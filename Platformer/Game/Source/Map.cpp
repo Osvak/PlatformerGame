@@ -45,6 +45,9 @@ void Map::Draw()
 	// L04: DONE 5: Prepare the loop to draw all tilesets + DrawTexture()
 	MapLayer* layer = data.layers.start->data;
 
+	TileSet* tileset;
+	iPoint coord;
+
 	// L06: TODO 4: Make sure we draw all the layers and not just the first one
 
 	for (int y = 0; y < data.height; ++y)
@@ -55,6 +58,7 @@ void Map::Draw()
 			if (tileId > 0)
 			{
 				// L04: TODO 9: Complete the draw function
+				//app->render->DrawTexture(tileset->texture, coord.x, coord.y, &tileset->GetTileRect(tileId));
 			}
 		}
 	}
@@ -224,11 +228,30 @@ bool Map::Load(const char* filename)
     
     if(ret == true)
     {
-        // L03: TODO 5: LOG all the data loaded iterate all tilesets and LOG everything
+        // L03: DONE 5: LOG all the data loaded iterate all tilesets and LOG everything
+		LOG("Succesfully parsed map XML file: %s", filename);
+		LOG("width: %d height: %d", data.width, data.height);
+		LOG("tile_width: %d tile_height: %d", data.tileWidth, data.tileHeight);
+		
+		LOG("Tileset ----");
+		int count = data.tilesets.count();
+		
+		for (int i = 0; i < count; ++i)
+		{
+			LOG("name: %s	firstGid: %d", data.tilesets.At(i)->data->name.GetString(), data.tilesets.At(i)->data->firstgid);
+			LOG("tile width: %d tile height: %d", data.tilesets.At(i)->data->tileWidth, data.tilesets.At(i)->data->tileHeight);
+			LOG("spacing: %d margin: %d", data.tilesets.At(i)->data->spacing, data.tilesets.At(i)->data->margin);
+
+		}
 
 
-
-		// L04: TODO 4: LOG the info for each loaded layer
+		// L04: DONE 4: LOG the info for each loaded layer
+		LOG("Layer ----");
+		for (int i = 0; i < count; ++i)
+		{
+			LOG("name: %s", data.tilesets.At(i)->data->name.GetString());
+			LOG("tile width: %d tile height: %d", data.tilesets.At(i)->data->tileWidth, data.tilesets.At(i)->data->tileHeight);
+		}
     }
 
     mapLoaded = ret;
@@ -236,7 +259,7 @@ bool Map::Load(const char* filename)
     return ret;
 }
 
-// L03: TODO: Load map general properties
+// L03: DONE: Load map general properties
 bool Map::LoadMap()
 {
 	bool ret = true;
@@ -249,24 +272,36 @@ bool Map::LoadMap()
 	}
 	else
 	{
-		// L03: TODO: Load map general properties
+		// L03: DONE: Load map general properties
+
+		data.height = map.attribute("height").as_int();
+		data.width = map.attribute("width").as_int();
+		data.tileHeight = map.attribute("tileheight").as_int();
+		data.tileWidth = map.attribute("tilewidth").as_int();
 		
 	}
 
 	return ret;
 }
 
-// L03: TODO: Load Tileset attributes
+// L03: DONE: Load Tileset attributes
 bool Map::LoadTilesetDetails(pugi::xml_node& tileset_node, TileSet* set)
 {
 	bool ret = true;
 	
-	// L03: TODO: Load Tileset attributes
+	// L03: DONE: Load Tileset attributes
+
+	set->name = tileset_node.attribute("name").as_string();
+	set->firstgid = tileset_node.attribute("firstgid").as_int();
+	set->margin = tileset_node.attribute("margin").as_int();
+	set->spacing = tileset_node.attribute("spacing").as_int();
+	set->tileHeight = tileset_node.attribute("tileheight").as_int();
+	set->tileWidth = tileset_node.attribute("tilewidth").as_int();
 
 	return ret;
 }
 
-// L03: TODO: Load Tileset image
+// L03: DONE: Load Tileset image
 bool Map::LoadTilesetImage(pugi::xml_node& tileset_node, TileSet* set)
 {
 	bool ret = true;
@@ -279,7 +314,16 @@ bool Map::LoadTilesetImage(pugi::xml_node& tileset_node, TileSet* set)
 	}
 	else
 	{
-		// L03: TODO: Load Tileset image
+		// L03: DONE: Load Tileset image
+
+		set->texture = app->tex->Load(PATH(folder.GetString(), image.attribute("source").as_string()));
+		set->texHeight = image.attribute("height").as_int();
+		set->texWidth = image.attribute("width").as_int();
+		set->numTilesHeight = set->texHeight / set->tileHeight;
+		set->numTilesWidth = set->texWidth / set->tileWidth;
+		set->offsetX = 0;
+		set->offsetY = 0;
+
 	}
 
 	return ret;
