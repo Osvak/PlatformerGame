@@ -50,8 +50,8 @@ public:
 	const char* GetOrganization() const;
 
     // L02: DONE 1: Create methods to request Load / Save
-	void LoadGameRequest();
-	void SaveGameRequest() const;
+	void LoadGameRequest(const char* fileName);
+	void SaveGameRequest(const char* fileName) const;
 
 private:
 
@@ -109,6 +109,8 @@ private:
 
 	mutable bool saveGameRequested;
 	bool loadGameRequested;
+	SString loadedGame;
+	mutable SString savedGame;
 };
 
 extern App* app;

@@ -33,7 +33,7 @@ bool Scene::Start()
 {
 	// L03: DONE: Load map
 	//app->map->Load("hello2.tmx");
-	app->map->Load("iso_walk.tmx");
+	app->map->Load("map.tmx");
 	
 	// Load music
 	app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
@@ -50,12 +50,12 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
-    // L02: DONE 3: Request Load / Save when pressing L/S
-	if(app->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN)
-		app->LoadGameRequest();
+    // L02: DONE 3: Request Save / Load when pressing F5/F6
+	if(app->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
+		app->SaveGameRequest("save_game.xml");
 
-	if(app->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
-		app->SaveGameRequest();
+	if(app->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
+		app->LoadGameRequest("save_game.xml");
 
 	if(app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		app->render->camera.y -= 1;

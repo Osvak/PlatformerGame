@@ -275,44 +275,112 @@ const char* App::GetOrganization() const
 }
 
 // Load / Save
-void App::LoadGameRequest()
+void App::LoadGameRequest(const char* fileName)
 {
 	// NOTE: We should check if SAVE_STATE_FILENAME actually exist
-	loadGameRequested = true;
+	pugi::xml_document saveStateFile;
+	pugi::xml_parse_result result = saveStateFile.load_file(SAVE_STATE_FILENAME);
+
+	if (result != NULL)
+	{
+		loadGameRequested = true;
+		loadedGame.Create(fileName);
+	}
+	
 }
 
 // ---------------------------------------
-void App::SaveGameRequest() const
+void App::SaveGameRequest(const char* fileName) const
 {
 	// NOTE: We should check if SAVE_STATE_FILENAME actually exist and... should we overwriten
+	pugi::xml_document saveStateFile;
+	pugi::xml_parse_result result = saveStateFile.load_file(SAVE_STATE_FILENAME);
+
+	if (result == NULL)
+	{
+		SDL_RWFromFile(SAVE_STATE_FILENAME, "w");
+	}
+
 	saveGameRequested = true;
 }
 
 // ---------------------------------------
-// L02: TODO 5: Create a method to actually load an xml file
+// L02: DONE 5: Create a method to actually load an xml file
 // then call all the modules to load themselves
 bool App::LoadGame()
 {
 	bool ret = false;
 
 	//...
+	pugi::xml_document data;
+	pugi::xml_node root;
+
+	pugi::xml_parse_result result = data.load_file(loadedGame.GetString());
+
+	if (result != NULL)
+	{
+		LOG("Loading new Game State from %s...", loadedGame.GetString());
+
+		root = data.child("save_state");
+
+		ListItem<Module*>* item = modules.start;
+		ret = true;
+
+		while (item != NULL && ret == true)
+		{
+			ret = item->data->LoadState(root.child(item->data->name.GetString()));
+			item = item->next;
+		}
+
+		if (ret == true)
+		{
+			LOG("...finished loading");
+		}
+
+	}
+	else
+	{
+		LOG("Could not load game state xml file %s. pugi error: %s", loadedGame.GetString(), result.description());
+	}
+
 
 	loadGameRequested = false;
 
 	return ret;
 }
 
-// L02: TODO 7: Implement the xml save method for current state
+// L02: DONE 7: Implement the xml save method for current state
 bool App::SaveGame() const
 {
 	bool ret = true;
 
-	//...
+	LOG("Saving Game State to %s...", savedGame.GetString());
+
+
+	//XML object where data will be stored
+	pugi::xml_document data;
+	pugi::xml_node root;
+
+
+	root = data.append_child("save_state");
+
+	ListItem<Module*>* item = modules.start;
+
+
+	while (item != NULL && ret == true)
+	{
+		ret = item->data->SaveState(root.append_child(item->data->name.GetString()));
+		item = item->next;
+	}
+
+	if (ret == true)
+	{
+		data.save_file(savedGame.GetString());
+		LOG("... finished saving");
+	}
+	
 
 	saveGameRequested = false;
 
 	return ret;
 }
-
-
-
