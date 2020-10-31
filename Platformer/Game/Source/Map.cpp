@@ -43,22 +43,31 @@ void Map::Draw()
 	if (mapLoaded == false) return;
 
 	// L04: DONE 5: Prepare the loop to draw all tilesets + DrawTexture()
-	MapLayer* layer = data.layers.start->data;
-
+	MapLayer* layer;
 	TileSet* tileset;
 	iPoint coord;
 
-	// L06: TODO 4: Make sure we draw all the layers and not just the first one
 
-	for (int y = 0; y < data.height; ++y)
+	// L06: TODO 4: Make sure we draw all the layers and not just the first one
+	for (ListItem<MapLayer*>* item = data.layers.start; item; item = item->next)
 	{
-		for (int x = 0; x < data.width; ++x)
+		layer = item->data;
+
+		for (int y = 0; y < data.height; ++y)
 		{
-			int tileId = layer->Get(x, y);
-			if (tileId > 0)
+			for (int x = 0; x < data.width; ++x)
 			{
-				// L04: TODO 9: Complete the draw function
-				//app->render->DrawTexture(tileset->texture, coord.x, coord.y, &tileset->GetTileRect(tileId));
+				int tileId = layer->Get(x, y);
+
+				coord = MapToWorld(x, y);
+				tileset = GetTilesetFromTileId(tileId);
+
+				if (tileId > 0)
+				{
+					// L04: TODO 9: Complete the draw function
+					SDL_Rect rect = tileset->GetTileRect(tileId);
+					app->render->DrawTexture(tileset->texture, coord.x, coord.y, &rect);
+				}
 			}
 		}
 	}
@@ -89,7 +98,7 @@ iPoint Map::MapToWorld(int x, int y) const
 	return ret;
 }
 
-// L05: TODO 2: Add orthographic world to map coordinates
+// L05: DONE 2: Add orthographic world to map coordinates
 iPoint Map::WorldToMap(int x, int y) const
 {
 	iPoint ret(0, 0);
@@ -123,7 +132,26 @@ TileSet* Map::GetTilesetFromTileId(int id) const
 	ListItem<TileSet*>* item = data.tilesets.start;
 	TileSet* set = item->data;
 
-	//...
+	/*if ((id == (item->data->firstgid == 1) ) || (id == (item->data->firstgid == 137) || (id = (item->data->firstgid == 307))))
+	{
+		LOG("Tileset is %d", id);
+		return set;
+	}*/
+
+	while (item->data != nullptr)
+	{
+		if (item->next == nullptr)
+		{
+			set = item->data;
+			break;
+		}
+		if ((item->data->firstgid <= id) && item->next->data->firstgid > id)
+		{
+			set = item->data;
+			break;
+		}
+		item = item->next;
+	}
 
 	return set;
 }
@@ -223,7 +251,9 @@ bool Map::Load(const char* filename)
 		ret = LoadLayer(layer, lay);
 
 		if (ret == true)
+		{
 			data.layers.add(lay);
+		}
 	}
     
     if(ret == true)
@@ -255,6 +285,8 @@ bool Map::Load(const char* filename)
     }
 
     mapLoaded = ret;
+	
+	LOG("Map Loaded Correctly");
 
     return ret;
 }
@@ -278,6 +310,26 @@ bool Map::LoadMap()
 		data.width = map.attribute("width").as_int();
 		data.tileHeight = map.attribute("tileheight").as_int();
 		data.tileWidth = map.attribute("tilewidth").as_int();
+
+
+		SString orientation(map.attribute("orientation").as_string());
+
+		if (orientation == "orthogonal")
+		{
+			data.type = MAPTYPE_ORTHOGONAL;
+		}
+		else if (orientation == "isometric")
+		{
+			data.type = MAPTYPE_ISOMETRIC;
+		}
+		else if (orientation == "staggered")
+		{
+			data.type = MAPTYPE_STAGGERED;
+		}
+		else
+		{
+			data.type = MAPTYPE_UNKNOWN;
+		}
 		
 	}
 
@@ -324,17 +376,33 @@ bool Map::LoadTilesetImage(pugi::xml_node& tileset_node, TileSet* set)
 		set->offsetX = 0;
 		set->offsetY = 0;
 
+		LOG("Tileset image loaded correctly");
+
 	}
 
 	return ret;
 }
 
-// L04: TODO 3: Create the definition for a function that loads a single layer
+// L04: DONE 3: Create the definition for a function that loads a single layer
 bool Map::LoadLayer(pugi::xml_node& node, MapLayer* layer)
 {
 	bool ret = true;
 	
-	// L04: TODO 3: Load a single layer
+	// L04: DONE 3: Load a single layer
+	layer->name = node.attribute("name").as_string("");
+	layer->width = node.attribute("width").as_int(0);
+	layer->height = node.attribute("height").as_int(0);
+
+	//Tile array for the layer
+	uint* pointer = new uint[layer->width * layer->height];
+	layer->data = pointer;
+
+	pugi::xml_node tileNode = node.child("data").child("title");
+
+	for (int i = 0; tileNode && ret; tileNode = tileNode.next_sibling("tile"), ++i)
+	{
+		layer->data[i] = tileNode.attribute("gid").as_uint(0);
+	}
 
 	return ret;
 }
