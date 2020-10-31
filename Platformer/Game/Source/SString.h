@@ -77,7 +77,7 @@ public:
 			delete[] str;
 	}
 
-	const SString& create(const char *format, ...)
+	const SString& Create(const char *format, ...)
 	{
 		size = 0;
 
@@ -329,6 +329,30 @@ public:
 		}
 
 		return ret;
+	}
+
+	// Paste a substring into buffer
+	uint SubString(unsigned int start, unsigned int end, SString & buffer) const
+	{
+		if (str != NULL)
+		{
+			start = MIN(start, size);
+			end = (end == 0) ? size : MIN(end, size);
+			uint s = end - start;
+
+			if (s > buffer.size)
+			{
+				char* tmp = buffer.str;
+				buffer.Alloc(s);
+				delete[] tmp;
+			}
+
+			strncpy_s(buffer.str, s, &str[start], s);
+			buffer.str[s] = '\0';
+
+			return(end - start);
+		}
+		else return 0;
 	}
 
 private:
