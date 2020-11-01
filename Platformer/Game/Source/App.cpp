@@ -165,7 +165,10 @@ void App::PrepareUpdate()
 void App::FinishUpdate()
 {
 	// L02: DONE 1: This is a good place to call Load / Save methods
-	if (loadGameRequested == true) LoadGame();
+	if (loadGameRequested == true)
+	{
+		LoadGame();
+	}
 	if (saveGameRequested == true) SaveGame();
 }
 
@@ -282,12 +285,16 @@ void App::LoadGameRequest(const char* fileName)
 {
 	// NOTE: We should check if SAVE_STATE_FILENAME actually exist
 	pugi::xml_document saveStateFile;
-	pugi::xml_parse_result result = saveStateFile.load_file(SAVE_STATE_FILENAME);
+	pugi::xml_parse_result result = saveStateFile.load_file(fileName);
 
 	if (result != NULL)
 	{
 		loadGameRequested = true;
 		loadedGame.Create(fileName);
+	}
+	else
+	{
+		LOG("Error in LoadGameRequest");
 	}
 	
 }
@@ -314,7 +321,6 @@ bool App::LoadGame()
 {
 	bool ret = false;
 
-	//...
 	pugi::xml_document data;
 	pugi::xml_node root;
 

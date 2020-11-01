@@ -56,6 +56,10 @@ public:
 	// Performs the render call of the player sprite
 	bool PostUpdate();
 
+	bool LoadState(pugi::xml_node&) override;
+
+	bool SaveState(pugi::xml_node&) const override;
+
 
 	// Collision callback, called when the player intersects with another collider
 	//void OnCollision(Collider* c1, Collider* c2) override;
@@ -81,11 +85,10 @@ public:
 	//Collider* collider = nullptr;
 
 	// Jump handlers
-	uint jumpCountdown = 30;
-	int jumpDirection = 1;
+	int jumpCountdown = 30000;
 
 	// The speed in which we move the player (pixels per frame)
-	float speed = 0.4f;
+	float speed = 4.0f;
 
 
 
