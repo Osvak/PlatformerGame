@@ -45,18 +45,18 @@ struct Properties
 {
 	struct Property
 	{
-		//...
+		const char* name;
+		int value;
 	};
 	
 	~Properties()
 	{
-		//...
 	}
 
 	// L06: TODO 7: Method to ask for the value of a custom property
 	int GetProperty(const char* name, int default_value = 0) const;
 
-	List<Property*> list;
+	List<Property*> propertyList;
 };
 
 // L04: DONE 1: Create a struct for the map layer
@@ -81,7 +81,8 @@ struct MapLayer
 	// L04: DONE 6: Short function to get the value of x,y
 	inline uint Get(int x, int y) const
 	{
-		return data[(y * width) + x];
+		//return data[(y * width) + x];
+		return x + y * width;
 	}
 };
 
