@@ -1520,7 +1520,11 @@
    <tile gid="29"/>
   </data>
  </layer>
- <layer id="6" name="collider" width="50" height="15">
+ <layer id="6" name="collider" width="50" height="15" visible="0" opacity="0.5">
+  <properties>
+   <property name="Draw" type="int" value="1"/>
+   <property name="Navigation" type="int" value="1"/>
+  </properties>
   <data>
    <tile/>
    <tile/>
