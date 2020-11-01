@@ -88,7 +88,7 @@ public:
 	int jumpCountdown = 30000;
 
 	// The speed in which we move the player (pixels per frame)
-	float speed = 4.0f;
+	float speed = 0.4f;
 
 
 
