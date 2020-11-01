@@ -52,8 +52,8 @@ bool Player::Awake(pugi::xml_node& config)
 	//
 	int screenWidth = config.child("resolution").attribute("width").as_int();
 	int screenHeight = config.child("resolution").attribute("height").as_int();
-	position.x = 48; //Tile size * Tiles
-	position.y = 176; //Tile size * Tiles
+	position.x = 48.0f; //Tile size * Tiles
+	position.y = 176.0f; //Tile size * Tiles
 
 
 	//
@@ -84,7 +84,7 @@ bool Player::Awake(pugi::xml_node& config)
 	//
 	// Placeholder square
 	//
-	plSquare = { position.x, position.y, PLAYER_SIZE, PLAYER_SIZE };
+	plSquare = { (int)position.x, (int)position.y, PLAYER_SIZE, PLAYER_SIZE };
 
 
 
@@ -108,60 +108,74 @@ void Player::UpdateState()
 	case IDLE:
 	{
 		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN)
+		{
 			ChangeState(state, MOVE_RIGHT);
+			break;
+		}
 
 		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN)
+		{
 			ChangeState(state, MOVE_LEFT);
+			break;
+		}
+
+		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		{
+			ChangeState(state, JUMP);
+			break;
+		}
 
 		break;
 	}
 
 	case MOVE_RIGHT:
 	{
-		if (movingFlag == false)
+		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
-			if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_RIGHT);
-			}
-
-			if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_LEFT);
-			}
-
-
-
-			if (movingFlag == false)
-			{
-				ChangeState(state, IDLE);
-			}
+			ChangeState(state, MOVE_LEFT);
+			break;
 		}
+
+		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+		{
+			ChangeState(state, MOVE_RIGHT);
+			break;
+		}
+
+		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		{
+			ChangeState(state, JUMP);
+			break;
+		}
+
+
+		ChangeState(state, IDLE);
 
 		break;
 	}
 
 	case MOVE_LEFT:
 	{
-		if (movingFlag == false)
+		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
-			if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_RIGHT);
-			}
-
-			if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_LEFT);
-			}
-
-
-
-			if (movingFlag == false)
-			{
-				ChangeState(state, IDLE);
-			}
+			ChangeState(state, MOVE_RIGHT);
+			break;
 		}
+
+		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+		{
+			ChangeState(state, MOVE_LEFT);
+			break;
+		}
+
+		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		{
+			ChangeState(state, JUMP);
+			break;
+		}
+
+
+		ChangeState(state, IDLE);
 
 		break;
 	}
@@ -183,12 +197,7 @@ void Player::UpdateLogic()
 
 	case MOVE_RIGHT:
 	{
-		if (movingFlag == true)
-		{
-			position.x += speed * horizontalDirection;
-
-			movingFlag = false;
-		}
+		position.x += speed * horizontalDirection;
 
 		//currentAnimation->Update();
 		break;
@@ -196,16 +205,14 @@ void Player::UpdateLogic()
 
 	case MOVE_LEFT:
 	{
-		if (movingFlag == true)
-		{
-			position.x += speed * horizontalDirection;
-
-			movingFlag = false;
-		}
+		position.x += speed * horizontalDirection;
 
 		//currentAnimation->Update();
 		break;
 	}
+
+	case JUMP:
+		break;
 
 	default:
 		break;
@@ -227,7 +234,7 @@ void Player::UpdateLogic()
 }
 
 // Change the State
-void Player::ChangeState(Player_State previousState, Player_State newState)
+void Player::ChangeState(PlayerState previousState, PlayerState newState)
 {
 	switch (newState)
 	{
@@ -239,8 +246,6 @@ void Player::ChangeState(Player_State previousState, Player_State newState)
 
 	case MOVE_RIGHT:
 	{
-		movingFlag = true;
-
 		verticalDirection = 0;
 		horizontalDirection = 1;
 
@@ -249,8 +254,6 @@ void Player::ChangeState(Player_State previousState, Player_State newState)
 
 	case(MOVE_LEFT):
 	{
-		movingFlag = true;
-		
 		verticalDirection = 0;
 		horizontalDirection = -1;
 
@@ -272,11 +275,7 @@ bool Player::PostUpdate()
 		/*SDL_Rect rect = currentAnimation->GetCurrentFrame();
 		App->render->Blit(playerTexture, position.x, position.y, &rect);*/
 		app->render->DrawRectangle(plSquare, 0, 255, 0, 255);
-
-		
 	}
-
-	app->render->DrawRectangle(plSquare, 0, 255, 0, 255);
 
 
 	return true;

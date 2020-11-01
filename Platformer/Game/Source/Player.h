@@ -14,7 +14,7 @@ struct SDL_Texture;
 struct Collider;
 
 // Different states of the player
-enum Player_State
+enum PlayerState
 {
 	IDLE,
 	MOVE_RIGHT,
@@ -49,7 +49,7 @@ public:
 	void UpdateLogic();
 
 	// Transition from one state to a new one. Changes animations, resets variables,...
-	void ChangeState(Player_State previousState, Player_State newState);
+	void ChangeState(PlayerState previousState, PlayerState newState);
 
 
 	// Called at the end of the application loop
@@ -65,10 +65,10 @@ public:
 
 	//// Variables ralated to the player /////
 	// Position of the player in the map
-	iPoint position;
+	fPoint position;
 
 	// The state of the player
-	Player_State state = IDLE;
+	PlayerState state = IDLE;
 
 	// The player spritesheet loaded into an SDL_Texture
 	SDL_Texture* playerTexture = nullptr;
@@ -85,7 +85,7 @@ public:
 	int jumpDirection = 1;
 
 	// The speed in which we move the player (pixels per frame)
-	int speed = 1;
+	float speed = 0.4f;
 
 
 
