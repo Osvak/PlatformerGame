@@ -25,6 +25,7 @@ struct TileSet
 	int	numTilesHeight;
 	int	offsetX;
 	int	offsetY;
+	int tilecount;
 
 	// L04: DONE 7: Create a method that receives a tile id and returns it's Rectfind the Rect associated with a specific tile id
 	SDL_Rect GetTileRect(int id) const;
@@ -81,8 +82,9 @@ struct MapLayer
 	// L04: DONE 6: Short function to get the value of x,y
 	inline uint Get(int x, int y) const
 	{
-		//return data[(y * width) + x];
-		return x + y * width;
+		uint ret = data[(y * width) + x];
+		return ret;
+		//return x + y * width;
 	}
 };
 
