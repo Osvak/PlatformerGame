@@ -113,6 +113,8 @@ private:
 	bool loadGameRequested;
 	SString loadedGame;
 	mutable SString savedGame;
+	pugi::xml_document saveLoadFile;
+	pugi::xml_node saveState;
 };
 
 extern App* app;

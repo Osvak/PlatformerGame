@@ -283,20 +283,8 @@ const char* App::GetOrganization() const
 // Load / Save
 void App::LoadGameRequest(const char* fileName)
 {
-	// NOTE: We should check if SAVE_STATE_FILENAME actually exist
-	pugi::xml_document saveStateFile;
-	pugi::xml_parse_result result = saveStateFile.load_file(fileName);
-
-	if (result != NULL)
-	{
 		loadGameRequested = true;
 		loadedGame.Create(fileName);
-	}
-	else
-	{
-		LOG("Error in LoadGameRequest");
-	}
-	
 }
 
 // ---------------------------------------
@@ -321,23 +309,21 @@ bool App::LoadGame()
 {
 	bool ret = false;
 
-	pugi::xml_document data;
-	pugi::xml_node root;
+	pugi::xml_parse_result result = saveLoadFile.load_file("save_game.xml");
 
-	pugi::xml_parse_result result = data.load_file(loadedGame.GetString());
 
 	if (result != NULL)
 	{
 		LOG("Loading new Game State from %s...", loadedGame.GetString());
-
-		root = data.child("save_state");
-
-		ListItem<Module*>* item = modules.start;
 		ret = true;
+
+		saveState = saveLoadFile.child("save_state");
+		ListItem<Module*>* item = modules.start;
+		
 
 		while (item != NULL && ret == true)
 		{
-			ret = item->data->LoadState(root.child(item->data->name.GetString()));
+			ret = item->data->LoadState(saveState.child(item->data->name.GetString()));
 			item = item->next;
 		}
 
@@ -367,27 +353,32 @@ bool App::SaveGame() const
 
 
 	//XML object where data will be stored
-	pugi::xml_document data;
-	pugi::xml_node root;
-
-
-	root = data.append_child("save_state");
-
 	ListItem<Module*>* item = modules.start;
+	pugi::xml_document file;
+	pugi::xml_node base = file.append_child("save_state");
 
 
 	while (item != NULL && ret == true)
 	{
-		ret = item->data->SaveState(root.append_child(item->data->name.GetString()));
+		pugi::xml_node node = base.append_child(item->data->name.GetString());
+		ret = item->data->SaveState(base.child(item->data->name.GetString()));
 		item = item->next;
 	}
 
+	file.save_file("save_game.xml"); // unknown error with the "fopen" method
+
 	if (ret == true)
 	{
-		data.save_file(savedGame.GetString());
+		
 		LOG("... finished saving");
 	}
 	
+	bool succ = file.save_file("save_game.xml");
+	if (succ != true)
+	{
+		LOG("File save error. pugi error: %d", pugi::status_internal_error);
+	}
+
 
 	saveGameRequested = false;
 
