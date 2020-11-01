@@ -52,8 +52,8 @@ bool Player::Awake(pugi::xml_node& config)
 	//
 	int screenWidth = config.child("resolution").attribute("width").as_int();
 	int screenHeight = config.child("resolution").attribute("height").as_int();
-	position.x = screenWidth / 2;
-	position.y = screenHeight / 2;
+	position.x = 48; //Tile size * Tiles
+	position.y = 176; //Tile size * Tiles
 
 
 	//
@@ -107,12 +107,6 @@ void Player::UpdateState()
 	{
 	case IDLE:
 	{
-		if (app->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN)
-			ChangeState(state, MOVE_UP);
-
-		if (app->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN)
-			ChangeState(state, MOVE_DOWN);
-
 		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN)
 			ChangeState(state, MOVE_RIGHT);
 
@@ -122,90 +116,10 @@ void Player::UpdateState()
 		break;
 	}
 
-	case MOVE_UP:
-	{
-		if (movingFlag == false)
-		{
-			if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_UP);
-			}
-
-			if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_DOWN);
-			}
-
-			if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_RIGHT);
-			}
-
-			if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_LEFT);
-			}
-
-
-
-			if (movingFlag == false)
-			{
-				ChangeState(state, IDLE);
-			}
-		}
-
-		break;
-	}
-
-	case MOVE_DOWN:
-	{
-		if (movingFlag == false)
-		{
-			if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_UP);
-			}
-
-			if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_DOWN);
-			}
-
-			if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_RIGHT);
-			}
-
-			if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_LEFT);
-			}
-
-
-
-			if (movingFlag == false)
-			{
-				ChangeState(state, IDLE);
-			}
-		}
-
-		break;
-	}
-
 	case MOVE_RIGHT:
 	{
 		if (movingFlag == false)
 		{
-			if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_UP);
-			}
-
-			if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_DOWN);
-			}
-
 			if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 			{
 				ChangeState(state, MOVE_RIGHT);
@@ -231,16 +145,6 @@ void Player::UpdateState()
 	{
 		if (movingFlag == false)
 		{
-			if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_UP);
-			}
-
-			if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_DOWN);
-			}
-
 			if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 			{
 				ChangeState(state, MOVE_RIGHT);
@@ -277,54 +181,13 @@ void Player::UpdateLogic()
 		break;
 	}
 
-	case MOVE_UP:
-	{
-		if (movingFlag == true)
-		{
-			if (position.y != (lastPos - PLAYER_SIZE))
-			{
-				position.y += speed * verticalDirection;
-			}
-			else
-			{
-				movingFlag = false;
-			}
-		}
-
-		//currentAnimation->Update();
-		break;
-	}
-
-	case MOVE_DOWN:
-	{
-		if (movingFlag == true)
-		{
-			if (position.y != (lastPos + PLAYER_SIZE))
-			{
-				position.y += speed * verticalDirection;
-			}
-			else
-			{
-				movingFlag = false;
-			}
-		}
-
-		//currentAnimation->Update();
-		break;
-	}
-
 	case MOVE_RIGHT:
 	{
 		if (movingFlag == true)
 		{
-			if (position.x != (lastPos + PLAYER_SIZE))
-			{
-				position.x += speed * horizontalDirection;
-			}
-			else
-			{
-				movingFlag = false;
-			}
+			position.x += speed * horizontalDirection;
+
+			movingFlag = false;
 		}
 
 		//currentAnimation->Update();
@@ -335,14 +198,9 @@ void Player::UpdateLogic()
 	{
 		if (movingFlag == true)
 		{
-			if (position.x != (lastPos - PLAYER_SIZE))
-			{
-				position.x += speed * horizontalDirection;
-			}
-			else
-			{
-				movingFlag = false;
-			}
+			position.x += speed * horizontalDirection;
+
+			movingFlag = false;
 		}
 
 		//currentAnimation->Update();
@@ -379,34 +237,9 @@ void Player::ChangeState(Player_State previousState, Player_State newState)
 		break;
 	}
 
-	case MOVE_UP:
-	{
-		movingFlag = true;
-		lastPos = position.y;
-
-		verticalDirection = -1;
-		horizontalDirection = 0;
-
-
-		//currentAnimation = &(horizontalDirection == -1 ? runningAnim_Left : runningAnim_Right);
-		break;
-	}
-
-	case MOVE_DOWN:
-	{
-		movingFlag = true;
-		lastPos = position.y;
-
-		verticalDirection = 1;
-		horizontalDirection = 0;
-
-		break;
-	}
-
 	case MOVE_RIGHT:
 	{
 		movingFlag = true;
-		lastPos = position.x;
 
 		verticalDirection = 0;
 		horizontalDirection = 1;
@@ -417,8 +250,7 @@ void Player::ChangeState(Player_State previousState, Player_State newState)
 	case(MOVE_LEFT):
 	{
 		movingFlag = true;
-		lastPos = position.x;
-
+		
 		verticalDirection = 0;
 		horizontalDirection = -1;
 

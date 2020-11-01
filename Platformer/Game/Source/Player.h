@@ -17,10 +17,9 @@ struct Collider;
 enum Player_State
 {
 	IDLE,
-	MOVE_UP,
-	MOVE_DOWN,
 	MOVE_RIGHT,
 	MOVE_LEFT,
+	JUMP,
 };
 
 
@@ -87,8 +86,6 @@ public:
 
 	// The speed in which we move the player (pixels per frame)
 	int speed = 1;
-
-	int lastPos = 0;
 
 
 
