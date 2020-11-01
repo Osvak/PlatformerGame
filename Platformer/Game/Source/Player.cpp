@@ -92,7 +92,7 @@ bool Player::Awake(pugi::xml_node& config)
 }
 
 // Main player Update
-bool Player::Update()
+bool Player::Update(float dt)
 {
 	UpdateState();
 	UpdateLogic();

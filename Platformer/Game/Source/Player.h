@@ -41,7 +41,7 @@ public:
 
 	// Called at the middle of the application loop
 	// Processes new input and handles player movement
-	bool Update();
+	bool Update(float dt);
 
 	// Checks for inputs (or timers) and changes the player state accordingly
 	void UpdateState();
