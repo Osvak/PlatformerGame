@@ -52,10 +52,10 @@ bool Scene::Update(float dt)
 {
     // L02: DONE 3: Request Save / Load when pressing F5/F6
 	if(app->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
-		app->SaveGameRequest("save_game.xml");
+		app->SaveGameRequest();
 
 	if(app->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
-		app->LoadGameRequest("save_game.xml");
+		app->LoadGameRequest();
 
 	if(app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		app->render->camera.y -= 1;

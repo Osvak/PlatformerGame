@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<save_state>
+	<window />
+	<input />
+	<textures />
+	<audio />
+	<scene />
+	<map />
+	<player>
+		<position positionX="103.600212" positionY="176" />
+	</player>
+	<renderer>
+		<camera x="0" y="0" />
+	</renderer>
+</save_state>

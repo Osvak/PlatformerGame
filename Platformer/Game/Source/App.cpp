@@ -80,9 +80,10 @@ bool App::Awake()
 		ret = true;
 		configApp = config.child("app");
 
-		// L01: DONE 4: Read the title from the config file
 		title.Create(configApp.child("title").child_value());
 		organization.Create(configApp.child("organization").child_value());
+		
+		//framerate = configApp.attribute("framerate_cap").as_int(0);
 	}
 
 	if (ret == true)
@@ -92,10 +93,7 @@ bool App::Awake()
 
 		while ((item != NULL) && (ret == true))
 		{
-			// L01: DONE 5: Add a new argument to the Awake method to receive a pointer to an xml node.
-			// If the section with the module name exists in config.xml, fill the pointer with the valid xml_node
-			// that can be used to read all variables for that module.
-			// Send nullptr if the node does not exist in config.xml
+
 			ret = item->data->Awake(config.child(item->data->name.GetString()));
 			item = item->next;
 		}
@@ -165,11 +163,12 @@ void App::PrepareUpdate()
 void App::FinishUpdate()
 {
 	// L02: DONE 1: This is a good place to call Load / Save methods
-	if (loadGameRequested == true)
-	{
-		LoadGame();
-	}
-	if (saveGameRequested == true) SaveGame();
+
+	if (saveGameRequested == true) SaveGame(filenameGame.GetString());
+	if (loadGameRequested == true) LoadGame(filenameGame.GetString());
+
+	if (loadConfigRequested == true) LoadGame(filenameConfig.GetString());
+	if (saveConfigRequested == true) SaveGame(filenameConfig.GetString());
 }
 
 // Call modules before each loop iteration
@@ -281,52 +280,57 @@ const char* App::GetOrganization() const
 }
 
 // Load / Save
-void App::LoadGameRequest(const char* fileName)
+void App::LoadGameRequest()
 {
-		loadGameRequested = true;
-		loadedGame.Create(fileName);
+	// NOTE: We should check if SAVE_STATE_FILENAME actually exist
+	loadGameRequested = true;
 }
 
 // ---------------------------------------
-void App::SaveGameRequest(const char* fileName) const
+void App::SaveGameRequest() const
 {
 	// NOTE: We should check if SAVE_STATE_FILENAME actually exist and... should we overwriten
-	pugi::xml_document saveStateFile;
-	pugi::xml_parse_result result = saveStateFile.load_file(SAVE_STATE_FILENAME);
-
-	if (result == NULL)
-	{
-		SDL_RWFromFile(SAVE_STATE_FILENAME, "w");
-	}
-
 	saveGameRequested = true;
+}
+
+void App::LoadConfigRequested()
+{
+	// NOTE: We should check if SAVE_STATE_FILENAME actually exist
+	loadConfigRequested = true;
+}
+
+// ---------------------------------------
+void App::SaveConfigRequested() const
+{
+	// NOTE: We should check if SAVE_STATE_FILENAME actually exist and... should we overwriten
+	saveConfigRequested = true;
 }
 
 // ---------------------------------------
 // L02: DONE 5: Create a method to actually load an xml file
 // then call all the modules to load themselves
-bool App::LoadGame()
+bool App::LoadGame(SString filename)
 {
 	bool ret = false;
 
-	pugi::xml_parse_result result = saveLoadFile.load_file("save_game.xml");
+	pugi::xml_parse_result result = saveStateFile.load_file(filename.GetString());
 
 
 	if (result != NULL)
 	{
-		LOG("Loading new Game State from %s...", loadedGame.GetString());
+		LOG("Loading new Game State from %s...", result.description());
 		ret = true;
 
-		saveState = saveLoadFile.child("save_state");
+		nodeSaveStateFile = saveStateFile.child("save_state");
 		ListItem<Module*>* item = modules.start;
 		
 
 		while (item != NULL && ret == true)
 		{
-			ret = item->data->LoadState(saveState.child(item->data->name.GetString()));
+			ret = item->data->LoadState(nodeSaveStateFile.child(item->data->name.GetString()));
 			item = item->next;
 		}
-
+		saveStateFile.reset();
 		if (ret == true)
 		{
 			LOG("...finished loading");
@@ -335,7 +339,8 @@ bool App::LoadGame()
 	}
 	else
 	{
-		LOG("Could not load game state xml file %s. pugi error: %s", loadedGame.GetString(), result.description());
+		LOG("Could not load game state xml file savegame.xml. pugi error: %s", result.description());
+		ret = false;
 	}
 
 
@@ -345,11 +350,11 @@ bool App::LoadGame()
 }
 
 // L02: DONE 7: Implement the xml save method for current state
-bool App::SaveGame() const
+bool App::SaveGame(SString filename) const
 {
 	bool ret = true;
 
-	LOG("Saving Game State to %s...", savedGame.GetString());
+	LOG("Saving Game State to savegame.xml.");
 
 
 	//XML object where data will be stored

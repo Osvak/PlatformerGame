@@ -51,8 +51,11 @@ public:
 	const char* GetOrganization() const;
 
     // L02: DONE 1: Create methods to request Load / Save
-	void LoadGameRequest(const char* fileName);
-	void SaveGameRequest(const char* fileName) const;
+	void LoadGameRequest();
+	void SaveGameRequest() const;
+	void LoadConfigRequested();
+	void SaveConfigRequested() const;
+
 
 private:
 
@@ -76,8 +79,8 @@ private:
 	bool PostUpdate();
 
 	// Load / Save
-	bool LoadGame();
-	bool SaveGame() const;
+	bool LoadGame(const SString _filename);
+	bool SaveGame(const SString _filename) const;
 
 public:
 
@@ -111,10 +114,14 @@ private:
 
 	mutable bool saveGameRequested;
 	bool loadGameRequested;
-	SString loadedGame;
-	mutable SString savedGame;
-	pugi::xml_document saveLoadFile;
-	pugi::xml_node saveState;
+
+	mutable bool saveConfigRequested;
+	bool loadConfigRequested;
+	SString filenameGame = "save_game.xml";
+	SString filenameConfig = "config.xml";
+
+	pugi::xml_document saveStateFile;
+	pugi::xml_node nodeSaveStateFile;
 };
 
 extern App* app;
