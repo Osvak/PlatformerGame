@@ -115,11 +115,11 @@ private:
 	uint frames;
 	float dt;
 
-	mutable bool saveGameRequested;
-	bool loadGameRequested;
+	mutable bool saveGameRequested = false;
+	bool loadGameRequested = false;
 
-	mutable bool saveConfigRequested;
-	bool loadConfigRequested;
+	mutable bool saveConfigRequested = false;
+	bool loadConfigRequested = false;
 	SString filenameGame = "save_game.xml";
 	SString filenameConfig = "config.xml";
 
