@@ -35,25 +35,39 @@ bool Player::Awake(pugi::xml_node& config)
 
 
 	//
-	//
-	//
 	// Animation pushbacks
 	//
-	//
-	//
+	idleAnim->loop = true;
+	idleAnim->speed = 0.2f;
+	walkAnim->loop = true;
+	walkAnim->speed = 0.4f;
+	jumpAnim->loop = false;
+	jumpAnim->speed = 0.25f;
+	fallAnim->loop = true;
+	fallAnim->speed = 0.2f;
+
+
+	for (int i = 0; i < 4; i++)
+		idleAnim->PushBack({ 50 * i,0, 50, 37 });
+
+	for (int i = 0; i < 6; i++)
+		walkAnim->PushBack({ 50 + (50 * i),37, 50, 37 });
+
+	for (int i = 0; i < 7; i++)
+		jumpAnim->PushBack({ 50 * i, 74, 50, 37 });
+		jumpAnim->PushBack({ 0, 111, 50, 37 });
+
+	for (int i = 0; i < 2 ; i++)
+		fallAnim->PushBack({ 50 + (50 * i) , 111, 50, 37 });
+
+	currentAnimation = idleAnim;
+
 
 	//
 	// Set initial position
 	//
 	position.x = 48.0f; //Tile size * Tiles
 	position.y = 176.0f; //Tile size * Tiles
-
-	//
-	// Placeholder square
-	//
-	plSquare = { (int)position.x, (int)position.y, PLAYER_SIZE, PLAYER_SIZE };
-
-
 
 	//
 	// Set Flags and Variables
@@ -73,13 +87,11 @@ bool Player::Start()
 	movingFlag = false;
 
 
+
 	//
+	// Load Player textures files
 	//
-	//
-	// Load Player textures files & set currentAnimation
-	//
-	//
-	//
+	playerTexture = app->tex->Load("Assets/textures/character/adventurer-v1.5-Sheet.png");
 
 	//
 	//
@@ -95,13 +107,6 @@ bool Player::Start()
 	// Create Player collider
 	//
 	playerCollider = app->collisions->AddCollider({ (int)position.x , (int)position.y, PLAYER_SIZE, PLAYER_SIZE }, Collider::ColliderType::PLAYER, this);
-
-
-
-	//
-	// Placeholder square
-	//
-	plSquare = { (int)position.x, (int)position.y, PLAYER_SIZE, PLAYER_SIZE };
 
 	return true;
 }
@@ -228,26 +233,36 @@ void Player::UpdateLogic(float dt)
 	{
 	case IDLE:
 	{
-		// Nothing to do here :)
+		currentAnimation->Update();
 		break;
 	}
 
 	case MOVE_RIGHT:
 	{
-		//currentAnimation->Update();
+		currentAnimation->Update();
 		break;
 	}
 
 	case MOVE_LEFT:
 	{
 
-		//currentAnimation->Update();
+		currentAnimation->Update();
 		break;
 	}
 
 	case JUMP:
+		if ((app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) || (app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN))
+		{
+			velocity.x = PLAYER_SPEED;
+			horizontalDirection = 1;
+		}
+		if ((app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) || (app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN))
+		{
+			velocity.x = -PLAYER_SPEED;
+			horizontalDirection = -1;
+		}
 		Jump(dt);
-
+		currentAnimation->Update();
 		break;
 
 	default:
@@ -274,11 +289,6 @@ void Player::UpdateLogic(float dt)
 	//
 	playerCollider->SetPos(position.x, position.y);
 
-	//
-	// Update placeholder square position
-	//
-	plSquare.x = position.x;
-	plSquare.y = position.y;
 }
 
 // Change the State
@@ -289,8 +299,7 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 	case IDLE:
 	{
 		verticalDirection = 0;
-		horizontalDirection = 0;
-		//currentAnimation = &(horizontalDirection == -1 ? idleAnim_Left : idleAnim_Right);
+		currentAnimation = idleAnim;
 
 		velocity = { 0, 0 };
 		acceleration = { 0,0 };
@@ -299,6 +308,7 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 
 	case MOVE_RIGHT:
 	{
+		currentAnimation = walkAnim;
 		verticalDirection = 0;
 		horizontalDirection = 1;
 
@@ -309,6 +319,7 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 
 	case MOVE_LEFT:
 	{
+		currentAnimation = walkAnim;
 		verticalDirection = 0;
 		horizontalDirection = -1;
 
@@ -318,6 +329,8 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 	}
 
 	case JUMP:
+		currentAnimation = jumpAnim;
+		currentAnimation->Reset();
 		verticalDirection = -1;
 		isJumping = true;
 
@@ -328,10 +341,6 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		else if (previousState == MOVE_LEFT)
 		{
 			horizontalDirection = -1;
-		}
-		else
-		{
-			horizontalDirection = 0;
 		}
 		break;
 	}
@@ -347,9 +356,16 @@ bool Player::PostUpdate()
 	//
 	if (!destroyed)
 	{
-		/*SDL_Rect rect = currentAnimation->GetCurrentFrame();
-		App->render->Blit(playerTexture, position.x, position.y, &rect);*/
-		app->render->DrawRectangle(plSquare, 0, 255, 0, 255);
+		SDL_Rect rect = currentAnimation->GetCurrentFrame();
+
+		// Player draw when walking right
+		if (horizontalDirection == 1)
+			app->render->DrawTexture(playerTexture, position.x - 17, position.y - (rect.h - 17), &rect);
+
+		// Player draw when walking right
+		if (horizontalDirection == -1)
+			app->render->DrawFlippedTexture(playerTexture, position.x - 17, position.y - (rect.h - 17), &rect);
+
 	}
 
 
@@ -417,6 +433,13 @@ void Player::Jump(float dt)
 	else
 	{
 		accel.y = GRAVITY;
+
+	}
+
+	if (velocity.y > 0)
+	{
+		//Falling anim
+		currentAnimation = fallAnim;
 	}
 	
 	

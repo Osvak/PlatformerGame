@@ -5,6 +5,8 @@
 #include "Point.h"
 #include "Log.h"
 #include "Defs.h"
+#include "Animation.h"
+
 #include "SDL/include/SDL_rect.h"
 
 
@@ -91,6 +93,9 @@ public:
 	// The player spritesheet loaded into an SDL_Texture
 	SDL_Texture* playerTexture = nullptr;
 
+	// Current animation
+	Animation* currentAnimation;
+
 	// The pointer to the current player animation
 	// It will be switched depending on the player's movement direction
 	//Animation* currentAnimation = nullptr;
@@ -106,23 +111,16 @@ public:
 	float jumpImpulseVel = -5.0f;
 	float jumpAccel = 4.0f;
 
-
-
-	// Player's placeholder square
-	SDL_Rect plSquare;
 	////////////////////////////////
 
 
 
-
-
-
-	///// Player Flags /////
+		///// Player Flags /////
 	// Flag to know if the player is moving
 	bool movingFlag = false;
 
 	// The horizontal direction where the player is facing -> -1 for LEFT // 1 for RIGHT // 0 for IDLE
-	int horizontalDirection = 0;
+	int horizontalDirection = 1;
 
 	// The horizontal direction where the player is facing -> -1 for UP // 1 for DOWN // 0 for IDLE
 	int verticalDirection = 0;
@@ -141,7 +139,13 @@ public:
 
 
 	/////// ANIMATION SETS ////////
-
+	Animation* idleAnim = new Animation();
+	Animation* walkAnim = new Animation();
+	//Animation* atakAnim = new Animation();
+	//Animation* damageAnim = new Animation();
+	//Animation* runAnim = new Animation();
+	Animation* jumpAnim = new Animation();
+	Animation* fallAnim = new Animation();
 	///////////////////////////////
 
 };
