@@ -8,6 +8,7 @@
 #include "Map.h"
 #include "Player.h"
 #include "Collisions.h"
+#include "FadeToBlack.h"
 
 #include "Defs.h"
 #include "Log.h"
