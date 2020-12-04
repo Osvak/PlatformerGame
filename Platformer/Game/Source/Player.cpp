@@ -6,6 +6,7 @@
 #include "Input.h"
 #include "Map.h"
 #include "Collisions.h"
+#include "Window.h"
 
 #include "Render.h"
 
@@ -51,6 +52,14 @@ bool Player::Awake(pugi::xml_node& config)
 	// Placeholder square
 	//
 	plSquare = { (int)position.x, (int)position.y, PLAYER_SIZE, PLAYER_SIZE };
+
+
+
+	//
+	// Set Flags and Variables
+	//
+	velocity = { 0.0f, 0.0f };
+	acceleration = { 0.0f, 0.0f };
 
 	return ret;
 }
@@ -102,7 +111,7 @@ bool Player::Start()
 bool Player::Update(float dt)
 {
 	UpdateState();
-	UpdateLogic();
+	UpdateLogic(dt);
 
 	return true;
 }
@@ -155,8 +164,6 @@ void Player::UpdateState()
 			break;
 		}
 
-
-
 		ChangeState(state, IDLE);
 
 		break;
@@ -190,7 +197,7 @@ void Player::UpdateState()
 	}
 
 	case JUMP:
-		if (jumpCountdown == 0)
+		if (isTouchingGround == true)
 		{
 			if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 			{
@@ -213,8 +220,10 @@ void Player::UpdateState()
 }
 
 // Control what each state does
-void Player::UpdateLogic()
+void Player::UpdateLogic(float dt)
 {
+	dt *= 2;
+
 	switch (state)
 	{
 	case IDLE:
@@ -225,30 +234,19 @@ void Player::UpdateLogic()
 
 	case MOVE_RIGHT:
 	{
-		position.x += speed * horizontalDirection;
-
 		//currentAnimation->Update();
 		break;
 	}
 
 	case MOVE_LEFT:
 	{
-		position.x += speed * horizontalDirection;
 
 		//currentAnimation->Update();
 		break;
 	}
 
 	case JUMP:
-		--jumpCountdown;
-
-		if (jumpCountdown < 15)
-		{
-			verticalDirection = 1;
-		}
-
-		position.y += speed * verticalDirection;
-		position.x += speed * horizontalDirection;
+		Jump(dt);
 
 		break;
 
@@ -258,11 +256,23 @@ void Player::UpdateLogic()
 
 
 	//
+	// Position update
+	//
+	velocity.y = velocity.y + (acceleration.y * dt);
+	if (velocity.y >= MAX_VELOCITY)
+	{
+		velocity.y = MAX_VELOCITY;
+	}
+	velocity.x = velocity.x + (acceleration.x * dt);
+
+	position.x += velocity.x;
+	position.y += velocity.y;
+
+
+	//
 	// Update Collider Position
 	//
 	playerCollider->SetPos(position.x, position.y);
-
-
 
 	//
 	// Update placeholder square position
@@ -278,7 +288,12 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 	{
 	case IDLE:
 	{
+		verticalDirection = 0;
+		horizontalDirection = 0;
 		//currentAnimation = &(horizontalDirection == -1 ? idleAnim_Left : idleAnim_Right);
+
+		velocity = { 0, 0 };
+		acceleration = { 0,0 };
 		break;
 	}
 
@@ -286,6 +301,8 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 	{
 		verticalDirection = 0;
 		horizontalDirection = 1;
+
+		velocity.x = PLAYER_SPEED;
 
 		break;
 	}
@@ -295,12 +312,14 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		verticalDirection = 0;
 		horizontalDirection = -1;
 
+		velocity.x = -PLAYER_SPEED;
+
 		break;
 	}
 
 	case JUMP:
-		jumpCountdown = 30;
 		verticalDirection = -1;
+		isJumping = true;
 
 		if (previousState == MOVE_RIGHT)
 		{
@@ -338,28 +357,24 @@ bool Player::PostUpdate()
 }
 
 // Controls what the player does when it collides with another collider
-//void Player::OnCollision(Collider* c1, Collider* c2)
-//{
-	//
-	//
+void Player::OnCollision(Collider* c1, Collider* c2)
+{
 	//
 	// Collision control
 	//
-	//
-	//
 
-	/*if (c1->type == Collider::Type::PLAYER && c2->type == Collider::Type::LADDER)
+	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::WALL)
 	{
-		canClimb = true;
+		verticalDirection = 0;
+		isTouchingGround = true;
+		isJumping = false;
+		position.y = c2->rect.y - (PLAYER_SIZE);
 	}
-
-	if (c2->type == Collider::Type::TOP_LADDER)
+	else
 	{
-		// TODO 5: The player has reached the top of the ladder, stop climbing
-
-
-	}*/
-//}
+		isTouchingGround = false;
+	}
+}
 
 bool Player::LoadState(pugi::xml_node& playerNode)
 {
@@ -376,4 +391,37 @@ bool Player::SaveState(pugi::xml_node& playerNode) const
 	player.append_attribute("positionX").set_value(position.x);
 	player.append_attribute("positionY").set_value(position.y);
 	return true;
+}
+
+
+void Player::Jump(float dt)
+{
+	// Allow player to jump
+	if (isTouchingGround) {
+		timeInAir = 0.0f;
+		accel.y = 0.0;
+		vel.y = 0.0;
+		isTouchingGround = false;
+	}
+
+
+	if (timeInAir < jumpImpulseTime)
+	{
+		vel.y = jumpImpulseVel;
+		velocity.y = vel.y;
+	}
+	else if (timeInAir < MAX_AIR_TIME)
+	{
+		accel.y = jumpAccel;
+	}
+	else
+	{
+		accel.y = GRAVITY;
+	}
+	
+	
+	timeInAir = timeInAir + 0.05f;
+
+	
+	acceleration.y = accel.y;
 }

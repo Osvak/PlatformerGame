@@ -9,7 +9,10 @@
 
 
 #define PLAYER_SIZE 16
-#define GRAVITY 1.0f
+#define PLAYER_SPEED 1.5f
+#define GRAVITY 5.0f
+#define MAX_VELOCITY 5.0f
+#define MAX_AIR_TIME 0.3f
 
 struct SDL_Texture;
 struct SDL_Rect;
@@ -51,7 +54,7 @@ public:
 	void UpdateState();
 
 	// Updates the logic of the player depending on the current state
-	void UpdateLogic();
+	void UpdateLogic(float dt);
 
 	// Transition from one state to a new one. Changes animations, resets variables,...
 	void ChangeState(PlayerState previousState, PlayerState newState);
@@ -67,14 +70,20 @@ public:
 
 
 	// Collision callback, called when the player intersects with another collider
-	//void OnCollision(Collider* c1, Collider* c2) override;
+	void OnCollision(Collider* c1, Collider* c2) override;
 
+
+private:
+
+	void Jump(float dt);
 
 public:
 
 	//// Variables ralated to the player /////
 	// Position of the player in the map
 	fPoint position;
+	fPoint velocity = { 0.0f, 0.0f };
+	fPoint acceleration = { 0.0f, 0.0f };
 
 	// The state of the player
 	PlayerState state = IDLE;
@@ -90,10 +99,12 @@ public:
 	Collider* playerCollider = nullptr;
 
 	// Jump handlers
-	int jumpCountdown = 30000;
-
-	// The speed in which we move the player (pixels per frame)
-	float speed = 0.4f;
+	fPoint accel = { 0.0, 0.0 };
+	fPoint vel = { 0.0, 0.0 };
+	float timeInAir = 0.0f;
+	float jumpImpulseTime = 0.05f;
+	float jumpImpulseVel = -5.0f;
+	float jumpAccel = 4.0f;
 
 
 
@@ -110,15 +121,21 @@ public:
 	// Flag to know if the player is moving
 	bool movingFlag = false;
 
-	// The horizontal direction where the player is facing -> -1 for LEFT // 1 for RIGHT
+	// The horizontal direction where the player is facing -> -1 for LEFT // 1 for RIGHT // 0 for IDLE
 	int horizontalDirection = 0;
 
-	// The horizontal direction where the player is facing -> -1 for UP // 1 for DOWN
+	// The horizontal direction where the player is facing -> -1 for UP // 1 for DOWN // 0 for IDLE
 	int verticalDirection = 0;
+
+	// Flag to know if the player is touching the ground
+	bool isTouchingGround = true;
+
+	// Flag to know if the player is jumping
+	bool isJumping = false;
 
 	// A flag to detect when the player has been destroyed
 	bool destroyed = false;
-	/////////////////////
+	///////////////////////
 
 
 
