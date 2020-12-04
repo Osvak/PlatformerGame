@@ -7,8 +7,9 @@
 	<scene />
 	<map />
 	<player>
-		<position positionX="103.600212" positionY="176" />
+		<position positionX="45.9999924" positionY="176" />
 	</player>
+	<:anonymous />
 	<renderer>
 		<camera x="0" y="0" />
 	</renderer>
