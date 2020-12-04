@@ -4,8 +4,10 @@
 #include "SString.h"
 
 #include "PugiXml/src/pugixml.hpp"
+#include "External/SDL/include/SDL_rect.h"
 
 class App;
+class Collider;
 
 class Module
 {
@@ -67,6 +69,7 @@ public:
 		return true;
 	}
 
+	virtual void OnCollision(Collider*, Collider*) {}
 public:
 
 	SString name;

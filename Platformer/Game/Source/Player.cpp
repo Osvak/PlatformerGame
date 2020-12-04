@@ -41,12 +41,6 @@ bool Player::Awake(pugi::xml_node& config)
 	//
 	//
 
-	LOG("+++++ Loading player textures");
-
-	destroyed = false;
-	movingFlag = false;
-
-
 	//
 	// Set initial position
 	//
@@ -54,6 +48,22 @@ bool Player::Awake(pugi::xml_node& config)
 	int screenHeight = config.child("resolution").attribute("height").as_int();
 	position.x = 48.0f; //Tile size * Tiles
 	position.y = 176.0f; //Tile size * Tiles
+
+	//
+	// Placeholder square
+	//
+	plSquare = { (int)position.x, (int)position.y, PLAYER_SIZE, PLAYER_SIZE };
+
+	return ret;
+}
+
+// Called the first frame
+bool Player::Start()
+{
+	LOG("+++++ Loading player textures");
+
+	destroyed = false;
+	movingFlag = false;
 
 
 	//
@@ -86,10 +96,9 @@ bool Player::Awake(pugi::xml_node& config)
 	//
 	plSquare = { (int)position.x, (int)position.y, PLAYER_SIZE, PLAYER_SIZE };
 
-
-
-	return ret;
+	return true;
 }
+
 
 // Main player Update
 bool Player::Update(float dt)

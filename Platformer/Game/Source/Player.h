@@ -9,8 +9,10 @@
 
 
 #define PLAYER_SIZE 16
+#define GRAVITY 1.0f
 
 struct SDL_Texture;
+struct SDL_Rect;
 struct Collider;
 
 // Different states of the player
@@ -34,8 +36,11 @@ public:
 	~Player();
 
 
-	// Called when the module is activated, loads textures
+	// Called when the module is activated, does animation pushbacks
 	bool Awake(pugi::xml_node&);
+
+	// Called the first frame
+	bool Start();
 
 
 	// Called at the middle of the application loop
