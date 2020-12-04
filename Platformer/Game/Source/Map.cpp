@@ -78,6 +78,18 @@ bool Map::Start()
 					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
 					app->collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
 				}
+				if (tileId == 308)
+				{
+					tileRect = tileset->GetTileRect(tileId);
+					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+					app->collisions->AddCollider(colliderRect, Collider::ColliderType::DIE, this);
+				}
+				if (tileId == 309)
+				{
+					tileRect = tileset->GetTileRect(tileId);
+					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+					app->collisions->AddCollider(colliderRect, Collider::ColliderType::NEXT_LEVEL, this);
+				}
 			}
 		}
 	}

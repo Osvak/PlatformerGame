@@ -7,10 +7,10 @@
 	<scene />
 	<map />
 	<player>
-		<position positionX="45.9999924" positionY="176" />
+		<position positionX="125.600296" positionY="176" />
 	</player>
 	<:anonymous />
 	<renderer>
-		<camera x="0" y="0" />
+		<camera x="-48" y="0" />
 	</renderer>
 </save_state>

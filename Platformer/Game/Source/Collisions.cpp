@@ -147,7 +147,7 @@ void Collisions::DebugDraw()
 			app->render->DrawRectangle(colliders[i]->rect, 255, 0, 0, alpha);
 			break;
 		case Collider::ColliderType::WALL:
-			app->render->DrawRectangle(colliders[i]->rect, 240, 190, 90, alpha); // mint
+			app->render->DrawRectangle(colliders[i]->rect, 0, 230, 185, alpha); // mint
 			break;
 		case Collider::ColliderType::DIE:
 			app->render->DrawRectangle(colliders[i]->rect, 255, 0, 0, alpha); // red
