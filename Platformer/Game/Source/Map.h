@@ -4,11 +4,12 @@
 #include "Module.h"
 #include "List.h"
 #include "Point.h"
+#include "PQueue.h"
+#include "DynArray.h"
 
 #include "PugiXml\src\pugixml.hpp"
 
-// L03: DONE 2: Create a struct to hold information for a TileSet
-// Ignore Terrain Types and Tile Types for now, but we want the image!
+// Struct to hold information for a TileSet
 struct TileSet
 {
 	SString	name;
@@ -46,12 +47,20 @@ struct Properties
 {
 	struct Property
 	{
-		const char* name;
+		SString name;
 		int value;
 	};
 	
 	~Properties()
 	{
+		ListItem<Property*>* listD;
+		listD = propertyList.start;
+		while (listD != nullptr)
+		{
+			RELEASE(listD->data);
+			listD = listD->next;
+		}
+		propertyList.Clear();
 	}
 
 	// L06: TODO 7: Method to ask for the value of a custom property
@@ -68,8 +77,9 @@ struct MapLayer
 	int height;
 	uint* data;
 
-	// L06: DONE 1: Support custom properties
 	Properties properties;
+
+	//float parralax;
 
 	MapLayer() : data(NULL)
 	{}
@@ -84,7 +94,6 @@ struct MapLayer
 	{
 		uint ret = data[(y * width) + x];
 		return ret;
-		//return x + y * width;
 	}
 };
 
@@ -97,9 +106,9 @@ struct MapData
 	int	tileHeight;
 	SDL_Color backgroundColor;
 	MapTypes type;
+
 	List<TileSet*> tilesets;
 
-	// L04: DONE 2: Add a list/array of layers to the map
 	List<MapLayer*> layers;
 };
 
@@ -107,10 +116,12 @@ class Map : public Module
 {
 public:
 
+	// Constructor
     Map();
 
     // Destructor
     virtual ~Map();
+
 
     // Called before render is available
     bool Awake(pugi::xml_node& conf);
@@ -120,6 +131,7 @@ public:
 
     // Called before quitting
     bool CleanUp();
+
 
     // Load new map
     bool Load(const char* path);

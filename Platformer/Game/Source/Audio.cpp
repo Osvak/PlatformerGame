@@ -75,7 +75,7 @@ bool Audio::CleanUp()
 	for(item = fx.start; item != NULL; item = item->next)
 		Mix_FreeChunk(item->data);
 
-	fx.clear();
+	fx.Clear();
 
 	Mix_CloseAudio();
 	Mix_Quit();
@@ -154,8 +154,8 @@ unsigned int Audio::LoadFx(const char* path)
 	}
 	else
 	{
-		fx.add(chunk);
-		ret = fx.count();
+		fx.Add(chunk);
+		ret = fx.Count();
 	}
 
 	return ret;
@@ -169,7 +169,7 @@ bool Audio::PlayFx(unsigned int id, int repeat)
 	if(!active)
 		return false;
 
-	if(id > 0 && id <= fx.count())
+	if(id > 0 && id <= fx.Count())
 	{
 		Mix_PlayChannel(-1, fx[id - 1], repeat);
 	}

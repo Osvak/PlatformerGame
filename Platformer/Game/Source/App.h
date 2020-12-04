@@ -4,6 +4,8 @@
 #include "Module.h"
 #include "List.h"
 #include "Log.h"
+#include "PerfTimer.h"
+#include "Timer.h"
 
 #include "PugiXml/src/pugixml.hpp"
 
@@ -97,6 +99,10 @@ public:
 	Player* player;
 	Collisions* collisions;
 
+
+	const int frameRate = 60;
+	const int screenTicks = 1000 / frameRate;
+
 private:
 
 	int argc;
@@ -112,8 +118,6 @@ private:
 	//pugi::xml_node config;
 	//pugi::xml_node configApp;
 
-	uint frames;
-	float dt;
 
 	mutable bool saveGameRequested = false;
 	bool loadGameRequested = false;
@@ -125,6 +129,28 @@ private:
 
 	pugi::xml_document saveStateFile;
 	pugi::xml_node nodeSaveStateFile;
+
+
+
+	// FPS variables
+	PerfTimer pTimer;
+	uint64 frameCount = 0;
+
+	Timer startupTime;
+	Timer frameTime;
+	Timer lastSecFrameTime;
+	Timer dtTimer;
+	uint32 lastSecFrameCount = 0;
+	uint32 prevLastSecFrameCount = 0;
+	float dt = 0.0f;
+
+	float secondsSinceStartup;
+	float fpsMSeconds;
+	float fpsCounter;
+	float fps = 0.f;
+	float fpsPreUpdate;
+
+	uint frames;
 };
 
 extern App* app;

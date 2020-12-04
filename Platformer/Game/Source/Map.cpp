@@ -21,7 +21,20 @@ Map::~Map()
 // L06: TODO 7: Ask for the value of a custom property
 int Properties::GetProperty(const char* value, int defaultValue) const
 {
-	//...
+	for (int i = 0; i < propertyList.Count(); i++)
+	{
+		if (strcmp(propertyList.At(i)->data->name.GetString(), value) == 0)
+		{
+			if (propertyList.At(i)->data->value != defaultValue)
+			{
+				return propertyList.At(i)->data->value;
+			}
+			else 
+			{
+				return defaultValue;
+			}
+		}
+	}
 
 	return defaultValue;
 }
@@ -64,7 +77,7 @@ void Map::Draw()
 				if (tileId > 0)
 				{
 					// L04: TODO 9: Complete the draw function
-					for (int i = 0; i < data.tilesets.count(); ++i)
+					for (int i = 0; i < data.tilesets.Count(); ++i)
 					{
 						SDL_Rect rect = data.tilesets.At(i)->data->GetTileRect(tileId);
 						app->render->DrawTexture(tileset->texture, coord.x, coord.y, &rect);
@@ -173,7 +186,7 @@ bool Map::CleanUp()
 {
     LOG("Unloading map");
 
-    // L03: DONE 2: Make sure you clean up any memory allocated from tilesets/map
+
     // Remove all tilesets
 	ListItem<TileSet*>* item;
 	item = data.tilesets.start;
@@ -183,9 +196,9 @@ bool Map::CleanUp()
 		RELEASE(item->data);
 		item = item->next;
 	}
-	data.tilesets.clear();
+	data.tilesets.Clear();
 
-	// L04: DONE 2: clean up all layer data
+
 	// Remove all layers
 	ListItem<MapLayer*>* item2;
 	item2 = data.layers.start;
@@ -195,7 +208,8 @@ bool Map::CleanUp()
 		RELEASE(item2->data);
 		item2 = item2->next;
 	}
-	data.layers.clear();
+	data.layers.Clear();
+
 
 	// Clean up the pugui tree
 	mapFile.reset();
@@ -217,15 +231,15 @@ bool Map::Load(const char* filename)
         ret = false;
     }
 
+
 	// Load general info
     if(ret == true)
     {
-        // L03: DONE 3: Create and call a private function to load and fill all your map data
 		ret = LoadMap();
 	}
 
-    // L03: DONE 4: Create and call a private function to load a tileset
-    // remember to support more any number of tilesets!
+
+    // Load tilesets info
 	pugi::xml_node tileset;
 	for (tileset = mapFile.child("map").child("tileset"); tileset && ret; tileset = tileset.next_sibling("tileset"))
 	{
@@ -235,10 +249,10 @@ bool Map::Load(const char* filename)
 
 		if (ret == true) ret = LoadTilesetImage(tileset, set);
 
-		data.tilesets.add(set);
+		data.tilesets.Add(set);
 	}
 
-	// L04: DONE 4: Iterate all layers and load each of them
+
 	// Load layer info
 	pugi::xml_node layerNode;
 	for (layerNode = mapFile.child("map").child("layer"); layerNode && ret; layerNode = layerNode.next_sibling("layer"))
@@ -250,7 +264,7 @@ bool Map::Load(const char* filename)
 			ret = LoadLayer(layerNode, lay);
 		}
 
-		data.layers.add(lay);
+		data.layers.Add(lay);
 	}
     
     if(ret == true)
@@ -261,7 +275,7 @@ bool Map::Load(const char* filename)
 		LOG("tile_width: %d tile_height: %d", data.tileWidth, data.tileHeight);
 		
 		LOG("Tileset ----");
-		int count = data.tilesets.count();
+		int count = data.tilesets.Count();
 		
 		for (int i = 0; i < count; ++i)
 		{
@@ -421,6 +435,15 @@ bool Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 {
 	bool ret = false;
 
-	//...
+	pugi::xml_node propertyNode = node.child("property");
+
+
+	for (propertyNode; propertyNode && ret; propertyNode = propertyNode.next_sibling("property"))
+	{
+		Properties::Property* propertyID = new Properties::Property();
+		propertyID->name = propertyNode.attribute("name").as_string("");
+		propertyID->value = propertyNode.attribute("value").as_int(0);
+		properties.propertyList.Add(propertyID);
+	}
 	return ret;
 }

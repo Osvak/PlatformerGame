@@ -32,7 +32,6 @@ bool Scene::Awake()
 bool Scene::Start()
 {
 	// L03: DONE: Load map
-	//app->map->Load("hello2.tmx");
 	app->map->Load("map.tmx");
 	
 	// Load music
@@ -50,7 +49,9 @@ bool Scene::PreUpdate()
 // Called each loop iteration
 bool Scene::Update(float dt)
 {
-    // L02: DONE 3: Request Save / Load when pressing F5/F6
+    //
+	// Scene controls
+	//
 	if(app->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
 		app->SaveGameRequest();
 
@@ -69,18 +70,18 @@ bool Scene::Update(float dt)
 	if(app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		app->render->camera.x += 1;
 
-	//app->render->DrawTexture(img, 380, 100); // Placeholder not needed any more
 
-	// Draw map
+	// Draw Map
 	app->map->Draw();
 
-	// L03: DONE 7: Set the window title with map/tileset info
-	SString title("Platformer Game, Map:%dx%d Tiles:%dx%d Tilesets:%d",
-				   app->map->data.width, app->map->data.height,
-				   app->map->data.tileWidth, app->map->data.tileHeight,
-				   app->map->data.tilesets.count());
 
-	app->win->SetTitle(title.GetString());
+	// Window Title update
+	//SString title("Platformer Game, Map:%dx%d Tiles:%dx%d Tilesets:%d",
+	//			   app->map->data.width, app->map->data.height,
+	//			   app->map->data.tileWidth, app->map->data.tileHeight,
+	//			   app->map->data.tilesets.Count());
+	//
+	//app->win->SetTitle(title.GetString());
 
 	return true;
 }

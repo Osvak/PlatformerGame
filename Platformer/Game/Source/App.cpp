@@ -18,7 +18,7 @@
 // Constructor
 App::App(int argc, char* args[]) : argc(argc), args(args)
 {
-	frames = 0;
+	PERF_START(pTimer);
 
 	win = new Window();
 	input = new Input();
@@ -43,6 +43,8 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 
 	// Render last to swap buffer
 	AddModule(render);
+
+	PERF_PEEK(pTimer);
 }
 
 // Destructor
@@ -57,18 +59,20 @@ App::~App()
 		item = item->prev;
 	}
 
-	modules.clear();
+	modules.Clear();
 }
 
 void App::AddModule(Module* module)
 {
 	module->Init();
-	modules.add(module);
+	modules.Add(module);
 }
 
 // Called before render is available
 bool App::Awake()
 {
+	PERF_START(pTimer);
+
 	pugi::xml_document configFile;
 	pugi::xml_node config;
 	pugi::xml_node configApp;
@@ -102,6 +106,9 @@ bool App::Awake()
 		}
 	}
 
+
+	PERF_PEEK(pTimer);
+
 	return ret;
 }
 
@@ -111,6 +118,8 @@ bool App::Start()
 	bool ret = true;
 	ListItem<Module*>* item;
 	item = modules.start;
+
+	fpsMSeconds = SDL_GetTicks();
 
 	while(item != NULL && ret == true)
 	{
@@ -160,6 +169,8 @@ pugi::xml_node App::LoadConfig(pugi::xml_document& configFile) const
 // ---------------------------------------------
 void App::PrepareUpdate()
 {
+	secondsSinceStartup = startupTime.ReadSec();
+	fpsPreUpdate = SDL_GetTicks();
 }
 
 // ---------------------------------------------
@@ -172,6 +183,31 @@ void App::FinishUpdate()
 
 	if (loadConfigRequested == true) LoadGame(filenameConfig.GetString());
 	if (saveConfigRequested == true) SaveGame(filenameConfig.GetString());
+
+
+	uint32 lastFrameMs = 0;
+	uint32 framesOnLastUpdate = 0;
+	frameCount++;
+	float averageFps = frameCount / secondsSinceStartup;
+	fpsCounter++;
+	float fpsMsecondsAfter = SDL_GetTicks() - fpsPreUpdate;
+
+	if (fpsMSeconds < SDL_GetTicks() - 1000)
+	{
+		fpsMSeconds = SDL_GetTicks();
+		fps = fpsCounter;
+		fpsCounter = 0;
+	}
+
+	SString title("Lato Viridi: FPS: %.2f Av.FPS: %.2f Last Frame Ms: %.2f Time since startup: %.3f Frame Count: %I64u ", fps, averageFps, fpsMsecondsAfter, secondsSinceStartup, frameCount);
+	
+	app->win->SetTitle(title.GetString());
+
+
+	if (fpsMsecondsAfter < screenTicks)
+	{
+		SDL_Delay(screenTicks - fpsMsecondsAfter);
+	}
 }
 
 // Call modules before each loop iteration
@@ -181,6 +217,9 @@ bool App::PreUpdate()
 
 	ListItem<Module*>* item;
 	Module* pModule = NULL;
+
+	dt = dtTimer.ReadSec();
+	dtTimer.Start();
 
 	for(item = modules.start; item != NULL && ret == true; item = item->next)
 	{

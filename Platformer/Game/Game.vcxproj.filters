@@ -23,6 +23,12 @@
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="Source\Collisions.cpp" />
+    <ClCompile Include="Source\PerfTimer.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Timer.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Window.h" />
@@ -65,6 +71,15 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Source\Collisions.h" />
+    <ClInclude Include="Source\PQueue.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PerfTimer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Timer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Utils">
