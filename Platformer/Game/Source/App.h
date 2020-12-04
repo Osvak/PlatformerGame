@@ -22,7 +22,19 @@ class Scene;
 class Map;
 class Player;
 class Collisions;
+class FadeToBlack;
 
+// All the Scenes
+enum GameScenes
+{
+	LOGO = 0,
+	TITLE,
+	LEVEL1,
+	WIN,
+	LOSE,
+};
+
+// Main Application
 class App
 {
 public:
@@ -32,6 +44,7 @@ public:
 
 	// Destructor
 	virtual ~App();
+
 
 	// Called before render is available
 	bool Awake();
@@ -44,6 +57,7 @@ public:
 
 	// Called before quitting
 	bool CleanUp();
+
 
 	// Add a new module to handle
 	void AddModule(Module* module);
@@ -98,7 +112,9 @@ public:
 	Map* map;
 	Player* player;
 	Collisions* collisions;
+	FadeToBlack* fadeToBlack;
 
+	int currentScene = LOGO;
 
 	const int frameRate = 60;
 	const int screenTicks = 1000 / frameRate;
@@ -113,12 +129,6 @@ private:
 	SString organization;
 
 	List<Module *> modules;
-
-	// L01: DONE 2: Create new variables from pugui namespace
-	// NOTE: Redesigned LoadConfig() to avoid storing this variables
-	//pugi::xml_document configFile;
-	//pugi::xml_node config;
-	//pugi::xml_node configApp;
 
 
 	mutable bool saveGameRequested = false;

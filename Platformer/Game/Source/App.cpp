@@ -29,6 +29,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	map = new Map();
 	player = new Player();
 	collisions = new Collisions();
+	fadeToBlack = new FadeToBlack();
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
@@ -40,6 +41,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(map);
 	AddModule(player);
 	AddModule(collisions);
+	AddModule(fadeToBlack);
 
 	// Render last to swap buffer
 	AddModule(render);
@@ -79,7 +81,7 @@ bool App::Awake()
 
 	bool ret = false;
 
-	// L01: DONE 3: Load config from XML
+	// Load config from XML
 	config = LoadConfig(configFile);
 
 	if (config.empty() == false)
@@ -187,10 +189,12 @@ void App::FinishUpdate()
 
 	uint32 lastFrameMs = 0;
 	uint32 framesOnLastUpdate = 0;
+
 	frameCount++;
 	float averageFps = frameCount / secondsSinceStartup;
+
 	fpsCounter++;
-	float fpsMsecondsAfter = SDL_GetTicks() - fpsPreUpdate;
+	float fpsMSecondsAfter = SDL_GetTicks() - fpsPreUpdate;
 
 	if (fpsMSeconds < SDL_GetTicks() - 1000)
 	{
@@ -200,14 +204,14 @@ void App::FinishUpdate()
 	}
 
 
-	SString title("Lato Viridi | FPS: %.2f | Avg.FPS: %.2f | Last-Frame MS: %.2f | Time since startup: %.3f | Frame Count: %I64u | VSync: %s", fps, averageFps, fpsMsecondsAfter, secondsSinceStartup, frameCount, usingVSync.GetString());
+	SString title("Lato Viridi | FPS: %.2f | Avg.FPS: %.2f | Last-Frame MS: %.2f | Time since startup: %.3f | Frame Count: %I64u | VSync: %s", fps, averageFps, fpsMSecondsAfter, secondsSinceStartup, frameCount, usingVSync.GetString());
 	
 	app->win->SetTitle(title.GetString());
 
 
-	if (fpsMsecondsAfter < screenTicks)
+	if (fpsMSecondsAfter < screenTicks)
 	{
-		SDL_Delay(screenTicks - fpsMsecondsAfter);
+		SDL_Delay(screenTicks - fpsMSecondsAfter);
 	}
 }
 
@@ -325,32 +329,28 @@ const char* App::GetOrganization() const
 // Load / Save
 void App::LoadGameRequest()
 {
-	// NOTE: We should check if SAVE_STATE_FILENAME actually exist
 	loadGameRequested = true;
 }
 
 // ---------------------------------------
 void App::SaveGameRequest() const
 {
-	// NOTE: We should check if SAVE_STATE_FILENAME actually exist and... should we overwriten
 	saveGameRequested = true;
 }
 
 void App::LoadConfigRequested()
 {
-	// NOTE: We should check if SAVE_STATE_FILENAME actually exist
 	loadConfigRequested = true;
 }
 
 // ---------------------------------------
 void App::SaveConfigRequested() const
 {
-	// NOTE: We should check if SAVE_STATE_FILENAME actually exist and... should we overwriten
 	saveConfigRequested = true;
 }
 
 // ---------------------------------------
-// L02: DONE 5: Create a method to actually load an xml file
+// Create a method to actually load an xml file
 // then call all the modules to load themselves
 bool App::LoadGame(SString filename)
 {
@@ -392,7 +392,7 @@ bool App::LoadGame(SString filename)
 	return ret;
 }
 
-// L02: DONE 7: Implement the xml save method for current state
+// Implement the XML save method for current state
 bool App::SaveGame(SString filename) const
 {
 	bool ret = true;
@@ -413,7 +413,7 @@ bool App::SaveGame(SString filename) const
 		item = item->next;
 	}
 
-	file.save_file("save_game.xml"); // unknown error with the "fopen" method
+	file.save_file("save_game.xml");
 
 	if (ret == true)
 	{
