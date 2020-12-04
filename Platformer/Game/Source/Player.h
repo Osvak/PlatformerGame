@@ -87,7 +87,7 @@ public:
 	//Animation* currentAnimation = nullptr;
 
 	// The Player's collider
-	//Collider* collider = nullptr;
+	Collider* playerCollider = nullptr;
 
 	// Jump handlers
 	int jumpCountdown = 30000;
@@ -115,7 +115,6 @@ public:
 
 	// The horizontal direction where the player is facing -> -1 for UP // 1 for DOWN
 	int verticalDirection = 0;
-
 
 	// A flag to detect when the player has been destroyed
 	bool destroyed = false;

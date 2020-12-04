@@ -139,8 +139,21 @@ void Collisions::DebugDraw()
 			//
 			// Color of each collider
 			//
-		case Collider::ColliderType::NONE: // white
-			app->render->DrawRectangle(colliders[i]->rect, 255, 255, 255, alpha);
+		case Collider::ColliderType::NONE:
+			app->render->DrawRectangle(colliders[i]->rect, 255, 255, 255, alpha); // white
+			break;
+		case Collider::ColliderType::PLAYER:
+			//app->render->DrawRectangle(colliders[i]->rect, 0, 255, 0, alpha); // green
+			app->render->DrawRectangle(colliders[i]->rect, 255, 0, 0, alpha);
+			break;
+		case Collider::ColliderType::WALL:
+			app->render->DrawRectangle(colliders[i]->rect, 240, 190, 90, alpha); // mint
+			break;
+		case Collider::ColliderType::DIE:
+			app->render->DrawRectangle(colliders[i]->rect, 255, 0, 0, alpha); // red
+			break;
+		case Collider::ColliderType::NEXT_LEVEL:
+			app->render->DrawRectangle(colliders[i]->rect, 0, 0, 255, alpha); // blue
 			break;
 		}
 	}

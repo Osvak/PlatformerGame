@@ -5,7 +5,7 @@
 #include "Textures.h"
 #include "Input.h"
 #include "Map.h"
-//#include "Collisions.h"
+#include "Collisions.h"
 
 #include "Render.h"
 
@@ -44,8 +44,6 @@ bool Player::Awake(pugi::xml_node& config)
 	//
 	// Set initial position
 	//
-	int screenWidth = config.child("resolution").attribute("width").as_int();
-	int screenHeight = config.child("resolution").attribute("height").as_int();
 	position.x = 48.0f; //Tile size * Tiles
 	position.y = 176.0f; //Tile size * Tiles
 
@@ -82,13 +80,13 @@ bool Player::Start()
 	//
 	//
 
-	//
+
 	//
 	//
 	// Create Player collider
 	//
-	//
-	//
+	playerCollider = app->collisions->AddCollider({ (int)position.x , (int)position.y, PLAYER_SIZE, PLAYER_SIZE }, Collider::ColliderType::PLAYER, this);
+
 
 
 	//
@@ -262,7 +260,7 @@ void Player::UpdateLogic()
 	//
 	// Update Collider Position
 	//
-	//collider->SetPos(position.x + 2, position.y + 14);
+	playerCollider->SetPos(position.x, position.y);
 
 
 
