@@ -126,6 +126,9 @@ public:
     // Called before render is available
     bool Awake(pugi::xml_node& conf);
 
+	// Called before the first frame
+	bool Start();
+
     // Called each loop iteration
     void Draw();
 

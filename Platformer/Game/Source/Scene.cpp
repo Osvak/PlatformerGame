@@ -31,7 +31,7 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
-	// L03: DONE: Load map
+	// Load map
 	app->map->Load("map.tmx");
 	
 	// Load music

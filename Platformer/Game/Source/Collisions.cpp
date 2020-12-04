@@ -128,7 +128,7 @@ bool Collisions::CleanUp()
 // Draw the squares for each collider
 void Collisions::DebugDraw()
 {
-	Uint8 alpha = 80;
+	Uint8 alpha = 100;
 	for (uint i = 0; i < MAX_COLLIDERS; ++i)
 	{
 		if (colliders[i] == nullptr)
@@ -156,6 +156,7 @@ void Collisions::DebugDraw()
 			app->render->DrawRectangle(colliders[i]->rect, 0, 0, 255, alpha); // blue
 			break;
 		}
+		//printf("Tile id %d with Collider Type %d in (%d,%d)\n", i, colliders[i]->type, colliders[i]->rect.x, colliders[i]->rect.y); // Debug Collider list
 	}
 }
 

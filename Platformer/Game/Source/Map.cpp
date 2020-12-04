@@ -1,7 +1,7 @@
-
 #include "App.h"
 #include "Render.h"
 #include "Textures.h"
+#include "Collisions.h"
 #include "Map.h"
 
 #include "Defs.h"
@@ -48,6 +48,43 @@ bool Map::Awake(pugi::xml_node& config)
     folder.Create(config.child("folder").child_value());
 
     return ret;
+}
+
+// Called before the first frame
+bool Map::Start()
+{
+	MapLayer* layer;
+	TileSet* tileset;
+	iPoint coords;
+
+	SDL_Rect tileRect;
+	SDL_Rect colliderRect;
+
+	for (ListItem<MapLayer*>* item = app->map->data.layers.start; item; item = item->next)
+	{
+		layer = item->data;
+
+		for (int y = 0; y < app->map->data.height; ++y)
+		{
+			for (int x = 0; x < app->map->data.width; ++x)
+			{
+				int tileId = layer->Get(x, y);
+				coords = app->map->MapToWorld(x, y);
+				tileset = app->map->GetTilesetFromTileId(tileId);
+
+				if (tileId == 307)
+				{
+					tileRect = tileset->GetTileRect(tileId);
+					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+					app->collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
+				}
+			}
+		}
+	}
+
+
+
+	return true;
 }
 
 // Draw the map (all requried layers)
