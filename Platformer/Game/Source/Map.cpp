@@ -18,16 +18,16 @@ Map::Map() : Module(), mapLoaded(false)
 Map::~Map()
 {}
 
-// L06: TODO 7: Ask for the value of a custom property
+// Ask for the value of a custom property
 int Properties::GetProperty(const char* value, int defaultValue) const
 {
 	for (int i = 0; i < propertyList.Count(); i++)
 	{
-		if (strcmp(propertyList.At(i)->data->name.GetString(), value) == 0)
+		if (strcmp(propertyList.At(i)->data->name.GetString(), value) == 0) // Checks the name of the property
 		{
-			if (propertyList.At(i)->data->value != defaultValue)
+			if (propertyList.At(i)->data->value != defaultValue) // Checks if the value the property has is different than what we gave
 			{
-				return propertyList.At(i)->data->value;
+				return propertyList.At(i)->data->value; // Returns the new value
 			}
 			else 
 			{
@@ -79,8 +79,11 @@ void Map::Draw()
 					// L04: TODO 9: Complete the draw function
 					for (int i = 0; i < data.tilesets.Count(); ++i)
 					{
-						SDL_Rect rect = data.tilesets.At(i)->data->GetTileRect(tileId);
-						app->render->DrawTexture(tileset->texture, coord.x, coord.y, &rect);
+						if ((data.layers.At(i)->data->properties.GetProperty("visible", true)) == true)
+						{
+							SDL_Rect rect = data.tilesets.At(i)->data->GetTileRect(tileId);
+							app->render->DrawTexture(tileset->texture, coord.x, coord.y, &rect);
+						}
 					}
 				}
 			}
@@ -147,15 +150,15 @@ TileSet* Map::GetTilesetFromTileId(int id) const
 	ListItem<TileSet*>* item = data.tilesets.start;
 	TileSet* set;
 
-	if (id < 137)
+	if (id < 137) // Checks for first tileset (tileset)
 	{
 
 	}
-	else if(id >= 137 && id < 307)
+	else if(id >= 137 && id < 307) // Checks for second tileset (background)
 	{
 		item = item->next;
 	}
-	else if (id >= 307)
+	else if (id >= 307) // Checks for third tileset (collider)
 	{
 		item = item->next;
 		item = item->next;
@@ -220,26 +223,26 @@ bool Map::CleanUp()
 // Load new map
 bool Map::Load(const char* filename)
 {
-    bool ret = true;
-    SString tmp("%s%s", folder.GetString(), filename);
+	bool ret = true;
+	SString tmp("%s%s", folder.GetString(), filename);
 
-    pugi::xml_parse_result result = mapFile.load_file(tmp.GetString());
+	pugi::xml_parse_result result = mapFile.load_file(tmp.GetString());
 
-    if(result == NULL)
-    {
-        LOG("Could not load map xml file %s. pugi error: %s", filename, result.description());
-        ret = false;
-    }
+	if (result == NULL)
+	{
+		LOG("Could not load map xml file %s. pugi error: %s", filename, result.description());
+		ret = false;
+	}
 
 
 	// Load general info
-    if(ret == true)
-    {
+	if (ret == true)
+	{
 		ret = LoadMap();
 	}
 
 
-    // Load tilesets info
+	// Load tilesets info
 	pugi::xml_node tileset;
 	for (tileset = mapFile.child("map").child("tileset"); tileset && ret; tileset = tileset.next_sibling("tileset"))
 	{
@@ -252,6 +255,8 @@ bool Map::Load(const char* filename)
 		data.tilesets.Add(set);
 	}
 
+	ret = true;
+
 
 	// Load layer info
 	pugi::xml_node layerNode;
@@ -259,24 +264,37 @@ bool Map::Load(const char* filename)
 	{
 		MapLayer* lay = new MapLayer();
 
+		ret = LoadLayer(layerNode, lay);
+
 		if (ret == true)
 		{
-			ret = LoadLayer(layerNode, lay);
+			//ret = LoadLayer(layerNode, lay);
+			data.layers.Add(lay);
 		}
 
-		data.layers.Add(lay);
+		//data.layers.Add(lay);
+
+		pugi::xml_node propertiesNode;
+		for (propertiesNode = layerNode.child("properties"); propertiesNode && ret; propertiesNode = propertiesNode.next_sibling("properties"))
+		{
+			Properties* property = new Properties();
+
+			ret = LoadProperties(propertiesNode, *property);
+
+			lay->properties = *property;
+		}
 	}
-    
-    if(ret == true)
-    {
-        // L03: DONE 5: LOG all the data loaded iterate all tilesets and LOG everything
+
+	if (ret == true)
+	{
+		// L03: DONE 5: LOG all the data loaded iterate all tilesets and LOG everything
 		LOG("Succesfully parsed map XML file: %s", filename);
 		LOG("width: %d height: %d", data.width, data.height);
 		LOG("tile_width: %d tile_height: %d", data.tileWidth, data.tileHeight);
-		
+
 		LOG("Tileset ----");
 		int count = data.tilesets.Count();
-		
+
 		for (int i = 0; i < count; ++i)
 		{
 			LOG("name: %s	firstGid: %d", data.tilesets.At(i)->data->name.GetString(), data.tilesets.At(i)->data->firstgid);
@@ -293,11 +311,14 @@ bool Map::Load(const char* filename)
 			LOG("name: %s", data.tilesets.At(i)->data->name.GetString());
 			LOG("tile width: %d tile height: %d", data.tilesets.At(i)->data->tileWidth, data.tilesets.At(i)->data->tileHeight);
 		}
-    }
+	}
 
-    mapLoaded = ret;
-	
-	LOG("Map Loaded Correctly");
+	mapLoaded = ret;
+
+	if (mapLoaded == true)
+	{
+		LOG("Map Loaded Correctly");
+	}
 
     return ret;
 }
@@ -433,7 +454,7 @@ bool Map::LoadLayer(pugi::xml_node& node, MapLayer* layer)
 // L06: TODO 6: Load a group of properties from a node and fill a list with it
 bool Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 {
-	bool ret = false;
+	bool ret = true;
 
 	pugi::xml_node propertyNode = node.child("property");
 
@@ -442,7 +463,19 @@ bool Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 	{
 		Properties::Property* propertyID = new Properties::Property();
 		propertyID->name = propertyNode.attribute("name").as_string("");
-		propertyID->value = propertyNode.attribute("value").as_int(0);
+
+		Properties::Property* propertyType = new Properties::Property();
+		propertyType->name = propertyNode.attribute("type").as_string("");
+
+
+		if (propertyType->name == "int")
+		{
+			propertyID->value = propertyNode.attribute("value").as_int(0);
+		}
+		if (propertyType->name == "bool")
+		{
+			propertyID->value = propertyNode.attribute("value").as_bool(false);
+		}
 		properties.propertyList.Add(propertyID);
 	}
 	return ret;
