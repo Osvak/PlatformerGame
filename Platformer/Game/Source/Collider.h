@@ -16,7 +16,11 @@ struct Collider
 	enum ColliderType
 	{
 		NONE = -1,
+
 		PLAYER,
+		WALL,
+		DIE,
+		NEXT_LEVEL,
 
 		MAX
 	};

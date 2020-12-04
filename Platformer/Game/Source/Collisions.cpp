@@ -9,6 +9,29 @@ Collisions::Collisions()
 	//
 	// Colliders matrix
 	//
+	// Player collider control
+	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::PLAYER] = false;
+	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::WALL] = true;
+	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::DIE] = true;
+	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::NEXT_LEVEL] = true;
+
+	// Wall collider control
+	matrix[Collider::ColliderType::WALL][Collider::ColliderType::PLAYER] = true;
+	matrix[Collider::ColliderType::WALL][Collider::ColliderType::WALL] = false;
+	matrix[Collider::ColliderType::WALL][Collider::ColliderType::DIE] = false;
+	matrix[Collider::ColliderType::WALL][Collider::ColliderType::NEXT_LEVEL] = false;
+
+	// Die collider control
+	matrix[Collider::ColliderType::DIE][Collider::ColliderType::PLAYER] = true;
+	matrix[Collider::ColliderType::DIE][Collider::ColliderType::WALL] = false;
+	matrix[Collider::ColliderType::DIE][Collider::ColliderType::DIE] = false;
+	matrix[Collider::ColliderType::DIE][Collider::ColliderType::NEXT_LEVEL] = false;
+
+	// Next Level collider control
+	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::PLAYER] = true;
+	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::WALL] = false;
+	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::DIE] = false;
+	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::NEXT_LEVEL] = false;
 
 }
 
