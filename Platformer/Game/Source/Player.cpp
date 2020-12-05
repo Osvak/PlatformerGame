@@ -324,6 +324,7 @@ void Player::UpdateLogic(float dt)
 		}
 		
 		currentAnimation->Update();
+
 		break;
 	}
 
@@ -360,18 +361,39 @@ void Player::UpdateLogic(float dt)
 	}
 
 	case JUMP:
-		if ((app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) || (app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN))
+		if (wallCollisionFromLeft == true)
 		{
-			velocity.x = PLAYER_SPEED;
+			while ((position.x + PLAYER_SIZE) > rect.x)
+			{
+				--position.x;
+			}
+			fallStraight = true;
+		}
+		if (wallCollisionFromRight == true)
+		{
+			while (position.x < (rect.x + rect.w))
+			{
+				++position.x;
+			}
+			fallStraight = true;
+		}
+
+		if ((app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) || (app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) && (fallStraight == false))
+		{
 			horizontalDirection = 1;
+			velocity.x = PLAYER_SPEED;
 		}
-		if ((app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) || (app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN))
+		if ((app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) || (app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) && (fallStraight == false))
 		{
-			velocity.x = -PLAYER_SPEED;
 			horizontalDirection = -1;
+			velocity.x = -PLAYER_SPEED;
 		}
+
 		Jump(dt);
+
+
 		currentAnimation->Update();
+
 		break;
 		
 	case DYING:
@@ -532,6 +554,7 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::PLATFORM)
 	{
 		ControlPlatformCollision(c2);
+		fallStraight = true;
 	}
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::NEXT_LEVEL)
@@ -605,18 +628,19 @@ void Player::Jump(float dt)
 
 void Player::ControlWallCollision(Collider* c)
 {
-	if ((position.x + PLAYER_SIZE) >= c->rect.x)
-	{
-		velocity.x = 0.0f;
-		wallCollisionFromLeft = true;
-	}
-	
-	if (position.x <= (c->rect.x + c->rect.w))
+	if (position.x - 3 < (c->rect.x + c->rect.w) &&
+		horizontalDirection == -1)
 	{
 		velocity.x = 0.0f;
 		wallCollisionFromRight = true;
 	}
 
+	if ((position.x + PLAYER_SIZE) > c->rect.x &&
+		horizontalDirection == 1)
+	{
+		velocity.x = 0.0f;
+		wallCollisionFromLeft = true;
+	}
 }
 
 void Player::ControlPlatformCollision(Collider* c)

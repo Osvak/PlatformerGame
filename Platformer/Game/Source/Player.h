@@ -132,6 +132,7 @@ public:
 
 	bool wallCollisionFromLeft = false;
 	bool wallCollisionFromRight = false;
+	bool fallStraight = false;
 
 	// Flag to know if the player is jumping
 	bool isJumping = false;
