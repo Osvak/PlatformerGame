@@ -30,7 +30,8 @@ class SceneWin;
 // All the Scenes
 enum GameScenes
 {
-	LOGO = 0,
+	NONE = 0,
+	LOGO,
 	TITLE,
 	LEVEL1,
 	WIN,
@@ -121,7 +122,7 @@ public:
 	SceneWin* sceneWin;
 
 
-	Module* lastScene = nullptr;
+	GameScenes lastScene = NONE;
 	GameScenes currentScene = LOGO;
 
 	const int frameRate = 60;
