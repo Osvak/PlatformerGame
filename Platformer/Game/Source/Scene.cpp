@@ -31,6 +31,8 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
+	app->currentScene = LEVEL1;
+
 	//
 	// Activate modules
 	//

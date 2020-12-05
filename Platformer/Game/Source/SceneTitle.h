@@ -1,25 +1,26 @@
-#ifndef __SCENELOGO_H__
-#define __SCENELOGO_H__
+#ifndef __SCENETITLE_H__
+#define __SCENETITLE_H__
 
 #include "Module.h"
 
 #include "App.h"
 #include "Textures.h"
+#include "Audio.h"
 #include "Render.h"
 #include "Input.h"
+#include "Map.h"
 #include "FadeToBlack.h"
 
 
-struct SDL_Texture;
 
-class SceneLogo : public Module
+class SceneTitle : public Module
 {
 public:
 	// Constructor
-	SceneLogo();
+	SceneTitle();
 
 	// Destructor
-	~SceneLogo();
+	~SceneTitle();
 
 
 	// Called before render is available
@@ -39,10 +40,6 @@ public:
 
 	// Called before quitting
 	bool CleanUp();
-
-private:
-	SDL_Texture* img;
-	int imgW = 0, imgH = 0;
 };
 
-#endif // !__SCENELOGO_H__
+#endif // !__SCENETITLE_H__

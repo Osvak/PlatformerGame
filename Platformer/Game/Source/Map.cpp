@@ -200,18 +200,38 @@ TileSet* Map::GetTilesetFromTileId(int id) const
 	ListItem<TileSet*>* item = data.tilesets.start;
 	TileSet* set;
 
-	if (id < 137) // Checks for first tileset (tileset)
+	if (app->currentScene == TITLE)
 	{
+		if (id < 171) // Checks for first tileset (tileset)
+		{
 
+		}
+		else if (id >= 171 && id < 226) // Checks for second tileset (background)
+		{
+			item = item->next;
+		}
+		else if (id >= 226) // Checks for third tileset (collider)
+		{
+			item = item->next;
+			item = item->next;
+		}
 	}
-	else if(id >= 137 && id < 307) // Checks for second tileset (background)
+
+	if (app->currentScene == LEVEL1)
 	{
-		item = item->next;
-	}
-	else if (id >= 307) // Checks for third tileset (collider)
-	{
-		item = item->next;
-		item = item->next;
+		if (id < 137) // Checks for first tileset (tileset)
+		{
+
+		}
+		else if (id >= 137 && id < 307) // Checks for second tileset (background)
+		{
+			item = item->next;
+		}
+		else if (id >= 307) // Checks for third tileset (collider)
+		{
+			item = item->next;
+			item = item->next;
+		}
 	}
 
 	set = item->data;

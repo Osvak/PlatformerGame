@@ -1,0 +1,114 @@
+#include "SceneTitle.h"
+
+
+// Constructor
+SceneTitle::SceneTitle() : Module()
+{
+	name.Create("sceneTitle");
+}
+
+// Destructor
+SceneTitle::~SceneTitle()
+{
+
+}
+
+
+// Called before render is available
+bool SceneTitle::Awake()
+{
+	LOG("Loading Title Screen");
+	
+	return true;
+}
+
+// Called before the first frame / when activated
+bool SceneTitle::Start()
+{
+	app->currentScene = TITLE;
+
+	//
+	// Load map
+	//
+	app->map->Load("scene_title.tmx");
+
+	//
+	// Activate modules
+	//
+	active = true;
+	app->map->Start();
+
+	//
+	// Load music
+	//
+
+
+	//
+	// Move camera
+	//
+	app->render->camera.x = 0;
+	app->render->camera.y = 0;
+
+
+	return true;
+}
+
+
+// Called before the Update
+bool SceneTitle::PreUpdate()
+{
+	return true;
+}
+
+// Called each loop iteration
+bool SceneTitle::Update(float dt)
+{
+
+	return true;
+}
+
+// Called after Updates
+bool SceneTitle::PostUpdate()
+{
+	bool ret = true;
+
+	//
+	// Scene controls
+	//
+	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	{
+		ret = false;
+	}
+	if (app->input->GetKey(SDL_SCANCODE_KP_ENTER) == KEY_DOWN ||
+		app->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN ||
+		app->input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN)
+	{
+		app->fadeToBlack->Fade(this, (Module*)app->scene, 60.0f);
+		return true;
+	}
+
+
+	//
+	// Draw map
+	//
+	app->map->Draw();
+
+	
+	return true;
+}
+
+// Called before quitting, frees memory and controls active and inactive modules
+bool SceneTitle::CleanUp()
+{
+	if (!active)
+	{
+		return true;
+	}
+
+	LOG("Freeing Title Sreen");
+
+	app->map->CleanUp();
+	active = false;
+
+	return true;
+}

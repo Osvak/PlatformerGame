@@ -14,6 +14,7 @@
 #include "Collisions.h"
 #include "FadeToBlack.h"
 #include "SceneLogo.h"
+#include "SceneTitle.h"
 
 #include "Defs.h"
 #include "List.h"
@@ -43,6 +44,7 @@ class Player;
 class Collisions;
 class FadeToBlack;
 class SceneLogo;
+class SceneTitle;
 
 // All the Scenes
 enum GameScenes
@@ -134,9 +136,11 @@ public:
 	Collisions* collisions;
 	FadeToBlack* fadeToBlack;
 	SceneLogo* sceneLogo;
+	SceneTitle* sceneTitle;
 
 
 	Module* lastScene = nullptr;
+	GameScenes currentScene = LOGO;
 
 	const int frameRate = 60;
 	const int screenTicks = 1000 / frameRate;

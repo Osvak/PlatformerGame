@@ -25,6 +25,7 @@ bool SceneLogo::Awake()
 bool SceneLogo::Start()
 {
 	app->lastScene = ((Module*)this);
+	app->currentScene = LOGO;
 
 	img = app->tex->Load("Assets/maps/scene_logo.png");
 
@@ -64,7 +65,7 @@ bool SceneLogo::PostUpdate()
 	if (app->input->GetKey(SDL_SCANCODE_KP_ENTER) == KEY_DOWN || app->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN
 		|| app->input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->scene, 60.0f);
+		app->fadeToBlack->Fade(this, (Module*)app->sceneTitle, 60.0f);
 		return true;
 	}
 
