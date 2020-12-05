@@ -88,7 +88,7 @@ bool SceneLose::PostUpdate()
 		app->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN ||
 		app->input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->scene, 60.0f);
+		app->fadeToBlack->Fade(this, (Module*)app->sceneTitle, 60.0f);
 		return true;
 	}
 
