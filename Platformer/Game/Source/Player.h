@@ -7,12 +7,13 @@
 
 #include "Point.h"
 
-
 #define PLAYER_SIZE 16
 #define PLAYER_SPEED 1.5f
 #define GRAVITY 5.0f
 #define MAX_VELOCITY 5.0f
 #define MAX_AIR_TIME 0.3f
+
+
 
 struct SDL_Texture;
 struct SDL_Rect;
@@ -25,6 +26,7 @@ enum PlayerState
 	MOVE_RIGHT,
 	MOVE_LEFT,
 	JUMP,
+	WINNING,
 };
 
 
@@ -80,6 +82,9 @@ private:
 
 	void Jump(float dt);
 
+	void ControlWallCollision(Collider* c1);
+	void ControlPlatformCollision(Collider* c1);
+
 public:
 
 	//// Variables ralated to the player /////
@@ -94,12 +99,8 @@ public:
 	// The player spritesheet loaded into an SDL_Texture
 	SDL_Texture* playerTexture = nullptr;
 
-	// Current animation
+	// The pointer to the Current animation
 	Animation* currentAnimation;
-
-	// The pointer to the current player animation
-	// It will be switched depending on the player's movement direction
-	//Animation* currentAnimation = nullptr;
 
 	// The Player's collider
 	Collider* playerCollider = nullptr;
@@ -111,15 +112,11 @@ public:
 	float jumpImpulseTime = 0.05f;
 	float jumpImpulseVel = -5.0f;
 	float jumpAccel = 4.0f;
-
 	////////////////////////////////
 
 
 
-		///// Player Flags /////
-	// Flag to know if the player is moving
-	bool movingFlag = false;
-
+	///////// Player Flags /////////
 	// The horizontal direction where the player is facing -> -1 for LEFT // 1 for RIGHT // 0 for IDLE
 	int horizontalDirection = 1;
 
@@ -129,12 +126,18 @@ public:
 	// Flag to know if the player is touching the ground
 	bool isTouchingGround = true;
 
+	bool wallCollisionFromLeft = false;
+	bool wallCollisionFromRight = false;
+
 	// Flag to know if the player is jumping
 	bool isJumping = false;
 
+	// Flog to know if the player is skipping level
+	bool isWinning = false;
+
 	// A flag to detect when the player has been destroyed
 	bool destroyed = false;
-	///////////////////////
+	///////////////////////////////
 
 
 

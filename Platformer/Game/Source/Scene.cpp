@@ -9,6 +9,7 @@
 #include "Map.h"
 #include "Player.h"
 #include "Collisions.h"
+#include "FadeToBlack.h"
 
 #include "Log.h"
 
@@ -83,20 +84,27 @@ bool Scene::Update(float dt)
 		app->LoadGameRequest();
 
 	if(app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		app->render->camera.y -= 5;
+		app->render->camera.y += 15;
 
 	if(app->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		app->render->camera.y += 5;
+		app->render->camera.y -= 15;
 
 	if(app->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		app->render->camera.x -= 5;
+		app->render->camera.x += 15;
 
 	if(app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		app->render->camera.x += 5;
+		app->render->camera.x -= 15;
 
 
 	// Draw Map
 	app->map->Draw();
+
+
+	if (app->player->isWinning == true)
+	{
+		CleanUp();
+		app->fadeToBlack->Fade(this, (Module*)app->sceneWin, 60.0f);
+	}
 
 	return true;
 }

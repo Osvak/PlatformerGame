@@ -15,24 +15,35 @@ Collisions::Collisions()
 	//
 	// Player collider control
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::PLAYER] = false;
+	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::PLATFORM] = true;
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::WALL] = true;
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::DIE] = true;
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::NEXT_LEVEL] = true;
 
+	// Platform collider control
+	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::PLAYER] = true;
+	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::PLATFORM] = false;
+	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::WALL] = false;
+	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::DIE] = false;
+	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::NEXT_LEVEL] = false;
+
 	// Wall collider control
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::PLAYER] = true;
+	matrix[Collider::ColliderType::WALL][Collider::ColliderType::PLATFORM] = false;
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::WALL] = false;
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::NEXT_LEVEL] = false;
 
 	// Die collider control
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::PLAYER] = true;
+	matrix[Collider::ColliderType::DIE][Collider::ColliderType::PLATFORM] = false;
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::WALL] = false;
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::NEXT_LEVEL] = false;
 
 	// Next Level collider control
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::PLAYER] = true;
+	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::PLATFORM] = false;
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::WALL] = false;
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::NEXT_LEVEL] = false;
@@ -150,10 +161,12 @@ void Collisions::DebugDraw()
 			app->render->DrawRectangle(colliders[i]->rect, 255, 255, 255, alpha); // white
 			break;
 		case Collider::ColliderType::PLAYER:
-			//app->render->DrawRectangle(colliders[i]->rect, 0, 255, 0, alpha); // green
-			app->render->DrawRectangle(colliders[i]->rect, 255, 0, 0, alpha);
+			app->render->DrawRectangle(colliders[i]->rect, 0, 255, 0, alpha); // green
 			break;
 		case Collider::ColliderType::WALL:
+			app->render->DrawRectangle(colliders[i]->rect, 105, 85, 157, alpha); // gray magenta
+			break;
+		case Collider::ColliderType::PLATFORM:
 			app->render->DrawRectangle(colliders[i]->rect, 0, 230, 185, alpha); // mint
 			break;
 		case Collider::ColliderType::DIE:
