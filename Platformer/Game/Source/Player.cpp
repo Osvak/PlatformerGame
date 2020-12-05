@@ -239,10 +239,6 @@ void Player::UpdateState()
 			break;
 		}
 
-		if (wallCollisionFromRight == true)
-		{
-			ChangeState(state, IDLE);
-		}
 
 		if (isDying == true)
 		{
@@ -312,13 +308,38 @@ void Player::UpdateLogic(float dt)
 	{
 	case IDLE:
 	{
+		if (wallCollisionFromLeft == true)
+		{
+			while ((position.x + PLAYER_SIZE) >= rect.x)
+			{
+				--position.x;
+			}
+		}
+		if (wallCollisionFromRight == true)
+		{
+			while (position.x <= (rect.x + rect.w))
+			{
+				++position.x;
+			}
+		}
+		
 		currentAnimation->Update();
 		break;
 	}
 
 	case MOVE_RIGHT:
 	{
+		if (wallCollisionFromLeft == false)
+		{
+			velocity.x = PLAYER_SPEED;
+		}
+		else
+		{
+			--position.x;
+		}
+
 		currentAnimation->Update();
+
 		break;
 	}
 
@@ -328,8 +349,13 @@ void Player::UpdateLogic(float dt)
 		{
 			velocity.x = -PLAYER_SPEED;
 		}
+		else
+		{
+			++position.x;
+		}
 
 		currentAnimation->Update();
+
 		break;
 	}
 
@@ -366,11 +392,15 @@ void Player::UpdateLogic(float dt)
 	}
 	velocity.x = velocity.x + (acceleration.x * dt);
 
-
 	position.x += velocity.x;
 	position.y += velocity.y;
 
 
+	//
+	// Flags reset
+	//
+	wallCollisionFromLeft = false;
+	wallCollisionFromRight = false;
 
 	//
 	// Update Collider Position
@@ -406,7 +436,6 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		verticalDirection = 0;
 		horizontalDirection = 1;
 
-		velocity.x = PLAYER_SPEED;
 
 		break;
 	}
@@ -435,6 +464,7 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 			horizontalDirection = -1;
 		}
 		break;
+
 	case WINNING:
 		velocity.x = 0;
 		velocity.y = 0;
@@ -490,10 +520,13 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::WALL)
 	{
 		ControlWallCollision(c2);
+		rect = c2->rect;
 	}
 	else
 	{
 		isTouchingGround = false;
+		wallCollisionFromLeft = false;
+		wallCollisionFromRight = false;
 	}
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::PLATFORM)
@@ -572,24 +605,16 @@ void Player::Jump(float dt)
 
 void Player::ControlWallCollision(Collider* c)
 {
-	if (position.x >= c->rect.x)
+	if ((position.x + PLAYER_SIZE) >= c->rect.x)
 	{
 		velocity.x = 0.0f;
 		wallCollisionFromLeft = true;
-	}
-	else
-	{
-		wallCollisionFromLeft = false;
 	}
 	
 	if (position.x <= (c->rect.x + c->rect.w))
 	{
 		velocity.x = 0.0f;
 		wallCollisionFromRight = true;
-	}
-	else
-	{
-		wallCollisionFromRight = false;
 	}
 
 }

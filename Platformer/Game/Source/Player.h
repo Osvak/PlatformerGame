@@ -113,6 +113,9 @@ public:
 	float jumpImpulseTime = 0.05f;
 	float jumpImpulseVel = -5.0f;
 	float jumpAccel = 4.0f;
+
+	// Auxiliar rect
+	SDL_Rect rect;
 	////////////////////////////////
 
 
