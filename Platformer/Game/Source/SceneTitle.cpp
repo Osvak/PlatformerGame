@@ -41,6 +41,7 @@ bool SceneTitle::Start()
 	// Load map
 	//
 	app->map->Load("scene_title.tmx");
+	pressEnterToStart = app->tex->Load("Assets/maps/press_enter_to_start.png");
 
 	//
 	// Activate modules
@@ -96,12 +97,23 @@ bool SceneTitle::PostUpdate()
 		app->fadeToBlack->Fade(this, (Module*)app->scene, 60.0f);
 		return true;
 	}
-
+	
 
 	//
 	// Draw map
 	//
 	app->map->Draw();
+	
+	++blinkCont;
+	if (blinkCont >= BLINK_TIME)
+	{
+		app->render->DrawTexture(pressEnterToStart, 9 * TILE_SIZE, 11 * TILE_SIZE);
+
+		if (blinkCont == (2 * BLINK_TIME))
+		{
+			blinkCont = 0;
+		}
+	}
 
 	
 	return true;

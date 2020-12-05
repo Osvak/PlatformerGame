@@ -3,7 +3,10 @@
 
 #include "Module.h"
 
+#define BLINK_TIME 35
 
+
+struct SDL_Texture;
 
 class SceneTitle : public Module
 {
@@ -32,6 +35,13 @@ public:
 
 	// Called before quitting
 	bool CleanUp();
+
+private:
+
+	SDL_Texture* pressEnterToStart;
+
+	int blinkCont = 0;
+
 };
 
 #endif // !__SCENETITLE_H__
