@@ -27,6 +27,7 @@ enum PlayerState
 	MOVE_LEFT,
 	JUMP,
 	WINNING,
+	DYING,
 };
 
 
@@ -132,8 +133,11 @@ public:
 	// Flag to know if the player is jumping
 	bool isJumping = false;
 
-	// Flog to know if the player is skipping level
+	// Flag to know if the player is skipping level
 	bool isWinning = false;
+
+	// Flag to know if the player is dying
+	bool isDying = false;
 
 	// A flag to detect when the player has been destroyed
 	bool destroyed = false;

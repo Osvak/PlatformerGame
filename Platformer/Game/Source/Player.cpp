@@ -115,6 +115,7 @@ bool Player::Start()
 	isTouchingGround = true;
 	isJumping = false;
 	isWinning = false;
+	isDying = false;
 	state = IDLE;
 	if (app->lastScene == TITLE)
 	{
@@ -166,6 +167,12 @@ void Player::UpdateState()
 			break;
 		}
 
+		if (isDying == true)
+		{
+			ChangeState(state, DYING);
+			break;
+		}
+
 		break;
 	}
 
@@ -192,6 +199,12 @@ void Player::UpdateState()
 		if (isWinning == true)
 		{
 			ChangeState(state, WINNING);
+			break;
+		}
+
+		if (isDying == true)
+		{
+			ChangeState(state, DYING);
 			break;
 		}
 
@@ -231,6 +244,11 @@ void Player::UpdateState()
 			ChangeState(state, IDLE);
 		}
 
+		if (isDying == true)
+		{
+			ChangeState(state, DYING);
+			break;
+		}
 
 		ChangeState(state, IDLE);
 
@@ -258,12 +276,24 @@ void Player::UpdateState()
 				break;
 			}
 
+			if (isDying == true)
+			{
+				ChangeState(state, DYING);
+				break;
+			}
+
 			ChangeState(state, IDLE);
 		}
 
 		if (isWinning == true)
 		{
 			ChangeState(state, WINNING);
+			break;
+		}
+
+		if (isDying == true)
+		{
+			ChangeState(state, DYING);
 			break;
 		}
 
@@ -316,6 +346,9 @@ void Player::UpdateLogic(float dt)
 		}
 		Jump(dt);
 		currentAnimation->Update();
+		break;
+		
+	case DYING:
 		break;
 
 	default:
@@ -409,6 +442,14 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		acceleration.y = 0;
 
 		break;
+
+	case DYING:
+		velocity.x = 0;
+		velocity.y = 0;
+		acceleration.x = 0;
+		acceleration.y = 0;
+
+		break;
 	}
 		
 
@@ -463,6 +504,11 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::NEXT_LEVEL)
 	{
 		isWinning = true;
+	}
+
+	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::DIE)
+	{
+		isDying = true;
 	}
 }
 

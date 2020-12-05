@@ -172,8 +172,8 @@ iPoint Map::MapToWorld(int x, int y) const
 	}
 	else
 	{
-		LOG("Unknown map type");
-		ret.x = x; ret.y = y;
+	LOG("Unknown map type");
+	ret.x = x; ret.y = y;
 	}
 
 	return ret;
@@ -248,6 +248,23 @@ TileSet* Map::GetTilesetFromTileId(int id) const
 	}
 
 	if (app->currentScene == WIN)
+	{
+		if (id < 171)
+		{
+
+		}
+		else if (id >= 171 && id < 307)
+		{
+			item = item->next;
+		}
+		else if (id >= 307)
+		{
+			item = item->next;
+			item = item->next;
+		}
+	}
+
+	if (app->currentScene == LOSE)
 	{
 		if (id < 171)
 		{

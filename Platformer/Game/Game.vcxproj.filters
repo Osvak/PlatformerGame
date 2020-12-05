@@ -43,6 +43,9 @@
     <ClCompile Include="Source\SceneWin.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SceneLose.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Window.h" />
@@ -102,13 +105,16 @@
     <ClInclude Include="Source\FadeToBlack.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SceneLogo.h">
-      <Filter>Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="Source\SceneTitle.h">
       <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Source\SceneWin.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneLogo.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneLose.h">
       <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>

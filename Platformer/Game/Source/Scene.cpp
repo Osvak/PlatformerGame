@@ -106,6 +106,11 @@ bool Scene::Update(float dt)
 		app->fadeToBlack->Fade(this, (Module*)app->sceneWin, 60.0f);
 	}
 
+	if (app->player->isDying == true)
+	{
+		app->fadeToBlack->Fade(this, (Module*)app->sceneLose, 60.0f);
+	}
+
 	return true;
 }
 

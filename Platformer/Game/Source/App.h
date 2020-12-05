@@ -26,6 +26,7 @@ class FadeToBlack;
 class SceneLogo;
 class SceneTitle;
 class SceneWin;
+class SceneLose;
 
 // All the Scenes
 enum GameScenes
@@ -120,6 +121,7 @@ public:
 	SceneLogo* sceneLogo;
 	SceneTitle* sceneTitle;
 	SceneWin* sceneWin;
+	SceneLose* sceneLose;
 
 
 	GameScenes lastScene = NONE;
