@@ -22,11 +22,11 @@ class Scene;
 class Map;
 class Player;
 class Collisions;
-class FadeToBlack;
 class SceneLogo;
 class SceneTitle;
 class SceneWin;
 class SceneLose;
+class FadeToBlack;
 
 // All the Scenes
 enum GameScenes
@@ -117,11 +117,11 @@ public:
 	Map* map;
 	Player* player;
 	Collisions* collisions;
-	FadeToBlack* fadeToBlack;
 	SceneLogo* sceneLogo;
 	SceneTitle* sceneTitle;
 	SceneWin* sceneWin;
 	SceneLose* sceneLose;
+	FadeToBlack* fadeToBlack;
 
 
 	GameScenes lastScene = NONE;

@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "Map.h"
 #include "FadeToBlack.h"
+#include "SceneLogo.h"
 
 #include "Log.h"
 
@@ -48,6 +49,7 @@ bool SceneTitle::Start()
 	//
 	active = true;
 	app->map->Start();
+	//app->sceneLogo->CleanUp();
 
 	//
 	// Load music
