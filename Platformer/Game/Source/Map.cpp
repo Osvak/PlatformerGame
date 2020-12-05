@@ -139,7 +139,7 @@ void Map::Draw()
 
 				if (tileId > 0)
 				{
-					// L04: TODO 9: Complete the draw function
+					// Complete the draw function
 					for (int i = 0; i < data.tilesets.Count(); ++i)
 					{
 						if ((data.layers.At(i)->data->properties.GetProperty("visible", true)) == true)
@@ -246,6 +246,24 @@ TileSet* Map::GetTilesetFromTileId(int id) const
 			item = item->next;
 		}
 	}
+
+	if (app->currentScene == WIN)
+	{
+		if (id < 171)
+		{
+
+		}
+		else if (id >= 171 && id < 307)
+		{
+			item = item->next;
+		}
+		else if (id >= 307)
+		{
+			item = item->next;
+			item = item->next;
+		}
+	}
+
 
 	set = item->data;
 
