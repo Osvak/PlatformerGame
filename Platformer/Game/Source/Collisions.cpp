@@ -1,7 +1,11 @@
 #include "Collisions.h"
+
 #include "App.h"
 #include "Input.h"
 #include "Render.h"
+
+#include "Log.h"
+
 
 // Constructor, fills the collision matrix data
 Collisions::Collisions()
@@ -41,6 +45,7 @@ Collisions::~Collisions()
 
 }
 
+// Called before the Updates
 bool Collisions::PreUpdate()
 {
 	// Remove all colliders scheduled for deletion

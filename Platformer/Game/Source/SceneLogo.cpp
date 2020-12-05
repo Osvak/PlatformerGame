@@ -1,5 +1,14 @@
 #include "SceneLogo.h"
 
+#include "App.h"
+#include "Textures.h"
+#include "Window.h"
+#include "Render.h"
+#include "Input.h"
+#include "FadeToBlack.h"
+
+#include "Log.h"
+
 
 // Constructor
 SceneLogo::SceneLogo() : Module()

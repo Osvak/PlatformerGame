@@ -3,34 +3,14 @@
 
 #include "Module.h"
 
-#include "Window.h"
-#include "Input.h"
-#include "Render.h"
-#include "Textures.h"
-#include "Audio.h"
-#include "Scene.h"
-#include "Map.h"
-#include "Player.h"
-#include "Collisions.h"
-#include "FadeToBlack.h"
-#include "SceneLogo.h"
-#include "SceneTitle.h"
-
-#include "Defs.h"
 #include "List.h"
-#include "Log.h"
 #include "PerfTimer.h"
 #include "Timer.h"
 
-#include "PugiXml/src/pugixml.hpp"
-
-#include <iostream>
-#include <sstream>
-
-
-
 #define CONFIG_FILENAME		"config.xml"
 #define SAVE_STATE_FILENAME "save_game.xml"
+
+
 
 // Modules
 class Window;

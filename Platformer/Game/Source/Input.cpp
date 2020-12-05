@@ -7,8 +7,9 @@
 
 #include "SDL/include/SDL.h"
 
-#define MAX_KEYS 300
 
+
+// Constructor
 Input::Input() : Module()
 {
 	name.Create("input");
@@ -141,18 +142,20 @@ bool Input::CleanUp()
 	return true;
 }
 
-
+// Getter for the Window Event
 bool Input::GetWindowEvent(EventWindow ev)
 {
 	return windowEvents[ev];
 }
 
+// Getter for Mouse Position
 void Input::GetMousePosition(int& x, int& y)
 {
 	x = mouseX;
 	y = mouseY;
 }
 
+// Getter for Mouse Motion
 void Input::GetMouseMotion(int& x, int& y)
 {
 	x = mouseMotionX;

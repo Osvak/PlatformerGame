@@ -1,14 +1,21 @@
+#include "Map.h"
+
 #include "App.h"
 #include "Render.h"
 #include "Textures.h"
 #include "Collisions.h"
-#include "Map.h"
 
+#include "PQueue.h"
+#include "DynArray.h"
 #include "Defs.h"
 #include "Log.h"
 
+#include "PugiXml\src\pugixml.hpp"
+
 #include <math.h>
 
+
+// Constructor
 Map::Map() : Module(), mapLoaded(false)
 {
     name.Create("map");

@@ -1,12 +1,15 @@
+#include "Render.h"
+
 #include "App.h"
 #include "Window.h"
-#include "Render.h"
 
 #include "Defs.h"
 #include "Log.h"
+#include "Point.h"
 
-#define VSYNC true
 
+
+// Constructor
 Render::Render() : Module()
 {
 	name.Create("renderer");
@@ -95,7 +98,7 @@ bool Render::CleanUp()
 	return true;
 }
 
-// L02: DONE 6: Implement a method to load the state, for now load camera's x and y
+// Method to load the state, for now load camera's x and y
 // Load Game State
 bool Render::LoadState(pugi::xml_node& data)
 {
@@ -105,7 +108,7 @@ bool Render::LoadState(pugi::xml_node& data)
 	return true;
 }
 
-// L02: DONE 8: Create a method to save the state of the renderer
+// Method to save the state of the renderer
 // Save Game State
 bool Render::SaveState(pugi::xml_node& data) const
 {
@@ -132,7 +135,7 @@ void Render::ResetViewPort()
 	SDL_RenderSetViewport(renderer, &viewport);
 }
 
-// Blit to screen
+// Draw to screen
 bool Render::DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float speed, double angle, int pivotX, int pivotY) const
 {
 	bool ret = true;
@@ -174,7 +177,7 @@ bool Render::DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* sec
 	return ret;
 }
 
-	// Blit on screen flipped
+	// Draw to screen flipped
 bool Render::DrawFlippedTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float speed, double angle, int pivotX, int pivotY) const
 {
 	bool ret = true;

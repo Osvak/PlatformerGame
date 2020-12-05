@@ -3,6 +3,7 @@
 
 #include "Defs.h"
 
+
 class PerfTimer
 {
 public:

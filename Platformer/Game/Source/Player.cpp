@@ -1,26 +1,29 @@
 #include "Player.h"
 
 #include "App.h"
-
+#include "Window.h"
+#include "Render.h"
 #include "Textures.h"
 #include "Input.h"
 #include "Map.h"
 #include "Collisions.h"
-#include "Window.h"
 
-#include "Render.h"
+#include "Log.h"
+#include "Defs.h"
 
 
-#include "SDL/include/SDL_scancode.h"
+#include "SDL/include/SDL_rect.h"
+
 #include <stdio.h>
 
 
-
+// Constructor
 Player::Player() : Module()
 {
 	name.Create("player");
 }
 
+// Destructor
 Player::~Player()
 {
 

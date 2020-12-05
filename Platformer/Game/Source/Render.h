@@ -2,10 +2,13 @@
 #define __RENDER_H__
 
 #include "Module.h"
-#include "Point.h"
+
 #include "SDL/include/SDL.h"
 
 #define TILE_SIZE 16
+#define VSYNC true
+
+
 
 class Render : public Module
 {

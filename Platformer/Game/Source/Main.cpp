@@ -6,11 +6,8 @@
 // NOTE: SDL redefines main function
 #include "SDL/include/SDL.h"
 
-// NOTE: Library linkage is configured in Linker Options
-//#pragma comment(lib, "../Game/Source/External/SDL/libx86/SDL2.lib")
-//#pragma comment(lib, "../Game/Source/External/SDL/libx86/SDL2main.lib")
-
 #include <stdlib.h>
+
 
 enum MainState
 {

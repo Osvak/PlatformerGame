@@ -2,12 +2,10 @@
 #define __PLAYER_H__
 
 #include "Module.h"
-#include "Point.h"
-#include "Log.h"
-#include "Defs.h"
+
 #include "Animation.h"
 
-#include "SDL/include/SDL_rect.h"
+#include "Point.h"
 
 
 #define PLAYER_SIZE 16

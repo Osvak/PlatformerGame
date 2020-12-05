@@ -1,4 +1,5 @@
 #include "Window.h"
+
 #include "App.h"
 
 #include "Defs.h"
@@ -7,6 +8,7 @@
 #include "SDL/include/SDL.h"
 
 
+// Constructor
 Window::Window() : Module()
 {
 	window = NULL;
@@ -33,7 +35,7 @@ bool Window::Awake(pugi::xml_node& config)
 	else
 	{
 		// Create window
-		// L01: DONE 6: Load all required configurations from config.xml
+		// Load all required configurations from config.xml
 		Uint32 flags = SDL_WINDOW_SHOWN;
 		bool fullscreen = config.child("fullscreen").attribute("value").as_bool(false);
 		bool borderless = config.child("borderless").attribute("value").as_bool(false);
@@ -85,7 +87,6 @@ bool Window::CleanUp()
 // Set new window title
 void Window::SetTitle(const char* new_title)
 {
-	//title.create(new_title);
 	SDL_SetWindowTitle(window, new_title);
 }
 

@@ -1,15 +1,19 @@
+#include "Scene.h"
+
 #include "App.h"
 #include "Input.h"
 #include "Textures.h"
 #include "Audio.h"
 #include "Render.h"
 #include "Window.h"
-#include "Scene.h"
 #include "Map.h"
+#include "Player.h"
+#include "Collisions.h"
 
-#include "Defs.h"
 #include "Log.h"
 
+
+// Constructor
 Scene::Scene() : Module()
 {
 	name.Create("scene");
@@ -93,15 +97,6 @@ bool Scene::Update(float dt)
 
 	// Draw Map
 	app->map->Draw();
-
-
-	// Window Title update
-	//SString title("Platformer Game, Map:%dx%d Tiles:%dx%d Tilesets:%d",
-	//			   app->map->data.width, app->map->data.height,
-	//			   app->map->data.tileWidth, app->map->data.tileHeight,
-	//			   app->map->data.tilesets.Count());
-	//
-	//app->win->SetTitle(title.GetString());
 
 	return true;
 }

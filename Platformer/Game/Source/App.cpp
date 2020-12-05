@@ -1,5 +1,27 @@
 #include "App.h"
 
+#include "Window.h"
+#include "Input.h"
+#include "Render.h"
+#include "Textures.h"
+#include "Audio.h"
+#include "Scene.h"
+#include "Map.h"
+#include "Player.h"
+#include "Collisions.h"
+#include "FadeToBlack.h"
+#include "SceneLogo.h"
+#include "SceneTitle.h"
+
+#include "Defs.h"
+#include "Log.h"
+#include "Timer.h"
+
+#include "PugiXml/src/pugixml.hpp"
+
+#include <iostream>
+#include <sstream>
+
 
 // Constructor
 App::App(int argc, char* args[]) : argc(argc), args(args)

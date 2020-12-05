@@ -3,7 +3,7 @@
 
 #include "Module.h"
 
-struct SDL_Texture;
+
 
 class Scene : public Module
 {
@@ -13,6 +13,7 @@ public:
 
 	// Destructor
 	virtual ~Scene();
+
 
 	// Called before render is available
 	bool Awake();
@@ -32,8 +33,6 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-private:
-	SDL_Texture* img;
 };
 
 #endif // __SCENE_H__

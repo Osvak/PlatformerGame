@@ -6,8 +6,9 @@
 
 #define MAX_LISTENERS 300
 
-class Module;
 
+
+class Module;
 
 // Collider struct
 struct Collider
