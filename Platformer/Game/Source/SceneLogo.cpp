@@ -33,7 +33,6 @@ bool SceneLogo::Awake()
 // Called before the first frame
 bool SceneLogo::Start()
 {
-	app->lastScene = ((Module*)this);
 	app->currentScene = LOGO;
 
 	img = app->tex->Load("Assets/maps/scene_logo.png");
