@@ -1,20 +1,5 @@
 #include "App.h"
-#include "Window.h"
-#include "Input.h"
-#include "Render.h"
-#include "Textures.h"
-#include "Audio.h"
-#include "Scene.h"
-#include "Map.h"
-#include "Player.h"
-#include "Collisions.h"
-#include "FadeToBlack.h"
 
-#include "Defs.h"
-#include "Log.h"
-
-#include <iostream>
-#include <sstream>
 
 // Constructor
 App::App(int argc, char* args[]) : argc(argc), args(args)
@@ -31,6 +16,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	player = new Player();
 	collisions = new Collisions();
 	fadeToBlack = new FadeToBlack();
+	sceneLogo = new SceneLogo();
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
@@ -43,9 +29,17 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(player);
 	AddModule(collisions);
 	AddModule(fadeToBlack);
+	AddModule(sceneLogo);
 
 	// Render last to swap buffer
 	AddModule(render);
+
+
+	// Start inactive
+	scene->active = false;
+	player->active = false;
+	map->active = false;
+
 
 	PERF_PEEK(pTimer);
 }
@@ -126,7 +120,10 @@ bool App::Start()
 
 	while(item != NULL && ret == true)
 	{
-		ret = item->data->Start();
+		if (item->data->active == true)
+		{
+			ret = item->data->Start();
+		}
 		item = item->next;
 	}
 
@@ -293,7 +290,10 @@ bool App::CleanUp()
 
 	while(item != NULL && ret == true)
 	{
-		ret = item->data->CleanUp();
+		if (item->data->active == true)
+		{
+			ret = item->data->CleanUp();
+		}
 		item = item->prev;
 	}
 

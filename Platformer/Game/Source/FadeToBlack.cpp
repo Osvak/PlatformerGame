@@ -39,9 +39,16 @@ bool FadeToBlack::Update(float dt)
 		++frameCount;
 		if (frameCount >= maxFadeFrames)
 		{
-			app->currentScene = sceneTo;
-
 			currentStep = Fade_Step::FROM_BLACK;
+			if (moduleToDisable->active == true)
+			{
+				moduleToDisable->CleanUp();
+			}
+			if (moduleToEnable->active == false)
+			{
+				moduleToEnable->Init();
+				moduleToEnable->Start();
+			}
 		}
 	}
 	else
@@ -70,7 +77,7 @@ bool FadeToBlack::PostUpdate()
 	return true;
 }
 
-bool FadeToBlack::Fade(GameScenes scene, float frames)
+bool FadeToBlack::Fade(Module* toDisable, Module* toEnable, float frames)
 {
 	bool ret = false;
 
@@ -81,7 +88,8 @@ bool FadeToBlack::Fade(GameScenes scene, float frames)
 		frameCount = 0;
 		maxFadeFrames = frames;
 
-		sceneTo = scene;
+		moduleToDisable = toDisable;
+		moduleToEnable = toEnable;
 
 		ret = true;
 	}

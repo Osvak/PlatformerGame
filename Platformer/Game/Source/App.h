@@ -2,12 +2,31 @@
 #define __APP_H__
 
 #include "Module.h"
+
+#include "Window.h"
+#include "Input.h"
+#include "Render.h"
+#include "Textures.h"
+#include "Audio.h"
+#include "Scene.h"
+#include "Map.h"
+#include "Player.h"
+#include "Collisions.h"
+#include "FadeToBlack.h"
+#include "SceneLogo.h"
+
+#include "Defs.h"
 #include "List.h"
 #include "Log.h"
 #include "PerfTimer.h"
 #include "Timer.h"
 
 #include "PugiXml/src/pugixml.hpp"
+
+#include <iostream>
+#include <sstream>
+
+
 
 #define CONFIG_FILENAME		"config.xml"
 #define SAVE_STATE_FILENAME "save_game.xml"
@@ -23,6 +42,7 @@ class Map;
 class Player;
 class Collisions;
 class FadeToBlack;
+class SceneLogo;
 
 // All the Scenes
 enum GameScenes
@@ -113,8 +133,10 @@ public:
 	Player* player;
 	Collisions* collisions;
 	FadeToBlack* fadeToBlack;
+	SceneLogo* sceneLogo;
 
-	int currentScene = LOGO;
+
+	Module* lastScene = nullptr;
 
 	const int frameRate = 60;
 	const int screenTicks = 1000 / frameRate;

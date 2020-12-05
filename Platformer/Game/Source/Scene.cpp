@@ -31,11 +31,29 @@ bool Scene::Awake()
 // Called before the first frame
 bool Scene::Start()
 {
-	// Load map
-	app->map->Load("map.tmx");
+	//
+	// Activate modules
+	//
+	active = true;
+	app->player->Start();
 	
+	//
+	// Load map
+	//
+	app->map->Load("map.tmx");
+	app->map->Start();
+
+	//
 	// Load music
+	//
 	app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
+
+	//
+	// Move Camera to starting position
+	//
+	app->render->camera.x = -((int)app->win->GetScale() * TILE_SIZE);
+	app->render->camera.y = 0;
+
 
 	return true;
 }
@@ -101,6 +119,17 @@ bool Scene::PostUpdate()
 bool Scene::CleanUp()
 {
 	LOG("Freeing scene");
+
+	if (!active)
+	{
+		return true;
+	}
+
+	app->map->CleanUp();
+	app->collisions->CleanUp();
+	app->player->CleanUp();
+
+	active = false;
 
 	return true;
 }

@@ -30,7 +30,7 @@ public:
 	// Called from another module
 	// Starts the fade process which has two steps, fade_out and fade_in
 	// After the first step, the modules should be switched
-	bool Fade(GameScenes scene, float frames);
+	bool Fade(Module* toDisable, Module* toEnable, float frames);
 
 private:
 
@@ -49,7 +49,8 @@ private:
 	SDL_Rect screenRect;
 
 	// The modules that should be switched after the first step
-	GameScenes sceneTo;
+	Module* moduleToEnable = nullptr;
+	Module* moduleToDisable = nullptr;
 };
 
 #endif //__FADETOBLACK_H__
