@@ -1,7 +1,6 @@
-#include "SceneTitle.h"
+#include "SceneWin.h"
 
 #include "App.h"
-#include "Textures.h"
 #include "Audio.h"
 #include "Render.h"
 #include "Input.h"
@@ -12,36 +11,35 @@
 
 
 // Constructor
-SceneTitle::SceneTitle() : Module()
+SceneWin::SceneWin() : Module()
 {
-	name.Create("sceneTitle");
+	name.Create("sceneWin");
 }
 
 // Destructor
-SceneTitle::~SceneTitle()
+SceneWin::~SceneWin()
 {
 
 }
 
 
 // Called before render is available
-bool SceneTitle::Awake()
+bool SceneWin::Awake()
 {
-	LOG("Loading Title Screen");
-	
+	LOG("Loading Win Screen");
+
 	return true;
 }
 
 // Called before the first frame / when activated
-bool SceneTitle::Start()
+bool SceneWin::Start()
 {
-	app->currentScene = TITLE;
+	app->currentScene = WIN;
 
 	//
 	// Load map
 	//
-	app->map->Load("scene_title.tmx");
-	pressEnterToStart = app->tex->Load("Assets/maps/press_enter_to_start.png");
+	app->map->Load("scene_win.tmx");
 
 	//
 	// Activate modules
@@ -52,7 +50,6 @@ bool SceneTitle::Start()
 	//
 	// Load music
 	//
-
 
 	//
 	// Move camera
@@ -66,20 +63,19 @@ bool SceneTitle::Start()
 
 
 // Called before the Update
-bool SceneTitle::PreUpdate()
+bool SceneWin::PreUpdate()
 {
 	return true;
 }
 
 // Called each loop iteration
-bool SceneTitle::Update(float dt)
+bool SceneWin::Update(float dt)
 {
-
 	return true;
 }
 
 // Called after Updates
-bool SceneTitle::PostUpdate()
+bool SceneWin::PostUpdate()
 {
 	bool ret = true;
 
@@ -94,40 +90,28 @@ bool SceneTitle::PostUpdate()
 		app->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN ||
 		app->input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->scene, 60.0f);
+		app->fadeToBlack->Fade(this, (Module*)app->sceneTitle, 60.0f);
 		return true;
 	}
-	
 
 	//
 	// Draw map
 	//
 	app->map->Draw();
-	
-	++blinkCont;
-	if (blinkCont >= BLINK_TIME)
-	{
-		app->render->DrawTexture(pressEnterToStart, 9 * TILE_SIZE, 11 * TILE_SIZE);
 
-		if (blinkCont == (2 * BLINK_TIME))
-		{
-			blinkCont = 0;
-		}
-	}
 
-	
 	return ret;
 }
 
-// Called before quitting, frees memory and controls active and inactive modules
-bool SceneTitle::CleanUp()
+// Called before quitting, frees memory and controls activa and inactive modules
+bool SceneWin::CleanUp()
 {
 	if (!active)
 	{
 		return true;
 	}
 
-	LOG("Freeing Title Sreen");
+	LOG("Freeing Win Screen");
 
 	app->map->CleanUp();
 	active = false;

@@ -12,6 +12,7 @@
 #include "FadeToBlack.h"
 #include "SceneLogo.h"
 #include "SceneTitle.h"
+#include "SceneWin.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -40,6 +41,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	fadeToBlack = new FadeToBlack();
 	sceneLogo = new SceneLogo();
 	sceneTitle = new SceneTitle();
+	sceneWin = new SceneWin();
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
@@ -54,6 +56,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(fadeToBlack);
 	AddModule(sceneLogo);
 	AddModule(sceneTitle);
+	AddModule(sceneWin);
 
 	// Render last to swap buffer
 	AddModule(render);
@@ -62,6 +65,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	// Start inactive
 	sceneTitle->active = false;
 	scene->active = false;
+	sceneWin->active = false;
 	player->active = false;
 	map->active = false;
 

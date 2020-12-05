@@ -25,6 +25,7 @@ class Collisions;
 class FadeToBlack;
 class SceneLogo;
 class SceneTitle;
+class SceneWin;
 
 // All the Scenes
 enum GameScenes
@@ -117,6 +118,7 @@ public:
 	FadeToBlack* fadeToBlack;
 	SceneLogo* sceneLogo;
 	SceneTitle* sceneTitle;
+	SceneWin* sceneWin;
 
 
 	Module* lastScene = nullptr;
