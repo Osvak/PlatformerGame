@@ -122,6 +122,8 @@ bool Collisions::CleanUp()
 		}
 	}
 
+	active = false;
+
 	return true;
 }
 

@@ -63,18 +63,6 @@ bool Player::Awake(pugi::xml_node& config)
 	currentAnimation = idleAnim;
 
 
-	//
-	// Set initial position
-	//
-	position.x = 48.0f; //Tile size * Tiles
-	position.y = 176.0f; //Tile size * Tiles
-
-	//
-	// Set Flags and Variables
-	//
-	velocity = { 0.0f, 0.0f };
-	acceleration = { 0.0f, 0.0f };
-
 	return ret;
 }
 
@@ -103,10 +91,27 @@ bool Player::Start()
 
 
 	//
+	// Set initial position
+	//
+	position.x = 48.0f; //Tile size * Tiles
+	position.y = 176.0f; //Tile size * Tiles
+
+
+	//
 	//
 	// Create Player collider
 	//
 	playerCollider = app->collisions->AddCollider({ (int)position.x , (int)position.y, PLAYER_SIZE, PLAYER_SIZE }, Collider::ColliderType::PLAYER, this);
+
+
+	//
+	// Set Flags and Variables
+	//
+	active = true;
+	velocity = { 0.0f, 0.0f };
+	acceleration = { 0.0f, 0.0f };
+	
+
 
 	return true;
 }
@@ -447,4 +452,20 @@ void Player::Jump(float dt)
 
 	
 	acceleration.y = accel.y;
+}
+
+
+// Clean Up
+bool Player::CleanUp()
+{
+	if (!active)
+	{
+		return true;
+	}
+
+	app->tex->UnLoad(playerTexture);
+
+	active = false;
+
+	return true;
 }

@@ -95,6 +95,7 @@ bool Map::Start()
 	}
 
 
+	active = true;
 
 	return true;
 }
@@ -265,6 +266,9 @@ bool Map::CleanUp()
 
 	// Clean up the pugui tree
 	mapFile.reset();
+
+
+	active = false;
 
     return true;
 }

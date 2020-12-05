@@ -13,7 +13,7 @@ class Module
 {
 public:
 
-	Module() : active(false)
+	Module() : active(true)
 	{}
 
 	void Init()
@@ -73,7 +73,7 @@ public:
 public:
 
 	SString name;
-	bool active;
+	bool active = true;
 
 };
 

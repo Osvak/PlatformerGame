@@ -52,7 +52,7 @@ bool Render::Awake(pugi::xml_node& config)
 
 		camera.w = app->win->screenSurface->w;
 		camera.h = app->win->screenSurface->h;
-		camera.x = -((int)app->win->GetScale() * TILE_SIZE);
+		camera.x = 0;
 		camera.y = 0;
 	}
 

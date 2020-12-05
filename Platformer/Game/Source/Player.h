@@ -47,6 +47,9 @@ public:
 	// Called the first frame
 	bool Start();
 
+	// Clean up
+	bool CleanUp();
+
 
 	// Called at the middle of the application loop
 	// Processes new input and handles player movement
