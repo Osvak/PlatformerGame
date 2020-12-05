@@ -28,6 +28,8 @@ enum PlayerState
 	JUMP,
 	WINNING,
 	DYING,
+	
+	MAX
 };
 
 
@@ -114,8 +116,9 @@ public:
 	float jumpImpulseVel = -5.0f;
 	float jumpAccel = 4.0f;
 
-	// Auxiliar rect
+	// Auxiliar variables
 	SDL_Rect rect;
+	int st = 0;
 	////////////////////////////////
 
 

@@ -323,6 +323,11 @@ void Player::UpdateLogic(float dt)
 	{
 	case IDLE:
 	{
+		velocity.x = 0.0f;
+		velocity.y = 0.0f;
+		acceleration.x = 0.0f;
+		acceleration.y = 0.0f;
+
 		if (wallCollisionFromLeft == true)
 		{
 			while ((position.x + PLAYER_SIZE) >= rect.x)
@@ -500,6 +505,8 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 	}
 
 	case JUMP:
+		timeInAir = 0.0f;
+
 		currentAnimation = jumpAnim;
 		currentAnimation->Reset();
 		verticalDirection = -1;
@@ -601,8 +608,50 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 
 bool Player::LoadState(pugi::xml_node& playerNode)
 {
+	// Load position
 	position.x = playerNode.child("position").attribute("positionX").as_float();
 	position.y = playerNode.child("position").attribute("positionY").as_float();
+
+	// Load velocity
+	velocity.x = playerNode.child("velocity").attribute("velocityX").as_float();
+	velocity.y = playerNode.child("velocity").attribute("velocityY").as_float();
+
+	// Load state
+	st = playerNode.child("state").attribute("playerstate").as_int();
+	switch (st)
+	{
+	case PlayerState::IDLE:
+		state = IDLE;
+		currentAnimation->Reset();
+		currentAnimation = idleAnim;
+		break;
+
+	case PlayerState::MOVE_RIGHT:
+		state = MOVE_RIGHT;
+		currentAnimation->Reset();
+		currentAnimation = walkAnim;
+		break;
+
+	case PlayerState::MOVE_LEFT:
+		state = MOVE_LEFT;
+		currentAnimation->Reset();
+		currentAnimation = walkAnim;
+		break;
+
+	case PlayerState::JUMP:
+		state = JUMP;
+		currentAnimation->Reset();
+		if (velocity.y <= 0)
+		{
+			currentAnimation = jumpAnim;
+		}
+		else
+		{
+			currentAnimation = fallAnim;
+		}
+		break;
+	}
+	horizontalDirection = playerNode.child("state").attribute("horizontaldirection").as_int();
 
 	return true;
 }
@@ -613,6 +662,32 @@ bool Player::SaveState(pugi::xml_node& playerNode) const
 	pugi::xml_node player = playerNode.append_child("position");
 	player.append_attribute("positionX").set_value(position.x);
 	player.append_attribute("positionY").set_value(position.y);
+	player = playerNode.append_child("velocity");
+	player.append_attribute("velocityX").set_value(velocity.x);
+	player.append_attribute("velocityY").set_value(velocity.y);
+	player = playerNode.append_child("state");
+	switch (state)
+	{
+	case IDLE:
+		app->player->st = 0;
+		break;
+
+	case MOVE_RIGHT:
+		app->player->st = 1;
+		break;
+
+	case MOVE_LEFT:
+		app->player->st = 2;
+		break;
+
+	case JUMP:
+		app->player->st = 3;
+		break;
+	}
+	player.append_attribute("playerstate").set_value(st);
+	player.append_attribute("horizontaldirection").set_value(horizontalDirection);
+	
+
 	return true;
 }
 
@@ -673,6 +748,7 @@ void Player::ControlWallCollision(Collider* c)
 		wallCollisionFromLeft = true;
 	}
 }
+
 
 void Player::ControlPlatformCollision(Collider* c)
 {
