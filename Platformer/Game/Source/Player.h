@@ -158,6 +158,7 @@ public:
 	//Animation* runAnim = new Animation();
 	Animation* jumpAnim = new Animation();
 	Animation* fallAnim = new Animation();
+	Animation* deathAnim = new Animation();
 	///////////////////////////////
 
 };

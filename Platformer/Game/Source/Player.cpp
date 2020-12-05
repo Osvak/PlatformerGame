@@ -48,6 +48,8 @@ bool Player::Awake(pugi::xml_node& config)
 	jumpAnim->speed = 0.25f;
 	fallAnim->loop = true;
 	fallAnim->speed = 0.2f;
+	deathAnim->loop = false;
+	deathAnim->speed = 0.3f;
 
 
 	for (int i = 0; i < 4; i++)
@@ -62,6 +64,12 @@ bool Player::Awake(pugi::xml_node& config)
 
 	for (int i = 0; i < 2 ; i++)
 		fallAnim->PushBack({ 50 + (50 * i) , 111, 50, 37 });
+
+	for (int i = 0; i < 4; i++)
+		deathAnim->PushBack({ 150 + (50 * i), 296, 50, 37 });
+	for (int i = 0; i < 6; i++)
+		deathAnim->PushBack({ 50 * i, 333, 50, 37 });
+
 
 
 	return ret;
@@ -294,6 +302,13 @@ void Player::UpdateState()
 		}
 
 		break;
+
+	case DYING:
+		if (isDying == false)
+		{
+			ChangeState(state, IDLE);
+		}
+		break;
 	default:
 		break;
 	}
@@ -389,14 +404,27 @@ void Player::UpdateLogic(float dt)
 			velocity.x = -PLAYER_SPEED;
 		}
 
-		Jump(dt);
-
-
+		if (isDying == false)
+		{
+			Jump(dt);
+		}
 		currentAnimation->Update();
 
 		break;
 		
 	case DYING:
+		
+		currentAnimation->Update();
+
+		if (currentAnimation->HasFinished() == true)
+		{
+
+			isDying = false;
+
+			isJumping = false;
+			isTouchingGround = true;
+		}
+
 		break;
 
 	default:
@@ -496,6 +524,9 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		break;
 
 	case DYING:
+		currentAnimation = deathAnim;
+		currentAnimation->Reset();
+
 		velocity.x = 0;
 		velocity.y = 0;
 		acceleration.x = 0;
