@@ -10,6 +10,7 @@
 #include "Scene.h"
 #include "FadeToBlack.h"
 #include "Scene.h"
+#include "Scene2.h"
 
 #include "Log.h"
 #include "Defs.h"
@@ -812,7 +813,14 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::CHECKPOINT)
 	{
-		app->scene->Cp1Activation();
+		if (app->currentScene == LEVEL1)
+		{
+			app->scene->Cp1Activation();
+		}
+		if (app->currentScene == LEVEL2)
+		{
+			app->scene2->Cp2Activation();
+		}
 	}
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::CAMERA_WINDOW)
