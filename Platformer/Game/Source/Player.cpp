@@ -99,7 +99,7 @@ bool Player::Start()
 	//
 	if (app->currentScene == LEVEL1)
 	{
-		position.x = TILE_SIZE * 3; // Tile size * Tile ammount
+		position.x = TILE_SIZE * 8; // Tile size * Tile ammount
 		position.y = TILE_SIZE * 11; // Tile size * Tile ammount
 	}
 	if (app->currentScene == LEVEL2)

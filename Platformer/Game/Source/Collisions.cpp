@@ -20,6 +20,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::DIE] = true;
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::NEXT_LEVEL] = true;
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::GOD_MODE] = false;
+	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::CAMERA_WINDOW] = true;
 
 	// Platform collider control
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::PLAYER] = true;
@@ -28,6 +29,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::NEXT_LEVEL] = false;
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::GOD_MODE] = false;
+	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::CAMERA_WINDOW] = false;
 
 	// Wall collider control
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::PLAYER] = true;
@@ -36,6 +38,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::NEXT_LEVEL] = false;
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::GOD_MODE] = false;
+	matrix[Collider::ColliderType::WALL][Collider::ColliderType::CAMERA_WINDOW] = false;
 
 	// Die collider control
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::PLAYER] = true;
@@ -44,6 +47,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::NEXT_LEVEL] = false;
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::GOD_MODE] = false;
+	matrix[Collider::ColliderType::DIE][Collider::ColliderType::CAMERA_WINDOW] = false;
 
 	// Next Level collider control
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::PLAYER] = true;
@@ -52,6 +56,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::NEXT_LEVEL] = false;
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::GOD_MODE] = false;
+	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::CAMERA_WINDOW] = false;
 
 	// God mode collider control
 	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::PLAYER] = false;
@@ -60,6 +65,16 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::NEXT_LEVEL] = false;
 	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::GOD_MODE] = false;
+	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::CAMERA_WINDOW] = true;
+
+	// Camera window collider control
+	matrix[Collider::ColliderType::CAMERA_WINDOW][Collider::ColliderType::PLAYER] = true;
+	matrix[Collider::ColliderType::CAMERA_WINDOW][Collider::ColliderType::WALL] = false;
+	matrix[Collider::ColliderType::CAMERA_WINDOW][Collider::ColliderType::PLATFORM] = false;
+	matrix[Collider::ColliderType::CAMERA_WINDOW][Collider::ColliderType::DIE] = false;
+	matrix[Collider::ColliderType::CAMERA_WINDOW][Collider::ColliderType::NEXT_LEVEL] = false;
+	matrix[Collider::ColliderType::CAMERA_WINDOW][Collider::ColliderType::GOD_MODE] = true;
+	matrix[Collider::ColliderType::CAMERA_WINDOW][Collider::ColliderType::CAMERA_WINDOW] = false;
 
 }
 

@@ -111,6 +111,9 @@ public:
 	// The Player's collider
 	Collider* playerCollider = nullptr;
 
+	// Collider for the Camera Window
+	Collider* cameraCollider = nullptr;
+
 	// Jump handlers
 	fPoint accel = { 0.0, 0.0 };
 	fPoint vel = { 0.0, 0.0 };

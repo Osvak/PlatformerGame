@@ -24,6 +24,7 @@ struct Collider
 		DIE,
 		NEXT_LEVEL,
 		GOD_MODE,
+		CAMERA_WINDOW,
 
 		MAX
 	};

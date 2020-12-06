@@ -59,7 +59,7 @@ bool Scene::Start()
 	// Move Camera to starting position
 	//
 	app->render->camera.x = -((int)app->win->GetScale() * TILE_SIZE);
-	app->render->camera.y = 0;
+	app->render->camera.y = -((int)app->win->GetScale() * TILE_SIZE * 2);
 
 
 	return true;
