@@ -443,7 +443,7 @@ bool App::SaveGame(SString filename) const
 	while (item != NULL && ret == true)
 	{
 		pugi::xml_node node = base.append_child(item->data->name.GetString());
-		ret = item->data->SaveState(base.child(item->data->name.GetString()));
+		ret = item->data->SaveState(base.child(item->data->name.GetString())); // Call the SaveState of each module
 		item = item->next;
 	}
 

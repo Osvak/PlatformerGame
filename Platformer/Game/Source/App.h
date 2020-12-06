@@ -35,6 +35,7 @@ enum GameScenes
 	LOGO,
 	TITLE,
 	LEVEL1,
+	LEVEL2,
 	WIN,
 	LOSE,
 };

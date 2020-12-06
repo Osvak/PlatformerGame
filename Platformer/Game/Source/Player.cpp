@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "Map.h"
 #include "Collisions.h"
+#include "FadeToBlack.h"
 
 #include "Log.h"
 #include "Defs.h"
@@ -710,6 +711,22 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 	}
 	horizontalDirection = playerNode.child("state").attribute("horizontaldirection").as_int();
 
+	// Load current scene
+	switch (app->player->sc)
+	{
+	case 1:
+		if (app->currentScene == LEVEL2)
+		{
+			app->fadeToBlack->Fade((Module*)app->scene/*2*/, (Module*)app->scene, 60.0f);
+		}
+		app->currentScene = LEVEL1;
+		break;
+
+	case 2:
+		app->currentScene = LEVEL2;
+		break;
+	}
+
 	return true;
 }
 
@@ -719,9 +736,11 @@ bool Player::SaveState(pugi::xml_node& playerNode) const
 	pugi::xml_node player = playerNode.append_child("position");
 	player.append_attribute("positionX").set_value(position.x);
 	player.append_attribute("positionY").set_value(position.y);
+
 	player = playerNode.append_child("velocity");
 	player.append_attribute("velocityX").set_value(velocity.x);
 	player.append_attribute("velocityY").set_value(velocity.y);
+
 	player = playerNode.append_child("state");
 	switch (state)
 	{
@@ -743,7 +762,20 @@ bool Player::SaveState(pugi::xml_node& playerNode) const
 	}
 	player.append_attribute("playerstate").set_value(st);
 	player.append_attribute("horizontaldirection").set_value(horizontalDirection);
-	
+
+	player = playerNode.append_child("level");
+	switch (app->currentScene)
+	{
+	case LEVEL1:
+		app->player->sc = 1;
+		break;
+
+	case LEVEL2:
+		app->player->sc = 2;
+		break;
+	}
+	player.append_attribute("currentlevel").set_value(sc);
+
 
 	return true;
 }

@@ -118,7 +118,8 @@ public:
 
 	// Auxiliar variables
 	SDL_Rect rect;
-	int st = 0;
+	int st = 0; // current state for save/load
+	int sc = 0; // current scene for save/load
 	////////////////////////////////
 
 
