@@ -38,7 +38,9 @@ public:
 
 private:
 	SDL_Texture* img;
+	unsigned int logoFX;
 	int imgW = 0, imgH = 0;
+	bool transition = false;
 	int nextSceneCounter = 0;
 };
 

@@ -138,7 +138,7 @@ bool Audio::PlayMusic(const char* path, float fade_time)
 }
 
 // Load WAV
-unsigned int Audio::LoadFx(const char* path)
+unsigned int Audio::LoadFX(const char* path)
 {
 	unsigned int ret = 0;
 
@@ -160,8 +160,22 @@ unsigned int Audio::LoadFx(const char* path)
 	return ret;
 }
 
+bool Audio::UnloadFX(unsigned int id)
+{
+	bool ret = false;
+	if (fx[id - 1] != nullptr)
+	{
+		Mix_FreeChunk(fx[id - 1]);
+		fx[id - 1] = nullptr;
+	}
+
+
+	return ret;
+}
+
+
 // Play WAV
-bool Audio::PlayFx(unsigned int id, int repeat)
+bool Audio::PlayFX(unsigned int id, int repeat)
 {
 	bool ret = false;
 

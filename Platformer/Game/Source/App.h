@@ -135,6 +135,8 @@ public:
 
 	SString usingVSync;
 
+	List<unsigned int*> musicList;
+
 private:
 
 	int argc;
