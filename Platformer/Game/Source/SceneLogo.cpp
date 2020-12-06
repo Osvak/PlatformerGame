@@ -68,6 +68,15 @@ bool SceneLogo::PostUpdate()
 {
 	bool ret = true;
 
+	//
+	// Drawp map
+	//
+	if (app->render->DrawTexture(img, 0, 0) == false)
+	{
+		LOG("Error drawing Scene Logo");
+	}
+
+
 	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 		ret = false;
 
@@ -78,9 +87,10 @@ bool SceneLogo::PostUpdate()
 		return true;
 	}
 
-	if (app->render->DrawTexture(img, 0, 0) == false)
+	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
-		LOG("Error drawing Scene Logo");
+		app->fadeToBlack->Fade(this, (Module*)app->scene, 60.0f);
+		return true;
 	}
 
 	return ret;

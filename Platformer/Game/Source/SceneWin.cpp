@@ -80,6 +80,11 @@ bool SceneWin::PostUpdate()
 	bool ret = true;
 
 	//
+	// Draw map
+	//
+	app->map->Draw();
+
+	//
 	// Scene controls
 	//
 	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
@@ -93,12 +98,6 @@ bool SceneWin::PostUpdate()
 		app->fadeToBlack->Fade(this, (Module*)app->sceneTitle, 60.0f);
 		return true;
 	}
-
-	//
-	// Draw map
-	//
-	app->map->Draw();
-
 
 	return ret;
 }

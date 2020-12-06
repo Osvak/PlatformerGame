@@ -86,6 +86,23 @@ bool SceneTitle::PostUpdate()
 	bool ret = true;
 
 	//
+	// Draw map
+	//
+	app->map->Draw();
+
+	++blinkCont;
+	if (blinkCont >= BLINK_TIME)
+	{
+		app->render->DrawTexture(pressEnterToStart, 9 * TILE_SIZE, 11 * TILE_SIZE);
+
+		if (blinkCont == (2 * BLINK_TIME))
+		{
+			blinkCont = 0;
+		}
+	}
+
+
+	//
 	// Scene controls
 	//
 	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
@@ -99,24 +116,6 @@ bool SceneTitle::PostUpdate()
 		app->fadeToBlack->Fade(this, (Module*)app->scene, 60.0f);
 		return true;
 	}
-	
-
-	//
-	// Draw map
-	//
-	app->map->Draw();
-	
-	++blinkCont;
-	if (blinkCont >= BLINK_TIME)
-	{
-		app->render->DrawTexture(pressEnterToStart, 9 * TILE_SIZE, 11 * TILE_SIZE);
-
-		if (blinkCont == (2 * BLINK_TIME))
-		{
-			blinkCont = 0;
-		}
-	}
-
 	
 	return ret;
 }
