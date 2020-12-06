@@ -97,8 +97,16 @@ bool Player::Start()
 	//
 	// Set initial position
 	//
-	position.x = 48.0f; //Tile size * Tiles
-	position.y = 176.0f; //Tile size * Tiles
+	if (app->currentScene == LEVEL1)
+	{
+		position.x = TILE_SIZE * 3; // Tile size * Tile ammount
+		position.y = TILE_SIZE * 11; // Tile size * Tile ammount
+	}
+	if (app->currentScene == LEVEL2)
+	{
+		position.x = TILE_SIZE * 3; // Tile size * Tile ammount
+		position.y = TILE_SIZE * 24; // Tile size * Tile ammount
+	}
 
 
 	//
@@ -866,12 +874,16 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 	case 1:
 		if (app->currentScene == LEVEL2)
 		{
-			app->fadeToBlack->Fade((Module*)app->scene/*2*/, (Module*)app->scene, 60.0f);
+			app->fadeToBlack->Fade((Module*)app->scene2, (Module*)app->scene, 60.0f);
 		}
 		app->currentScene = LEVEL1;
 		break;
 
 	case 2:
+		if (app->currentScene == LEVEL1)
+		{
+			app->fadeToBlack->Fade((Module*)app->scene, (Module*)app->scene2, 60.0f);
+		}
 		app->currentScene = LEVEL2;
 		break;
 	}

@@ -79,40 +79,82 @@ bool Map::Start()
 				coords = app->map->MapToWorld(x, y);
 				tileset = app->map->GetTilesetFromTileId(tileId);
 
-				if (tileId == 307)
+				if (app->currentScene == LEVEL1)
 				{
-					tileRect = tileset->GetTileRect(tileId);
-					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-					if (app->currentScene == LEVEL1)
+					if (tileId == 307)
 					{
-						app->collisions->AddCollider(colliderRect, Collider::ColliderType::PLATFORM, this);
+						tileRect = tileset->GetTileRect(tileId);
+						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+						if (app->currentScene == LEVEL1)
+						{
+							app->collisions->AddCollider(colliderRect, Collider::ColliderType::PLATFORM, this);
+						}
+					}
+					if (tileId == 308)
+					{
+						tileRect = tileset->GetTileRect(tileId);
+						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+						if (app->currentScene == LEVEL1)
+						{
+							app->collisions->AddCollider(colliderRect, Collider::ColliderType::DIE, this);
+						}
+					}
+					if (tileId == 309)
+					{
+						tileRect = tileset->GetTileRect(tileId);
+						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+						if (app->currentScene == LEVEL1)
+						{
+							app->collisions->AddCollider(colliderRect, Collider::ColliderType::NEXT_LEVEL, this);
+						}
+					}
+					if (tileId == 310)
+					{
+						tileRect = tileset->GetTileRect(tileId);
+						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+						if (app->currentScene == LEVEL1)
+						{
+							app->collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
+						}
 					}
 				}
-				if (tileId == 308)
+				if (app->currentScene == LEVEL2)
 				{
-					tileRect = tileset->GetTileRect(tileId);
-					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-					if (app->currentScene == LEVEL1)
+					if (tileId == 995)
 					{
-						app->collisions->AddCollider(colliderRect, Collider::ColliderType::DIE, this);
+						tileRect = tileset->GetTileRect(tileId);
+						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+						if (app->currentScene == LEVEL2)
+						{
+							app->collisions->AddCollider(colliderRect, Collider::ColliderType::PLATFORM, this);
+						}
 					}
-				}
-				if (tileId == 309)
-				{
-					tileRect = tileset->GetTileRect(tileId);
-					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-					if (app->currentScene == LEVEL1)
+					if (tileId == 996)
 					{
-						app->collisions->AddCollider(colliderRect, Collider::ColliderType::NEXT_LEVEL, this);
+						tileRect = tileset->GetTileRect(tileId);
+						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+						if (app->currentScene == LEVEL2)
+						{
+							app->collisions->AddCollider(colliderRect, Collider::ColliderType::DIE, this);
+						}
 					}
-				}
-				if (tileId == 310)
-				{
-					tileRect = tileset->GetTileRect(tileId);
-					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-					if (app->currentScene == LEVEL1)
+					if (tileId == 997)
 					{
-						app->collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
+						tileRect = tileset->GetTileRect(tileId);
+						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+						if (app->currentScene == LEVEL2)
+						{
+							app->collisions->AddCollider(colliderRect, Collider::ColliderType::NEXT_LEVEL, this);
+						}
+					}
+					if (tileId == 998)
+					{
+						tileRect = tileset->GetTileRect(tileId);
+						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+						if (app->currentScene == LEVEL2)
+						{
+							app->collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
+						}
 					}
 				}
 			}
@@ -254,6 +296,29 @@ TileSet* Map::GetTilesetFromTileId(int id) const
 		}
 		else if (id >= 307) // Checks for third tileset (collider / walls)
 		{
+			item = item->next;
+			item = item->next;
+		}
+	}
+
+	if (app->currentScene == LEVEL2)
+	{
+		if (id < 859) // Checks for first tileset (background_2)
+		{
+
+		}
+		else if (id >= 859 && id < 995) // Checks for second tileset (tileset)
+		{
+			item = item->next;
+		}
+		else if (id >= 995 && id < 999) // Checks for third tileset (collider)
+		{
+			item = item->next;
+			item = item->next;
+		}
+		else if (id >= 999) // Checks for fourth tileset (clouds)
+		{
+			item = item->next;
 			item = item->next;
 			item = item->next;
 		}

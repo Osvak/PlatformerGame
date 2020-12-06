@@ -5,6 +5,7 @@
 	<textures />
 	<audio />
 	<scene />
+	<scene2 />
 	<map />
 	<player>
 		<position positionX="48" positionY="176" />

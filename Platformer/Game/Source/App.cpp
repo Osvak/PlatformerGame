@@ -6,6 +6,7 @@
 #include "Textures.h"
 #include "Audio.h"
 #include "Scene.h"
+#include "Scene2.h"
 #include "Map.h"
 #include "Player.h"
 #include "Collisions.h"
@@ -36,6 +37,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	tex = new Textures();
 	audio = new Audio();
 	scene = new Scene();
+	scene2 = new Scene2();
 	map = new Map();
 	player = new Player();
 	collisions = new Collisions();
@@ -52,6 +54,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(tex);
 	AddModule(audio);
 	AddModule(scene);
+	AddModule(scene2);
 	AddModule(map);
 	AddModule(player);
 	AddModule(collisions);
@@ -68,6 +71,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	// Start inactive
 	sceneTitle->active = false;
 	scene->active = false;
+	scene2->active = false;
 	sceneWin->active = false;
 	sceneLose->active = false;
 	player->active = false;
