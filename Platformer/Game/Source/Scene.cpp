@@ -13,6 +13,8 @@
 
 #include "Log.h"
 
+#include "SDL/include/SDL_rect.h"
+
 
 // Constructor
 Scene::Scene() : Module()
@@ -31,6 +33,22 @@ bool Scene::Awake()
 	bool ret = true;
 
 	return ret;
+
+	//
+	// Animation pushbacks
+	//
+	cpIdleAnim->loop = true;
+	cpIdleAnim->speed = 0.2f;
+	cpActiveAnim->loop = true;
+	cpActiveAnim->speed = 0.1f;
+	
+	for (int i = 0; i < 9; i++)
+		cpIdleAnim->PushBack({ 0,0,12,20 });
+
+	for (int i = 0; i < 3; i++)
+		cpActiveAnim->PushBack({ 0,20,12,20 });
+
+
 }
 
 // Called before the first frame
@@ -51,6 +69,11 @@ bool Scene::Start()
 	app->map->Start();
 
 	//
+	// Load textures
+	//
+	cpTexture = app->tex->Load("Assets\textures\items\checkpoint_sheet.png");
+
+	//
 	// Load music
 	//
 	app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
@@ -60,6 +83,12 @@ bool Scene::Start()
 	//
 	app->render->camera.x = -((int)app->win->GetScale() * TILE_SIZE);
 	app->render->camera.y = 0;
+
+	// Checkpoint Collider
+
+	checkPointCollider = app->collisions->AddCollider({ 535, 140, 12, 20 }, Collider::ColliderType::CHECKPOINT, this);
+
+	currentAnim = cpIdleAnim;
 
 
 	return true;
@@ -99,6 +128,10 @@ bool Scene::Update(float dt)
 	// Draw Map
 	app->map->Draw();
 
+	SDL_Rect cpRect = currentAnim->GetCurrentFrame();
+
+	app->render->DrawTexture(app->scene->cpTexture, 535, 140, &cpRect);
+
 
 	if (app->player->isWinning == true)
 	{
@@ -107,7 +140,10 @@ bool Scene::Update(float dt)
 
 	if (app->player->isDying == true)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->sceneLose, 60.0f);
+	if (app->player->lifes <= 0)
+		{
+			app->fadeToBlack->Fade(this, (Module*)app->sceneLose, 60.0f);
+		}
 	}
 
 	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
@@ -121,6 +157,19 @@ bool Scene::Update(float dt)
 		return true;
 	}
 
+	
+
+	if (isCpActive == true)
+	{
+
+		currentAnim = cpActiveAnim;
+	}
+
+	//
+	// Animation Update
+	//
+	currentAnim->Update();
+
 	return true;
 }
 
@@ -130,6 +179,7 @@ bool Scene::PostUpdate()
 	bool ret = true;
 
 	if(app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+
 		ret = false;
 
 	return ret;
@@ -149,8 +199,21 @@ bool Scene::CleanUp()
 	app->map->CleanUp();
 	app->player->CleanUp();
 
+	isCpActive = false;
+
 
 	active = false;
+
+	return true;
+}
+
+bool Scene::Cp1Activation()
+{
+	isCpActive = true;
+
+	app->player->savedPos = { 535.0f, 145.0f };
+
+	//app->SaveGameRequest();
 
 	return true;
 }

@@ -123,6 +123,12 @@ public:
 	SDL_Rect rect;
 	int st = 0; // current state for save/load
 	int sc = 0; // current scene for save/load
+
+	// Player position saved
+	fPoint savedPos;
+
+	// Lifes variable
+	int lifes = 3;
 	////////////////////////////////
 
 

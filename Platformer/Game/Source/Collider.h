@@ -24,6 +24,7 @@ struct Collider
 		DIE,
 		NEXT_LEVEL,
 		GOD_MODE,
+		CHECKPOINT,
 
 		MAX
 	};

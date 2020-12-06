@@ -20,6 +20,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::DIE] = true;
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::NEXT_LEVEL] = true;
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::GOD_MODE] = false;
+	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::CHECKPOINT] = true;
 
 	// Platform collider control
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::PLAYER] = true;
@@ -28,6 +29,8 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::NEXT_LEVEL] = false;
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::GOD_MODE] = false;
+	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::CHECKPOINT] = false;
+
 
 	// Wall collider control
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::PLAYER] = true;
@@ -36,6 +39,8 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::NEXT_LEVEL] = false;
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::GOD_MODE] = false;
+	matrix[Collider::ColliderType::WALL][Collider::ColliderType::CHECKPOINT] = false;
+
 
 	// Die collider control
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::PLAYER] = true;
@@ -44,6 +49,8 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::NEXT_LEVEL] = false;
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::GOD_MODE] = false;
+	matrix[Collider::ColliderType::DIE][Collider::ColliderType::CHECKPOINT] = false;
+
 
 	// Next Level collider control
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::PLAYER] = true;
@@ -52,6 +59,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::NEXT_LEVEL] = false;
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::GOD_MODE] = false;
+	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::CHECKPOINT] = false;
 
 	// God mode collider control
 	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::PLAYER] = false;
@@ -60,6 +68,19 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::NEXT_LEVEL] = false;
 	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::GOD_MODE] = false;
+	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::CHECKPOINT] = false;
+	
+
+	// Checkpoint collider control
+	matrix[Collider::ColliderType::CHECKPOINT][Collider::ColliderType::PLAYER] = true;
+	matrix[Collider::ColliderType::CHECKPOINT][Collider::ColliderType::WALL] = false;
+	matrix[Collider::ColliderType::CHECKPOINT][Collider::ColliderType::PLATFORM] = false;
+	matrix[Collider::ColliderType::CHECKPOINT][Collider::ColliderType::DIE] = false;
+	matrix[Collider::ColliderType::CHECKPOINT][Collider::ColliderType::NEXT_LEVEL] = false;
+	matrix[Collider::ColliderType::CHECKPOINT][Collider::ColliderType::CHECKPOINT] = false;
+	matrix[Collider::ColliderType::CHECKPOINT][Collider::ColliderType::GOD_MODE] = false;
+
+
 
 }
 
@@ -186,9 +207,14 @@ void Collisions::DebugDraw()
 		case Collider::ColliderType::NEXT_LEVEL:
 			app->render->DrawRectangle(colliders[i]->rect, 0, 0, 255, alpha); // blue
 			break;
+
 		case Collider::ColliderType::GOD_MODE:
 			app->render->DrawRectangle(colliders[i]->rect, 255, 255, 255, alpha); // white
 			break;
+
+		case Collider::ColliderType::CHECKPOINT:
+			app->render->DrawRectangle(colliders[i]->rect, 100, 100, 0, alpha); // green camo
+
 		}
 		//printf("Tile id %d with Collider Type %d in (%d,%d)\n", i, colliders[i]->type, colliders[i]->rect.x, colliders[i]->rect.y); // Debug Collider list
 	}

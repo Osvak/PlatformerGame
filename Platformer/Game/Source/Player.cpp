@@ -8,6 +8,7 @@
 #include "Map.h"
 #include "Collisions.h"
 #include "FadeToBlack.h"
+#include "Scene.h"
 
 #include "Log.h"
 #include "Defs.h"
@@ -123,6 +124,8 @@ bool Player::Start()
 	isJumping = false;
 	isWinning = false;
 	isDying = false;
+	lifes = 3;
+	savedPos = { 48.0f, 176.0f };
 	state = IDLE;
 	if (app->lastScene == TITLE)
 	{
@@ -572,11 +575,16 @@ void Player::UpdateLogic(float dt)
 
 		if (currentAnimation->HasFinished() == true)
 		{
+				isDying = false;
 
-			isDying = false;
+				isJumping = false;
+				isTouchingGround = true;
 
-			isJumping = false;
-			isTouchingGround = true;
+				if (lifes > 0)
+				{
+					position = savedPos;
+				}
+
 		}
 
 		break;
@@ -713,6 +721,8 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		acceleration.x = 0.0f;
 		acceleration.y = 0.0f;
 
+		--lifes;
+
 		break;
 	}
 
@@ -783,7 +793,12 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::DIE)
 	{
-		isDying = true;
+			isDying = true;
+	}
+
+	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::CHECKPOINT)
+	{
+		app->scene->Cp1Activation();
 	}
 }
 

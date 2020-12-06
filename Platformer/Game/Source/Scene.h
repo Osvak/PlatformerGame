@@ -3,6 +3,10 @@
 
 #include "Module.h"
 
+#include "Animation.h"
+
+struct SDL_Texture;
+
 
 
 class Scene : public Module
@@ -33,6 +37,23 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
+	// Checkpoint activation
+	bool Cp1Activation();
+
+
+public:
+	Collider* checkPointCollider = nullptr;
+	SDL_Texture* cpTexture = nullptr;
+
+	Animation* currentAnim;
+
+	Animation* cpIdleAnim = new Animation();
+	Animation* cpActiveAnim = new Animation();
+	
+
+
+	// Checkpoint flags
+	bool isCpActive = false;
 };
 
 #endif // __SCENE_H__
