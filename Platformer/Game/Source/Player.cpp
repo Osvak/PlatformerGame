@@ -5,6 +5,7 @@
 #include "Render.h"
 #include "Textures.h"
 #include "Input.h"
+#include "Audio.h"
 #include "Map.h"
 #include "Collisions.h"
 #include "Scene.h"
@@ -89,13 +90,12 @@ bool Player::Start()
 	playerTexture = app->tex->Load("Assets/textures/character/adventurer-v1.5-Sheet.png");
 
 	//
-	//
-	//
 	// Load Player FX files
 	//
-	//
-	//
-
+	jumpFX = app->audio->LoadFX("Assets/audio/fx/jump.wav");
+	app->musicList.Add(&jumpFX);
+	secondJumpFX = app->audio->LoadFX("Assets/audio/fx/second_jump.wav");
+	app->musicList.Add(&secondJumpFX);
 
 	//
 	// Set initial position
@@ -524,6 +524,8 @@ void Player::UpdateLogic(float dt)
 		if ((canDoubleJump == true) && (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN))
 		{
 			isDoubleJumping = true;
+
+			app->audio->PlayFX(secondJumpFX);
 		}
 
 		if (isDying == false)
@@ -703,6 +705,9 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		{
 			horizontalDirection = -1;
 		}
+
+		app->audio->PlayFX(jumpFX);
+
 		break;
 	}
 
@@ -1116,6 +1121,9 @@ bool Player::CleanUp()
 	}
 
 	app->tex->UnLoad(playerTexture);
+
+	app->audio->UnloadFX(jumpFX);
+	app->audio->UnloadFX(secondJumpFX);
 
 	app->collisions->RemoveCollider(playerCollider);
 	app->collisions->RemoveCollider(cameraCollider);

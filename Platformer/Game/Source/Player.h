@@ -182,6 +182,12 @@ public:
 	Animation* deathAnim = new Animation();
 	///////////////////////////////
 
+
+	//////// Sound Effects ////////
+	unsigned int jumpFX;
+	unsigned int secondJumpFX;
+	///////////////////////////////
+
 };
 
 #endif //!__PLAYER_H__
