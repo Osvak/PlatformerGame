@@ -96,6 +96,8 @@ bool Player::Start()
 	app->musicList.Add(&jumpFX);
 	secondJumpFX = app->audio->LoadFX("Assets/audio/fx/second_jump.wav");
 	app->musicList.Add(&secondJumpFX);
+	oofFX = app->audio->LoadFX("Assets/audio/fx/oof.wav");
+	app->musicList.Add(&oofFX);
 
 	//
 	// Set initial position
@@ -747,6 +749,8 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 
 		--lifes;
 
+		app->audio->PlayFX(oofFX);
+
 		break;
 	}
 
@@ -840,6 +844,27 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 
 bool Player::LoadState(pugi::xml_node& playerNode)
 {
+	// Load current scene
+	sc = playerNode.child("level").attribute("currentlevel").as_int();
+	switch (app->player->sc)
+	{
+	case 1:
+		if (app->currentScene == LEVEL2)
+		{
+			app->fadeToBlack->Fade((Module*)app->scene2, (Module*)app->scene, 60.0f);
+		}
+		app->currentScene = LEVEL1;
+		break;
+
+	case 2:
+		if (app->currentScene == LEVEL1)
+		{
+			app->fadeToBlack->Fade((Module*)app->scene, (Module*)app->scene2, 60.0f);
+		}
+		app->currentScene = LEVEL2;
+		break;
+	}
+
 	// Load position
 	position.x = playerNode.child("position").attribute("positionX").as_float();
 	position.y = playerNode.child("position").attribute("positionY").as_float();
@@ -910,28 +935,6 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 		break;
 	}
 	horizontalDirection = playerNode.child("state").attribute("horizontaldirection").as_int();
-
-	// Load current scene
-	switch (app->player->sc)
-	{
-	case 1:
-		if (app->currentScene == LEVEL2)
-		{
-			app->fadeToBlack->Fade((Module*)app->scene2, (Module*)app->scene, 60.0f);
-		}
-		app->currentScene = LEVEL1;
-		break;
-
-	case 2:
-		if (app->currentScene == LEVEL1)
-		{
-			app->fadeToBlack->Fade((Module*)app->scene, (Module*)app->scene2, 60.0f);
-		}
-		app->currentScene = LEVEL2;
-		break;
-	}
-
-
 
 	return true;
 }
@@ -1124,6 +1127,7 @@ bool Player::CleanUp()
 
 	app->audio->UnloadFX(jumpFX);
 	app->audio->UnloadFX(secondJumpFX);
+	app->audio->UnloadFX(oofFX);
 
 	app->collisions->RemoveCollider(playerCollider);
 	app->collisions->RemoveCollider(cameraCollider);

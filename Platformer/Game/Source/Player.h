@@ -186,6 +186,7 @@ public:
 	//////// Sound Effects ////////
 	unsigned int jumpFX;
 	unsigned int secondJumpFX;
+	unsigned int oofFX;
 	///////////////////////////////
 
 };
