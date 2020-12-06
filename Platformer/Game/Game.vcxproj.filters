@@ -46,6 +46,9 @@
     <ClCompile Include="Source\SceneLose.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Scene2.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Window.h" />
@@ -115,6 +118,9 @@
       <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Source\SceneLose.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene2.h">
       <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>

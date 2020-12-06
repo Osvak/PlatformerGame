@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "Map.h"
 #include "Collisions.h"
+#include "Scene.h"
 #include "FadeToBlack.h"
 #include "Scene.h"
 
@@ -98,8 +99,16 @@ bool Player::Start()
 	//
 	// Set initial position
 	//
-	position.x = 48.0f; //Tile size * Tiles
-	position.y = 176.0f; //Tile size * Tiles
+	if (app->currentScene == LEVEL1)
+	{
+		position.x = TILE_SIZE * 8; // Tile size * Tile ammount
+		position.y = TILE_SIZE * 16; // Tile size * Tile ammount
+	}
+	if (app->currentScene == LEVEL2)
+	{
+		position.x = TILE_SIZE * 3; // Tile size * Tile ammount
+		position.y = TILE_SIZE * 24; // Tile size * Tile ammount
+	}
 
 
 	//
@@ -107,6 +116,8 @@ bool Player::Start()
 	// Create Player collider
 	//
 	playerCollider = app->collisions->AddCollider({ (int)position.x , (int)position.y, PLAYER_SIZE, PLAYER_SIZE }, Collider::ColliderType::PLAYER, this);
+	cameraCollider = app->collisions->AddCollider({ (int)position.x, (int)position.y - (TILE_SIZE * 4), TILE_SIZE * 6, TILE_SIZE * 5 }, Collider::ColliderType::CAMERA_WINDOW, this);
+
 
 	//
 	// Set current animation
@@ -396,7 +407,7 @@ void Player::UpdateLogic(float dt)
 				++position.x;
 			}
 		}
-		
+
 		currentAnimation->Update();
 
 		break;
@@ -447,7 +458,7 @@ void Player::UpdateLogic(float dt)
 			++position.x;
 		}
 
-		if (isTouchingGround ==  true && app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+		if (isTouchingGround == true && app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
 		{
 			velocity.x = velocity.x * 2;
 			walkAnim->speed = 0.8f;
@@ -521,7 +532,7 @@ void Player::UpdateLogic(float dt)
 
 		break;
 	}
-	
+
 	case GOD_MODE:
 	{
 		if ((app->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN) ||
@@ -623,10 +634,15 @@ void Player::UpdateLogic(float dt)
 		playerCollider->SetPos(position.x, position.y);
 	}
 
+	//
+	// Update Camera Position
+	//
+	if (app->scene->freeCamera == false)
+	{
+		app->render->camera.x = -(cameraCollider->rect.x - (TILE_SIZE * 6)) * (int)app->win->GetScale();
+		app->render->camera.y = -(cameraCollider->rect.y - (TILE_SIZE * 5)) * (int)app->win->GetScale();
+	}
 
-	//
-	// Next Level control
-	//
 }
 
 // Change the State
@@ -776,14 +792,10 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 		wallCollisionFromRight = false;
 	}
 
-	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::PLATFORM)
+	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::PLATFORM && c2->type != Collider::ColliderType::CAMERA_WINDOW)
 	{
 		ControlPlatformCollision(c2);
 		rect = c2->rect;
-	}
-	else
-	{
-		isTouchingGround = false;
 	}
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::NEXT_LEVEL)
@@ -799,6 +811,11 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::CHECKPOINT)
 	{
 		app->scene->Cp1Activation();
+	}
+
+	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::CAMERA_WINDOW)
+	{
+		ControlCameraMovement(c2);
 	}
 }
 
@@ -881,12 +898,16 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 	case 1:
 		if (app->currentScene == LEVEL2)
 		{
-			app->fadeToBlack->Fade((Module*)app->scene/*2*/, (Module*)app->scene, 60.0f);
+			app->fadeToBlack->Fade((Module*)app->scene2, (Module*)app->scene, 60.0f);
 		}
 		app->currentScene = LEVEL1;
 		break;
 
 	case 2:
+		if (app->currentScene == LEVEL1)
+		{
+			app->fadeToBlack->Fade((Module*)app->scene, (Module*)app->scene2, 60.0f);
+		}
 		app->currentScene = LEVEL2;
 		break;
 	}
@@ -1048,6 +1069,29 @@ void Player::ControlPlatformCollision(Collider* c)
 }
 
 
+void Player::ControlCameraMovement(Collider* c)
+{
+	if (position.x < c->rect.x)
+	{
+		c->rect.x -= c->rect.x - position.x;
+	}
+	if ((position.x + PLAYER_SIZE) > (c->rect.x + c->rect.w))
+	{
+		c->rect.x += (position.x + PLAYER_SIZE) - (c->rect.x + c->rect.w);
+	}
+	if (position.y < c->rect.y)
+	{
+		c->rect.y -= c->rect.y - position.y;
+	}
+	if ((position.y + PLAYER_SIZE) > (c->rect.y + c->rect.h))
+	{
+		c->rect.y += (position.y + PLAYER_SIZE) - (c->rect.y + c->rect.h);
+	}
+
+	cameraCollider->rect = c->rect;
+
+}
+
 
 // Clean Up
 bool Player::CleanUp()
@@ -1058,6 +1102,9 @@ bool Player::CleanUp()
 	}
 
 	app->tex->UnLoad(playerTexture);
+
+	app->collisions->RemoveCollider(playerCollider);
+	app->collisions->RemoveCollider(cameraCollider);
 
 	active = false;
 

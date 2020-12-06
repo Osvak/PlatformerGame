@@ -6,7 +6,7 @@
 #include "Collider.h"
 
 
-#define MAX_COLLIDERS 250
+#define MAX_COLLIDERS 300
 
 
 class Collisions : public Module

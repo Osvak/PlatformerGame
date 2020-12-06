@@ -54,6 +54,11 @@ public:
 
 	// Checkpoint flags
 	bool isCpActive = false;
+
+public:
+	bool freeCamera = false;
+
+
 };
 
 #endif // __SCENE_H__

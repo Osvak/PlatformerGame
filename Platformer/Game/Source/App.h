@@ -19,6 +19,7 @@ class Render;
 class Textures;
 class Audio;
 class Scene;
+class Scene2;
 class Map;
 class Player;
 class Collisions;
@@ -115,6 +116,7 @@ public:
 	Textures* tex;
 	Audio* audio;
 	Scene* scene;
+	Scene2* scene2;
 	Map* map;
 	Player* player;
 	Collisions* collisions;

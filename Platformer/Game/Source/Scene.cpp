@@ -76,13 +76,13 @@ bool Scene::Start()
 	//
 	// Load music
 	//
-	app->audio->PlayMusic("Assets/audio/music/music_spy.ogg");
+	app->audio->PlayMusic("Assets/audio/music/map_1_music.ogg");
 
 	//
 	// Move Camera to starting position
 	//
 	app->render->camera.x = -((int)app->win->GetScale() * TILE_SIZE);
-	app->render->camera.y = 0;
+	app->render->camera.y = -((int)app->win->GetScale() * TILE_SIZE * 2);
 
 	// Checkpoint Collider
 
@@ -112,18 +112,33 @@ bool Scene::Update(float dt)
 	if(app->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		app->LoadGameRequest();
 
-	if(app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		app->render->camera.y += 15;
+	if (app->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
+	{
+		if (freeCamera == false)
+		{
+			freeCamera = true;
+		}
+		else
+		{
+			freeCamera = false;
+		}
+	}
 
-	if(app->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		app->render->camera.y -= 15;
+	if (freeCamera == true)
+	{
 
-	if(app->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		app->render->camera.x += 15;
+		if (app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+			app->render->camera.y += 15;
 
-	if(app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		app->render->camera.x -= 15;
+		if (app->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+			app->render->camera.y -= 15;
 
+		if (app->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+			app->render->camera.x += 15;
+
+		if (app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+			app->render->camera.x -= 15;
+	}
 
 	// Draw Map
 	app->map->Draw();
@@ -135,7 +150,7 @@ bool Scene::Update(float dt)
 
 	if (app->player->isWinning == true)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->sceneWin, 60.0f);
+		app->fadeToBlack->Fade(this, (Module*)app->scene2, 60.0f);
 	}
 
 	if (app->player->isDying == true)
@@ -149,6 +164,11 @@ bool Scene::Update(float dt)
 	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
 		app->fadeToBlack->Fade(this, this, 60.0f);
+		return true;
+	}
+	if (app->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+	{
+		app->fadeToBlack->Fade(this, (Module*)app->scene2, 60.0f);
 		return true;
 	}
 	if (app->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)

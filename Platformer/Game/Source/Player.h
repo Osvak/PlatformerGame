@@ -89,6 +89,7 @@ private:
 
 	void ControlWallCollision(Collider* c1);
 	void ControlPlatformCollision(Collider* c1);
+	void ControlCameraMovement(Collider* c1);
 
 public:
 
@@ -110,6 +111,9 @@ public:
 
 	// The Player's collider
 	Collider* playerCollider = nullptr;
+
+	// Collider for the Camera Window
+	Collider* cameraCollider = nullptr;
 
 	// Jump handlers
 	fPoint accel = { 0.0, 0.0 };

@@ -25,6 +25,7 @@ struct Collider
 		NEXT_LEVEL,
 		GOD_MODE,
 		CHECKPOINT,
+		CAMERA_WINDOW,
 
 		MAX
 	};
