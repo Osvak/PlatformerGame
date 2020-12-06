@@ -5,6 +5,7 @@
 #include "Window.h"
 #include "Render.h"
 #include "Input.h"
+#include "Audio.h"
 #include "Map.h"
 #include "FadeToBlack.h"
 
@@ -38,6 +39,9 @@ bool SceneLogo::Start()
 
 	img = app->tex->Load("Assets/maps/scene_logo.png");
 
+	logoFX = app->audio->LoadFX("Assets/audio/fx/logo.wav");
+	app->musicList.Add(&logoFX);
+
 	imgW = (int)app->win->GetWidth() / (int)app->win->GetScale();
 	imgH = (int)app->win->GetHeight() / (int)app->win->GetScale();
 
@@ -49,6 +53,7 @@ bool SceneLogo::Start()
 	app->render->camera.x = app->render->camera.y = 0;
 
 	nextSceneCounter = 0;
+	transition = false;
 
 
 	return true;
@@ -63,14 +68,15 @@ bool SceneLogo::PreUpdate()
 // Called each loop iteration
 bool SceneLogo::Update(float dt)
 {
-	if (nextSceneCounter == NEXT_SCENE_TIME)
-	{
-		nextSceneCounter = 0;
-	}
-	else
+	if (nextSceneCounter < NEXT_SCENE_TIME && transition == false)
 	{
 		++nextSceneCounter;
+		if (nextSceneCounter == 15)
+		{
+			app->audio->PlayFX(logoFX);
+		}
 	}
+
 	return true;
 }
 
@@ -95,17 +101,23 @@ bool SceneLogo::PostUpdate()
 		|| app->input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN || nextSceneCounter == NEXT_SCENE_TIME)
 	{
 		app->fadeToBlack->Fade(this, (Module*)app->sceneTitle, 60.0f);
+		transition = true;
+		nextSceneCounter = 0;
 		return true;
 	}
 
 	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
 		app->fadeToBlack->Fade(this, (Module*)app->scene, 60.0f);
+		transition = true;
+		nextSceneCounter = 0;
 		return true;
 	}
 	if (app->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
 	{
 		app->fadeToBlack->Fade(this, (Module*)app->scene2, 60.0f);
+		transition = true;
+		nextSceneCounter = 0;
 		return true;
 	}
 
@@ -123,6 +135,9 @@ bool SceneLogo::CleanUp()
 	LOG("Freeing Logo Screen");
 
 	app->tex->UnLoad(img);
+
+	app->audio->UnloadFX(logoFX);
+
 	app->map->CleanUp();
 	active = false;
 

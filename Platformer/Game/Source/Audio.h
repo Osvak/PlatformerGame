@@ -31,10 +31,12 @@ public:
 	bool PlayMusic(const char* path, float fadeTime = DEFAULT_MUSIC_FADE_TIME);
 
 	// Load a WAV in memory
-	unsigned int LoadFx(const char* path);
+	unsigned int LoadFX(const char* path);
+	bool UnloadFX(unsigned int id);
 
 	// Play a previously loaded WAV
-	bool PlayFx(unsigned int fx, int repeat = 0);
+	bool PlayFX(unsigned int fx, int repeat = 0);
+	
 
 private:
 
