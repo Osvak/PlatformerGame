@@ -89,6 +89,12 @@ bool Player::Start()
 	playerTexture = app->tex->Load("Assets/textures/character/adventurer-v1.5-Sheet.png");
 
 	//
+	// Load Lifes texture files 
+	//
+	lifesTexture = app->tex->Load("Assets/textures/items/heart_sprite.png");
+
+
+	//
 	//
 	//
 	// Load Player FX files
@@ -763,6 +769,7 @@ bool Player::PostUpdate()
 	{
 		SDL_Rect rect = currentAnimation->GetCurrentFrame();
 
+
 		// Player draw when walking right
 		if (horizontalDirection == 1)
 			app->render->DrawTexture(playerTexture, position.x - 17, position.y - (rect.h - 17), &rect);
@@ -770,7 +777,6 @@ bool Player::PostUpdate()
 		// Player draw when walking right
 		if (horizontalDirection == -1)
 			app->render->DrawFlippedTexture(playerTexture, position.x - 17, position.y - (rect.h - 17), &rect);
-
 	}
 
 
@@ -1116,6 +1122,7 @@ bool Player::CleanUp()
 	}
 
 	app->tex->UnLoad(playerTexture);
+	app->tex->UnLoad(lifesTexture);
 
 	app->collisions->RemoveCollider(playerCollider);
 	app->collisions->RemoveCollider(cameraCollider);

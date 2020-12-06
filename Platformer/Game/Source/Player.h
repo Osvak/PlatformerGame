@@ -133,6 +133,10 @@ public:
 
 	// Lifes variable
 	int lifes = 3;
+
+	// The life sprite loaded into an SDL_Texture
+	SDL_Texture* lifesTexture = nullptr;
+
 	////////////////////////////////
 
 

@@ -149,9 +149,18 @@ bool Scene::Update(float dt)
 	// Draw Map
 	app->map->Draw();
 
-	SDL_Rect cpRect = currentAnim->GetCurrentFrame();
+	//SDL_Rect cpRect = currentAnim->GetCurrentFrame();
+	SDL_Rect lifesRect;
+	//lifesRect.x = app->player->cameraCollider->rect.x - (TILE_SIZE * 5);
+	//lifesRect.y = app->player->cameraCollider->rect.y - (TILE_SIZE * 4);
 
-	app->render->DrawTexture(app->scene->cpTexture, TILE_SIZE * 38, TILE_SIZE * 14, &cpRect);
+	lifesRect.x = -(app->render->camera.x - (TILE_SIZE * 3));
+	lifesRect.y = -(app->render->camera.y - (TILE_SIZE * -18)) * 2.5f;
+
+	//app->render->DrawTexture(app->scene->cpTexture, TILE_SIZE * 38, TILE_SIZE * 14, &cpRect);
+
+	app->render->DrawTexture(app->player->lifesTexture, lifesRect.x, lifesRect.y);
+	
 
 
 	if (app->player->isWinning == true)
