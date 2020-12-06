@@ -698,14 +698,17 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 
 	case PlayerState::JUMP:
 		state = JUMP;
+		isTouchingGround = false;
 		currentAnimation->Reset();
 		if (velocity.y <= 0.0f)
 		{
 			currentAnimation = jumpAnim;
+			currentAnimation->Reset();
 		}
 		else
 		{
 			currentAnimation = fallAnim;
+			currentAnimation->Reset();
 		}
 		break;
 	}
