@@ -27,28 +27,26 @@ Scene::~Scene()
 {}
 
 // Called before render is available
-bool Scene::Awake()
+bool Scene::Awake(pugi::xml_node& config)
 {
 	LOG("Loading Scene");
 	bool ret = true;
-
-	return ret;
 
 	//
 	// Animation pushbacks
 	//
 	cpIdleAnim->loop = true;
-	cpIdleAnim->speed = 0.2f;
+	cpIdleAnim->speed = 0.1f;
 	cpActiveAnim->loop = true;
 	cpActiveAnim->speed = 0.1f;
-	
+
 	for (int i = 0; i < 9; i++)
-		cpIdleAnim->PushBack({ i,0,12,20 });
+		cpIdleAnim->PushBack({ i * 12, 0, 12, 20 });
 
 	for (int i = 0; i < 3; i++)
-		cpActiveAnim->PushBack({ i,20,12,20 });
+		cpActiveAnim->PushBack({ i * 12, 20, 12, 20 });
 
-
+	return ret;
 }
 
 // Called before the first frame
@@ -71,7 +69,7 @@ bool Scene::Start()
 	//
 	// Load textures
 	//
-	cpTexture = app->tex->Load("Assets\textures\items\checkpoint_sheet.png");
+	cpTexture = app->tex->Load("Assets/textures/items/checkpoint_sheet.png");
 
 	//
 	// Load music
@@ -88,6 +86,9 @@ bool Scene::Start()
 
 	checkPointCollider = app->collisions->AddCollider({ TILE_SIZE * 38, TILE_SIZE * 14, 12, 20 }, Collider::ColliderType::CHECKPOINT, this);
 
+	//
+	// Set current animation
+	//
 	currentAnim = cpIdleAnim;
 
 
@@ -151,6 +152,9 @@ bool Scene::Update(float dt)
 
 	//SDL_Rect cpRect = currentAnim->GetCurrentFrame();
 	SDL_Rect lifesRect;
+	SDL_Rect cpRect;
+
+	// Lifes HUD Draw
 	lifesRect.x = app->player->cameraCollider->rect.x - (TILE_SIZE * 5);
 	lifesRect.y = app->player->cameraCollider->rect.y - (TILE_SIZE * 4);
 
@@ -162,7 +166,17 @@ bool Scene::Update(float dt)
 		app->render->DrawTexture(app->player->lifesTexture, lifesRect.x + 17 * i, lifesRect.y);
 	}
 
-	//app->render->DrawTexture(app->scene->cpTexture, TILE_SIZE * 38, TILE_SIZE * 14, &cpRect);
+	// Checkpoint Draw
+	
+	// Animation Update
+	
+	currentAnim->Update();
+
+	cpRect = currentAnim->GetCurrentFrame();
+
+	app->render->DrawTexture(app->scene->cpTexture, TILE_SIZE * 38, TILE_SIZE * 14 - 4, &cpRect);
+
+
 
 	if (app->player->isWinning == true)
 	{
@@ -201,11 +215,6 @@ bool Scene::Update(float dt)
 		currentAnim = cpActiveAnim;
 	}
 
-	//
-	// Animation Update
-	//
-	currentAnim->Update();
-
 	return true;
 }
 
@@ -225,6 +234,8 @@ bool Scene::PostUpdate()
 bool Scene::Cp1Activation()
 {
 	isCpActive = true;
+
+	currentAnim = cpActiveAnim;
 
 	app->player->savedPos.x = TILE_SIZE * 38;
 	app->player->savedPos.y = TILE_SIZE * 14;

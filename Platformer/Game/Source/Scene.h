@@ -20,7 +20,7 @@ public:
 
 
 	// Called before render is available
-	bool Awake();
+	bool Awake(pugi::xml_node& config);
 
 	// Called before the first frame
 	bool Start();
@@ -42,6 +42,7 @@ public:
 
 
 public:
+	// Checkpoint Variables
 	Collider* checkPointCollider = nullptr;
 	SDL_Texture* cpTexture = nullptr;
 
@@ -49,8 +50,6 @@ public:
 
 	Animation* cpIdleAnim = new Animation();
 	Animation* cpActiveAnim = new Animation();
-	
-
 
 	// Checkpoint flags
 	bool isCpActive = false;
