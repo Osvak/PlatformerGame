@@ -22,6 +22,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::GOD_MODE] = false;
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::CHECKPOINT] = true;
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::CAMERA_WINDOW] = true;
+	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::POTION] = true;
 
 
 	// Platform collider control
@@ -33,6 +34,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::GOD_MODE] = false;
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::CHECKPOINT] = false;
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::CAMERA_WINDOW] = false;
+	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::POTION] = false;
 
 
 	// Wall collider control
@@ -44,6 +46,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::GOD_MODE] = false;
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::CHECKPOINT] = false;
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::CAMERA_WINDOW] = false;
+	matrix[Collider::ColliderType::WALL][Collider::ColliderType::POTION] = false;
 
 
 	// Die collider control
@@ -55,6 +58,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::GOD_MODE] = false;
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::CHECKPOINT] = false;
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::CAMERA_WINDOW] = false;
+	matrix[Collider::ColliderType::DIE][Collider::ColliderType::POTION] = false;
 
 
 	// Next Level collider control
@@ -66,6 +70,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::GOD_MODE] = false;
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::CHECKPOINT] = false;
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::CAMERA_WINDOW] = false;
+	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::POTION] = false;
 
 
 	// God mode collider control
@@ -77,6 +82,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::GOD_MODE] = false;
 	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::CHECKPOINT] = false;
 	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::CAMERA_WINDOW] = true;	
+	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::POTION] = false;
 
 	// Checkpoint collider control
 	matrix[Collider::ColliderType::CHECKPOINT][Collider::ColliderType::PLAYER] = true;
@@ -87,6 +93,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::CHECKPOINT][Collider::ColliderType::CHECKPOINT] = false;
 	matrix[Collider::ColliderType::CHECKPOINT][Collider::ColliderType::GOD_MODE] = false;
 	matrix[Collider::ColliderType::CHECKPOINT][Collider::ColliderType::CAMERA_WINDOW] = false;
+	matrix[Collider::ColliderType::CHECKPOINT][Collider::ColliderType::POTION] = false;
 
 	// Camera window collider control
 	matrix[Collider::ColliderType::CAMERA_WINDOW][Collider::ColliderType::PLAYER] = true;
@@ -96,7 +103,19 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::CAMERA_WINDOW][Collider::ColliderType::NEXT_LEVEL] = false;
 	matrix[Collider::ColliderType::CAMERA_WINDOW][Collider::ColliderType::GOD_MODE] = true;
 	matrix[Collider::ColliderType::CAMERA_WINDOW][Collider::ColliderType::CHECKPOINT] = false;
+	matrix[Collider::ColliderType::CAMERA_WINDOW][Collider::ColliderType::CAMERA_WINDOW] = false;
+	matrix[Collider::ColliderType::CAMERA_WINDOW][Collider::ColliderType::POTION] = false;
 
+	// Potion collider control
+	matrix[Collider::ColliderType::POTION][Collider::ColliderType::PLAYER] = true;
+	matrix[Collider::ColliderType::POTION][Collider::ColliderType::WALL] = false;
+	matrix[Collider::ColliderType::POTION][Collider::ColliderType::PLATFORM] = false;
+	matrix[Collider::ColliderType::POTION][Collider::ColliderType::DIE] = false;
+	matrix[Collider::ColliderType::POTION][Collider::ColliderType::NEXT_LEVEL] = false;
+	matrix[Collider::ColliderType::POTION][Collider::ColliderType::GOD_MODE] = false;
+	matrix[Collider::ColliderType::POTION][Collider::ColliderType::CHECKPOINT] = false;
+	matrix[Collider::ColliderType::POTION][Collider::ColliderType::CAMERA_WINDOW] = false;
+	matrix[Collider::ColliderType::POTION][Collider::ColliderType::POTION] = false;
 }
 
 // Destructor
@@ -231,6 +250,8 @@ void Collisions::DebugDraw()
 		case Collider::ColliderType::CAMERA_WINDOW:
 			app->render->DrawRectangle(colliders[i]->rect, 250, 110, 190, alpha); // bubble gum pink
 			break;
+		case Collider::ColliderType::POTION:
+			app->render->DrawRectangle(colliders[i]->rect, 0, 255, 255, alpha); //green blue
 		}
 		//printf("Tile id %d with Collider Type %d in (%d,%d)\n", i, colliders[i]->type, colliders[i]->rect.x, colliders[i]->rect.y); // Debug Collider list
 	}

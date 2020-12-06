@@ -15,6 +15,7 @@
 #include "SceneWin.h"
 #include "SceneLose.h"
 #include "FadeToBlack.h"
+#include "Potion.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -46,6 +47,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	sceneWin = new SceneWin();
 	sceneLose = new SceneLose();
 	fadeToBlack = new FadeToBlack();
+	potion = new Potion();
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
@@ -63,6 +65,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(sceneWin);
 	AddModule(sceneLose);
 	AddModule(fadeToBlack);
+	AddModule(potion);
 
 	// Render last to swap buffer
 	AddModule(render);

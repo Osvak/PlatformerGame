@@ -28,6 +28,7 @@ class SceneTitle;
 class SceneWin;
 class SceneLose;
 class FadeToBlack;
+class Potion;
 
 // All the Scenes
 enum GameScenes
@@ -125,6 +126,7 @@ public:
 	SceneWin* sceneWin;
 	SceneLose* sceneLose;
 	FadeToBlack* fadeToBlack;
+	Potion* potion;
 
 
 	GameScenes lastScene = NONE;

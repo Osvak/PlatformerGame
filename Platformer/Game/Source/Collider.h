@@ -26,6 +26,7 @@ struct Collider
 		GOD_MODE,
 		CHECKPOINT,
 		CAMERA_WINDOW,
+		POTION,
 
 		MAX
 	};

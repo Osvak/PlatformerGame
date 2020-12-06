@@ -12,6 +12,7 @@
 #include "FadeToBlack.h"
 #include "Scene.h"
 #include "Scene2.h"
+#include "Potion.h"
 
 #include "Log.h"
 #include "Defs.h"
@@ -738,6 +739,7 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 
 	case WINNING:
 	{
+		currentAnimation = idleAnim;
 		velocity.x = 0.0f;
 		velocity.y = 0.0f;
 		acceleration.x = 0.0f;
@@ -850,6 +852,11 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 	if (c1->type == Collider::ColliderType::GOD_MODE && c2->type == Collider::ColliderType::CAMERA_WINDOW)
 	{
 		ControlCameraMovement(c2);
+	}
+
+	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::POTION) {
+		++lifes;
+		app->potion->isCollected = true;
 	}
 }
 

@@ -157,9 +157,6 @@ bool Scene::Update(float dt)
 	// Lifes HUD Draw
 	lifesRect.x = app->player->cameraCollider->rect.x - (TILE_SIZE * 5);
 	lifesRect.y = app->player->cameraCollider->rect.y - (TILE_SIZE * 4);
-
-	//lifesRect.x = -(app->render->camera.x - (TILE_SIZE * -3));
-	//lifesRect.y = -(app->render->camera.y - (TILE_SIZE * -13));
 		
 	for (int i = 0; i < app->player->lifes; i++)
 	{
@@ -256,6 +253,7 @@ bool Scene::CleanUp()
 	}
 
 	
+	app->tex->UnLoad(cpTexture);
 
 	app->collisions->CleanUp();
 	app->map->CleanUp();

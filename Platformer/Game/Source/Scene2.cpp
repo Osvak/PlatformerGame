@@ -10,6 +10,7 @@
 #include "Player.h"
 #include "Collisions.h"
 #include "FadeToBlack.h"
+#include "Potion.h"
 
 #include "Log.h"
 
@@ -30,6 +31,20 @@ bool Scene2::Awake()
 {
 	LOG("Loading Scene 2");
 	bool ret = true;
+
+	//
+	// Animation pushbacks
+	//
+	cpIdleAnim->loop = true;
+	cpIdleAnim->speed = 0.1f;
+	cpActiveAnim->loop = true;
+	cpActiveAnim->speed = 0.1f;
+
+	for (int i = 0; i < 9; i++)
+		cpIdleAnim->PushBack({ i * 12, 0, 12, 20 });
+
+	for (int i = 0; i < 3; i++)
+		cpActiveAnim->PushBack({ i * 12, 20, 12, 20 });
 
 	return ret;
 }
@@ -54,6 +69,7 @@ bool Scene2::Start()
 	//
 	// Load textures
 	//
+	cpTexture = app->tex->Load("Assets/textures/items/checkpoint_sheet.png");
 
 	//
 	// Load music
@@ -69,10 +85,17 @@ bool Scene2::Start()
 	// Checkpoint collider
 
 	checkPointCollider = app->collisions->AddCollider({ TILE_SIZE * 44, TILE_SIZE * 20, 12, 20 }, Collider::ColliderType::CHECKPOINT, this);
+	app->potion->potionCollider = app->collisions->AddCollider({ app->potion->potionPosition.x, app->potion->potionPosition.y, 8, 10 }, Collider::ColliderType::POTION, this);
 
 	// Set savedPos to the start of the level 2
 	app->player->savedPos.x = TILE_SIZE * 3;
 	app->player->savedPos.y = TILE_SIZE * 24;
+
+	//
+	// Set current animation
+	//
+	currentAnim = cpIdleAnim;
+
 
 	return true;
 }
@@ -133,12 +156,33 @@ bool Scene2::Update(float dt)
 	app->map->Draw();
 
 	SDL_Rect lifesRect;
+	SDL_Rect cpRect;
+
+	// Lifes HUD Draw
 	lifesRect.x = app->player->cameraCollider->rect.x - (TILE_SIZE * 5);
 	lifesRect.y = app->player->cameraCollider->rect.y - (TILE_SIZE * 4);
+
 
 	for (int i = 0; i < app->player->lifes; i++)
 	{
 		app->render->DrawTexture(app->player->lifesTexture, lifesRect.x + 17 * i, lifesRect.y);
+	}
+
+	// Checkpoint Draw
+
+	// Animation Update
+
+	currentAnim->Update();
+
+	cpRect = currentAnim->GetCurrentFrame();
+
+	app->render->DrawTexture(app->scene2->cpTexture, TILE_SIZE * 44, TILE_SIZE * 20 - 4, &cpRect);
+
+
+
+	if (app->potion->isCollected == false)
+	{
+		app->render->DrawTexture(app->potion->potionTexture, app->potion->potionPosition.x, app->potion->potionPosition.y);
 	}
 
 	if (app->player->isWinning == true)
@@ -184,6 +228,17 @@ bool Scene2::PostUpdate()
 	return ret;
 }
 
+
+bool Scene2::Cp2Activation()
+{
+	isCpActive = true;
+
+	app->player->savedPos.x = TILE_SIZE * 44;
+	app->player->savedPos.y = TILE_SIZE * 20;
+
+	return true;
+}
+
 // Called before quitting
 bool Scene2::CleanUp()
 {
@@ -194,6 +249,8 @@ bool Scene2::CleanUp()
 		return true;
 	}
 
+	app->tex->UnLoad(cpTexture);
+
 	app->collisions->CleanUp();
 	app->map->CleanUp();
 	app->player->CleanUp();
@@ -201,16 +258,6 @@ bool Scene2::CleanUp()
 	isCpActive = false;
 
 	active = false;
-
-	return true;
-}
-
-bool Scene2::Cp2Activation()
-{
-	isCpActive = true;
-
-	app->player->savedPos.x = TILE_SIZE * 44;
-	app->player->savedPos.y = TILE_SIZE * 20;
 
 	return true;
 }
