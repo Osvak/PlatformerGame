@@ -43,10 +43,10 @@ bool Scene::Awake()
 	cpActiveAnim->speed = 0.1f;
 	
 	for (int i = 0; i < 9; i++)
-		cpIdleAnim->PushBack({ 0,0,12,20 });
+		cpIdleAnim->PushBack({ i,0,12,20 });
 
 	for (int i = 0; i < 3; i++)
-		cpActiveAnim->PushBack({ 0,20,12,20 });
+		cpActiveAnim->PushBack({ i,20,12,20 });
 
 
 }
@@ -84,7 +84,7 @@ bool Scene::Start()
 	app->render->camera.x = -((int)app->win->GetScale() * TILE_SIZE);
 	app->render->camera.y = -((int)app->win->GetScale() * TILE_SIZE * 2);
 
-	// Checkpoint Collider
+	// Checkpoint collider
 
 	checkPointCollider = app->collisions->AddCollider({ TILE_SIZE * 38, TILE_SIZE * 14, 12, 20 }, Collider::ColliderType::CHECKPOINT, this);
 

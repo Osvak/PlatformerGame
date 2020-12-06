@@ -13,6 +13,8 @@
 
 #include "Log.h"
 
+#include "SDL/include/SDL_rect.h"
+
 // Constructor
 Scene2::Scene2() : Module()
 {
@@ -50,6 +52,10 @@ bool Scene2::Start()
 	app->map->Start();
 
 	//
+	// Load textures
+	//
+
+	//
 	// Load music
 	//
 	app->audio->PlayMusic("Assets/audio/music/map_2_music.ogg");
@@ -60,6 +66,13 @@ bool Scene2::Start()
 	app->render->camera.x = -((int)app->win->GetScale() * TILE_SIZE);
 	app->render->camera.y = -((int)app->win->GetScale() * TILE_SIZE * 14);
 
+	// Checkpoint collider
+
+	checkPointCollider = app->collisions->AddCollider({ TILE_SIZE * 44, TILE_SIZE * 20, 12, 20 }, Collider::ColliderType::CHECKPOINT, this);
+
+	// Set savedPos to the start of the level 2
+	app->player->savedPos.x = TILE_SIZE * 3;
+	app->player->savedPos.y = TILE_SIZE * 24;
 
 	return true;
 }
@@ -82,18 +95,33 @@ bool Scene2::Update(float dt)
 	if (app->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		app->LoadGameRequest();
 
-	if (app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		app->render->camera.y += 15;
+	if (app->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
+	{
+		if (freeCamera == false)
+		{
+			freeCamera = true;
+		}
+		else
+		{
+			freeCamera = false;
+		}
+	}
 
-	if (app->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		app->render->camera.y -= 15;
+	if (freeCamera == true)
+	{
 
-	if (app->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		app->render->camera.x += 15;
+		if (app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+			app->render->camera.y += 15;
 
-	if (app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		app->render->camera.x -= 15;
+		if (app->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+			app->render->camera.y -= 15;
 
+		if (app->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+			app->render->camera.x += 15;
+
+		if (app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+			app->render->camera.x -= 15;
+	}
 
 	// Draw Map
 	app->map->Draw();
@@ -106,7 +134,10 @@ bool Scene2::Update(float dt)
 
 	if (app->player->isDying == true)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->sceneLose, 60.0f);
+		if (app->player->lifes <= 0)
+		{
+			app->fadeToBlack->Fade(this, (Module*)app->sceneLose, 60.0f);
+		}
 	}
 
 	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
@@ -153,8 +184,19 @@ bool Scene2::CleanUp()
 	app->map->CleanUp();
 	app->player->CleanUp();
 
+	isCpActive = false;
 
 	active = false;
+
+	return true;
+}
+
+bool Scene2::Cp2Activation()
+{
+	isCpActive = true;
+
+	app->player->savedPos.x = TILE_SIZE * 44;
+	app->player->savedPos.y = TILE_SIZE * 20;
 
 	return true;
 }
