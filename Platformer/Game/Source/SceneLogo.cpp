@@ -48,6 +48,9 @@ bool SceneLogo::Start()
 
 	app->render->camera.x = app->render->camera.y = 0;
 
+	nextSceneCounter = 0;
+
+
 	return true;
 }
 
@@ -60,6 +63,14 @@ bool SceneLogo::PreUpdate()
 // Called each loop iteration
 bool SceneLogo::Update(float dt)
 {
+	if (nextSceneCounter == NEXT_SCENE_TIME)
+	{
+		nextSceneCounter = 0;
+	}
+	else
+	{
+		++nextSceneCounter;
+	}
 	return true;
 }
 
@@ -81,7 +92,7 @@ bool SceneLogo::PostUpdate()
 		ret = false;
 
 	if (app->input->GetKey(SDL_SCANCODE_KP_ENTER) == KEY_DOWN || app->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN
-		|| app->input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN)
+		|| app->input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN || nextSceneCounter == NEXT_SCENE_TIME)
 	{
 		app->fadeToBlack->Fade(this, (Module*)app->sceneTitle, 60.0f);
 		return true;

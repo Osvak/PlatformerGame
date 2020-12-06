@@ -3,6 +3,7 @@
 
 #include "Module.h"
 
+#define NEXT_SCENE_TIME 80
 
 
 struct SDL_Texture;
@@ -38,6 +39,7 @@ public:
 private:
 	SDL_Texture* img;
 	int imgW = 0, imgH = 0;
+	int nextSceneCounter = 0;
 };
 
 #endif // !__SCENELOGO_H__
