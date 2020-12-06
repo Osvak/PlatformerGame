@@ -209,7 +209,7 @@ void App::PrepareUpdate()
 // ---------------------------------------------
 void App::FinishUpdate()
 {
-	// L02: DONE 1: This is a good place to call Load / Save methods
+	// Call Load / Save methods
 
 	if (saveGameRequested == true) SaveGame(filenameGame.GetString());
 	if (loadGameRequested == true) LoadGame(filenameGame.GetString());

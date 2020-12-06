@@ -781,7 +781,7 @@ void Player::Jump(float dt)
 
 void Player::ControlWallCollision(Collider* c)
 {
-	if (position.x - 3 < (c->rect.x + c->rect.w) &&
+	if (position.x < (c->rect.x + c->rect.w) &&
 		horizontalDirection == -1)
 	{
 		velocity.x = 0.0f;
@@ -799,7 +799,7 @@ void Player::ControlWallCollision(Collider* c)
 
 void Player::ControlPlatformCollision(Collider* c)
 {
-
+	//if (position.y )
 }
 
 

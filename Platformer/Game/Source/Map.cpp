@@ -118,13 +118,13 @@ void Map::Draw()
 {
 	if (mapLoaded == false) return;
 
-	// L04: DONE 5: Prepare the loop to draw all tilesets + DrawTexture()
+	// Prepare the loop to draw all tilesets + DrawTexture()
 	MapLayer* layer;
 	TileSet* tileset;
 	iPoint coord;
 
 
-	// L06: TODO 4: Make sure we draw all the layers and not just the first one
+	// Make sure we draw all the layers and not just the first one
 	for (ListItem<MapLayer*>* item = data.layers.start; item; item = item->next)
 	{
 		layer = item->data;
@@ -154,12 +154,12 @@ void Map::Draw()
 	}
 }
 
-// L04: DONE 8: Create a method that translates x,y coordinates from map positions to world positions
+// Method that translates x,y coordinates from map positions to world positions
 iPoint Map::MapToWorld(int x, int y) const
 {
 	iPoint ret;
 
-	// L05: DONE 1: Add isometric map to world coordinates
+	// Add isometric map to world coordinates
 	if (data.type == MAPTYPE_ORTHOGONAL)
 	{
 		ret.x = x * data.tileWidth;
