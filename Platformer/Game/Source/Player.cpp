@@ -130,6 +130,7 @@ bool Player::Start()
 	active = true;
 	velocity = { 0.0f, 0.0f };
 	acceleration = { 0.0f, 0.0f };
+	horizontalDirection = 1;
 	isTouchingGround = true;
 	isJumping = false;
 	isWinning = false;
@@ -799,6 +800,10 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 	}
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::CAMERA_WINDOW)
+	{
+		ControlCameraMovement(c2);
+	}
+	if (c1->type == Collider::ColliderType::GOD_MODE && c2->type == Collider::ColliderType::CAMERA_WINDOW)
 	{
 		ControlCameraMovement(c2);
 	}
