@@ -107,6 +107,8 @@ bool Player::Start()
 	app->musicList.Add(&secondJumpFX);
 	oofFX = app->audio->LoadFX("Assets/audio/fx/oof.wav");
 	app->musicList.Add(&oofFX);
+	checkpointFX = app->audio->LoadFX("Assets/audio/fx/checkpoint.wav");
+	app->musicList.Add(&checkpointFX);
 
 	//
 	// Set initial position
@@ -123,7 +125,6 @@ bool Player::Start()
 	}
 
 
-	//
 	//
 	// Create Player collider
 	//
@@ -829,6 +830,7 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::CHECKPOINT)
 	{
+		app->audio->PlayFX(checkpointFX);
 		if (app->currentScene == LEVEL1)
 		{
 			app->scene->Cp1Activation();

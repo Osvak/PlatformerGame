@@ -191,6 +191,7 @@ public:
 	unsigned int jumpFX;
 	unsigned int secondJumpFX;
 	unsigned int oofFX;
+	unsigned int checkpointFX;
 	///////////////////////////////
 
 };
