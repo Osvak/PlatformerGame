@@ -259,6 +259,7 @@ void Player::UpdateState()
 	}
 
 	case JUMP:
+	{
 		if (isTouchingGround == true)
 		{
 			if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
@@ -301,13 +302,17 @@ void Player::UpdateState()
 		}
 
 		break;
+	}
 
 	case DYING:
+	{
 		if (isDying == false)
 		{
 			ChangeState(state, IDLE);
 		}
 		break;
+	}
+
 	default:
 		break;
 	}
@@ -411,6 +416,7 @@ void Player::UpdateLogic(float dt)
 	}
 
 	case JUMP:
+	{
 		if ((wallCollisionFromLeft == true) && (verticalDirection != 0))
 		{
 			while ((position.x + PLAYER_SIZE) > rect.x)
@@ -469,9 +475,10 @@ void Player::UpdateLogic(float dt)
 		currentAnimation->Update();
 
 		break;
+	}
 		
 	case DYING:
-		
+	{
 		currentAnimation->Update();
 
 		if (currentAnimation->HasFinished() == true)
@@ -484,6 +491,7 @@ void Player::UpdateLogic(float dt)
 		}
 
 		break;
+	}
 
 	default:
 		break;
@@ -560,6 +568,7 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 	}
 
 	case JUMP:
+	{
 		timeInAir = 0.0f;
 
 		currentAnimation = jumpAnim;
@@ -576,16 +585,20 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 			horizontalDirection = -1;
 		}
 		break;
+	}
 
 	case WINNING:
+	{
 		velocity.x = 0.0f;
 		velocity.y = 0.0f;
 		acceleration.x = 0.0f;
 		acceleration.y = 0.0f;
 
 		break;
+	}
 
 	case DYING:
+	{
 		currentAnimation = deathAnim;
 		currentAnimation->Reset();
 
@@ -595,6 +608,11 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		acceleration.y = 0.0f;
 
 		break;
+	}
+
+	default:
+		break;
+
 	}
 		
 
