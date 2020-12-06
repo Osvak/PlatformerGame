@@ -113,7 +113,7 @@ public:
 	fPoint vel = { 0.0, 0.0 };
 	float timeInAir = 0.0f;
 	float jumpImpulseTime = 0.05f;
-	float jumpImpulseVel = -5.0f;
+	float jumpImpulseVel = -4.0f;
 	float jumpAccel = 4.0f;
 
 	// Auxiliar variables
@@ -139,6 +139,8 @@ public:
 
 	// Flag to know if the player is jumping
 	bool isJumping = false;
+	bool canDoubleJump = false;
+	bool isDoubleJumping = false;
 
 	// Flag to know if the player is skipping level
 	bool isWinning = false;

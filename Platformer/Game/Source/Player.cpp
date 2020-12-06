@@ -423,6 +423,11 @@ void Player::UpdateLogic(float dt)
 			velocity.x = -PLAYER_SPEED;
 		}
 
+		if ((canDoubleJump == true) && (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN))
+		{
+			isDoubleJumping = true;
+		}
+
 		if (isDying == false)
 		{
 			Jump(dt);
@@ -600,15 +605,23 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 	}
 	else
 	{
-		isTouchingGround = false;
 		wallCollisionFromLeft = false;
 		wallCollisionFromRight = false;
 	}
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::PLATFORM)
 	{
+		fallStraight = false;
+		isJumping = false;
+		isDoubleJumping = false;
+		canDoubleJump = false;
+
 		ControlPlatformCollision(c2);
-		fallStraight = true;
+		rect = c2->rect;
+	}
+	else
+	{
+		isTouchingGround = false;
 	}
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::NEXT_LEVEL)
@@ -710,18 +723,36 @@ bool Player::SaveState(pugi::xml_node& playerNode) const
 
 void Player::Jump(float dt)
 {
-	// Allow player to jump
-	if (isTouchingGround) {
+	// Allow player to double jump
+	if (isDoubleJumping == true && canDoubleJump == true)
+	{
+		currentAnimation->Reset();
+		currentAnimation = jumpAnim;
+		currentAnimation->Reset();
 		timeInAir = 0.0f;
 		accel.y = 0.0;
 		vel.y = 0.0;
 		isTouchingGround = false;
+		canDoubleJump = false;
+	}
+
+	// Allow player to jump
+	if (isTouchingGround == true) {
+		timeInAir = 0.0f;
+		accel.y = 0.0;
+		vel.y = 0.0;
+		isTouchingGround = false;
+		canDoubleJump = true;
 	}
 
 
 	if (timeInAir < jumpImpulseTime)
 	{
 		vel.y = jumpImpulseVel;
+		if (isDoubleJumping == true)
+		{
+			vel.y = jumpImpulseVel * 0.8f;
+		}
 		velocity.y = vel.y;
 	}
 	else if (timeInAir < MAX_AIR_TIME)
