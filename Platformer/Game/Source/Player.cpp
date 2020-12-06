@@ -109,6 +109,7 @@ bool Player::Start()
 	app->musicList.Add(&oofFX);
 	checkpointFX = app->audio->LoadFX("Assets/audio/fx/checkpoint.wav");
 	app->musicList.Add(&checkpointFX);
+	nextLevelFX = app->audio->LoadFX("Assets/audio/fx/next_level.wav");
 
 	//
 	// Set initial position
@@ -820,17 +821,18 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::NEXT_LEVEL)
 	{
+		app->audio->PlayFX(nextLevelFX, 0);
 		isWinning = true;
 	}
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::DIE)
 	{
-			isDying = true;
+		isDying = true;
 	}
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::CHECKPOINT)
 	{
-		app->audio->PlayFX(checkpointFX);
+		app->audio->PlayFX(checkpointFX, 0);
 		if (app->currentScene == LEVEL1)
 		{
 			app->scene->Cp1Activation();
@@ -1138,6 +1140,8 @@ bool Player::CleanUp()
 	app->audio->UnloadFX(jumpFX);
 	app->audio->UnloadFX(secondJumpFX);
 	app->audio->UnloadFX(oofFX);
+	app->audio->UnloadFX(checkpointFX);
+	app->audio->UnloadFX(nextLevelFX);
 
 	app->collisions->RemoveCollider(playerCollider);
 	app->collisions->RemoveCollider(cameraCollider);

@@ -192,6 +192,7 @@ public:
 	unsigned int secondJumpFX;
 	unsigned int oofFX;
 	unsigned int checkpointFX;
+	unsigned int nextLevelFX;
 	///////////////////////////////
 
 };
