@@ -9,6 +9,7 @@
 
 #define PLAYER_SIZE 16
 #define PLAYER_SPEED 1.5f
+#define GOD_MODE_MULT 1.5f
 #define GRAVITY 5.0f
 #define MAX_VELOCITY 5.0f
 #define MAX_AIR_TIME 0.3f
@@ -26,6 +27,7 @@ enum PlayerState
 	MOVE_RIGHT,
 	MOVE_LEFT,
 	JUMP,
+	GOD_MODE,
 	WINNING,
 	DYING,
 	
@@ -98,6 +100,7 @@ public:
 
 	// The state of the player
 	PlayerState state = IDLE;
+	PlayerState prevState = IDLE;
 
 	// The player spritesheet loaded into an SDL_Texture
 	SDL_Texture* playerTexture = nullptr;
@@ -142,6 +145,9 @@ public:
 	bool isJumping = false;
 	bool canDoubleJump = false;
 	bool isDoubleJumping = false;
+
+	// Flog to know if the God Mode is activated
+	bool godMode = false;
 
 	// Flag to know if the player is skipping level
 	bool isWinning = false;

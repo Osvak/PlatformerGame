@@ -168,6 +168,12 @@ void Player::UpdateState()
 			break;
 		}
 		
+		if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+		{
+			ChangeState(state, GOD_MODE);
+			break;
+		}
+
 		if (isWinning == true)
 		{
 			ChangeState(state, WINNING);
@@ -200,6 +206,12 @@ void Player::UpdateState()
 		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
 			ChangeState(state, MOVE_RIGHT);
+			break;
+		}
+
+		if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+		{
+			ChangeState(state, GOD_MODE);
 			break;
 		}
 
@@ -240,6 +252,12 @@ void Player::UpdateState()
 			break;
 		}
 		
+		if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+		{
+			ChangeState(state, GOD_MODE);
+			break;
+		}
+
 		if (isWinning == true)
 		{
 			ChangeState(state, WINNING);
@@ -289,6 +307,12 @@ void Player::UpdateState()
 			ChangeState(state, IDLE);
 		}
 
+		if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+		{
+			ChangeState(state, GOD_MODE);
+			break;
+		}
+
 		if (isWinning == true)
 		{
 			ChangeState(state, WINNING);
@@ -304,6 +328,23 @@ void Player::UpdateState()
 		break;
 	}
 
+	case GOD_MODE:
+	{
+		if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+		{
+			playerCollider->type = Collider::ColliderType::PLAYER;
+			
+			ChangeState(state, prevState);
+		}
+		break;
+	}
+
+	case WINNING:
+	{
+		// Nothing to do here
+		break;
+	}
+
 	case DYING:
 	{
 		if (isDying == false)
@@ -313,6 +354,7 @@ void Player::UpdateState()
 		break;
 	}
 
+	
 	default:
 		break;
 	}
@@ -476,7 +518,54 @@ void Player::UpdateLogic(float dt)
 
 		break;
 	}
-		
+	
+	case GOD_MODE:
+	{
+		if ((app->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN) ||
+			(app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT))
+		{
+			velocity.y = -PLAYER_SPEED * GOD_MODE_MULT;
+		}
+		if ((app->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN) ||
+			(app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT))
+		{
+			velocity.y = PLAYER_SPEED * GOD_MODE_MULT;
+		}
+		if ((app->input->GetKey(SDL_SCANCODE_W) != KEY_DOWN) &&
+			(app->input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT) &&
+			(app->input->GetKey(SDL_SCANCODE_S) != KEY_DOWN) &&
+			(app->input->GetKey(SDL_SCANCODE_S) != KEY_REPEAT))
+		{
+			velocity.y = 0;
+		}
+
+		if ((app->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN) ||
+			(app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT))
+		{
+			velocity.x = -PLAYER_SPEED * GOD_MODE_MULT;
+		}
+		if ((app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) ||
+			(app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT))
+		{
+			velocity.x = PLAYER_SPEED * GOD_MODE_MULT;
+		}
+		if ((app->input->GetKey(SDL_SCANCODE_A) != KEY_DOWN) &&
+			(app->input->GetKey(SDL_SCANCODE_A) != KEY_REPEAT) &&
+			(app->input->GetKey(SDL_SCANCODE_D) != KEY_DOWN) &&
+			(app->input->GetKey(SDL_SCANCODE_D) != KEY_REPEAT))
+		{
+			velocity.x = 0;
+		}
+
+		break;
+	}
+
+	case WINNING:
+	{
+		// Nothing to do here
+		break;
+	}
+
 	case DYING:
 	{
 		currentAnimation->Update();
@@ -508,8 +597,8 @@ void Player::UpdateLogic(float dt)
 	}
 	velocity.x = velocity.x + (acceleration.x * dt);
 
-	position.x += velocity.x;
-	position.y += velocity.y;
+	position.x += velocity.x /** dt*/;
+	position.y += velocity.y /** dt*/;
 
 
 	//
@@ -521,7 +610,10 @@ void Player::UpdateLogic(float dt)
 	//
 	// Update Collider Position
 	//
-	playerCollider->SetPos(position.x, position.y);
+	if (godMode == false)
+	{
+		playerCollider->SetPos(position.x, position.y);
+	}
 
 
 	//
@@ -541,8 +633,8 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		verticalDirection = 0;
 		currentAnimation = idleAnim;
 
-		velocity = { 0, 0 };
-		acceleration = { 0,0 };
+		velocity = { 0.0f, 0.0f };
+		acceleration = { 0.0f, 0.0f };
 		break;
 	}
 
@@ -587,6 +679,20 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		break;
 	}
 
+	case GOD_MODE:
+	{
+		playerCollider->type = Collider::ColliderType::GOD_MODE;
+
+		prevState = previousState;
+
+		velocity.x = 0.0f;
+		velocity.y = 0.0f;
+		acceleration.x = 0.0f;
+		acceleration.y = 0.0f;
+
+		break;
+	}
+
 	case WINNING:
 	{
 		velocity.x = 0.0f;
@@ -612,7 +718,6 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 
 	default:
 		break;
-
 	}
 		
 
@@ -697,24 +802,44 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 	switch (st)
 	{
 	case PlayerState::IDLE:
+		if (state = GOD_MODE)
+		{
+			playerCollider->type = Collider::ColliderType::PLAYER;
+			godMode = false;
+		}
 		state = IDLE;
 		currentAnimation->Reset();
 		currentAnimation = idleAnim;
 		break;
 
 	case PlayerState::MOVE_RIGHT:
+		if (state = GOD_MODE)
+		{
+			playerCollider->type = Collider::ColliderType::PLAYER;
+			godMode = false;
+		}
 		state = MOVE_RIGHT;
 		currentAnimation->Reset();
 		currentAnimation = walkAnim;
 		break;
 
 	case PlayerState::MOVE_LEFT:
+		if (state = GOD_MODE)
+		{
+			playerCollider->type = Collider::ColliderType::PLAYER;
+			godMode = false;
+		}
 		state = MOVE_LEFT;
 		currentAnimation->Reset();
 		currentAnimation = walkAnim;
 		break;
 
 	case PlayerState::JUMP:
+		if (state = GOD_MODE)
+		{
+			playerCollider->type = Collider::ColliderType::PLAYER;
+			godMode = false;
+		}
 		state = JUMP;
 		isTouchingGround = false;
 		currentAnimation->Reset();
@@ -728,6 +853,9 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 			currentAnimation = fallAnim;
 			currentAnimation->Reset();
 		}
+		break;
+	case PlayerState::GOD_MODE:
+		state = GOD_MODE;
 		break;
 	}
 	horizontalDirection = playerNode.child("state").attribute("horizontaldirection").as_int();
@@ -747,6 +875,8 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 		app->currentScene = LEVEL2;
 		break;
 	}
+
+
 
 	return true;
 }
@@ -779,6 +909,10 @@ bool Player::SaveState(pugi::xml_node& playerNode) const
 
 	case JUMP:
 		app->player->st = 3;
+		break;
+
+	case GOD_MODE:
+		app->player->st = 4;
 		break;
 	}
 	player.append_attribute("playerstate").set_value(st);

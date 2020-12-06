@@ -23,6 +23,7 @@ struct Collider
 		PLATFORM,
 		DIE,
 		NEXT_LEVEL,
+		GOD_MODE,
 
 		MAX
 	};

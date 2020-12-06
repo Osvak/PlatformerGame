@@ -19,6 +19,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::PLATFORM] = true;
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::DIE] = true;
 	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::NEXT_LEVEL] = true;
+	matrix[Collider::ColliderType::PLAYER][Collider::ColliderType::GOD_MODE] = false;
 
 	// Platform collider control
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::PLAYER] = true;
@@ -26,6 +27,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::PLATFORM] = false;
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::NEXT_LEVEL] = false;
+	matrix[Collider::ColliderType::PLATFORM][Collider::ColliderType::GOD_MODE] = false;
 
 	// Wall collider control
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::PLAYER] = true;
@@ -33,6 +35,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::PLATFORM] = false;
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::WALL][Collider::ColliderType::NEXT_LEVEL] = false;
+	matrix[Collider::ColliderType::WALL][Collider::ColliderType::GOD_MODE] = false;
 
 	// Die collider control
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::PLAYER] = true;
@@ -40,6 +43,7 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::PLATFORM] = false;
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::DIE][Collider::ColliderType::NEXT_LEVEL] = false;
+	matrix[Collider::ColliderType::DIE][Collider::ColliderType::GOD_MODE] = false;
 
 	// Next Level collider control
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::PLAYER] = true;
@@ -47,6 +51,15 @@ Collisions::Collisions()
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::PLATFORM] = false;
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::DIE] = false;
 	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::NEXT_LEVEL] = false;
+	matrix[Collider::ColliderType::NEXT_LEVEL][Collider::ColliderType::GOD_MODE] = false;
+
+	// God mode collider control
+	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::PLAYER] = false;
+	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::WALL] = false;
+	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::PLATFORM] = false;
+	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::DIE] = false;
+	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::NEXT_LEVEL] = false;
+	matrix[Collider::ColliderType::GOD_MODE][Collider::ColliderType::GOD_MODE] = false;
 
 }
 
@@ -172,6 +185,9 @@ void Collisions::DebugDraw()
 			break;
 		case Collider::ColliderType::NEXT_LEVEL:
 			app->render->DrawRectangle(colliders[i]->rect, 0, 0, 255, alpha); // blue
+			break;
+		case Collider::ColliderType::GOD_MODE:
+			app->render->DrawRectangle(colliders[i]->rect, 255, 255, 255, alpha); // white
 			break;
 		}
 		//printf("Tile id %d with Collider Type %d in (%d,%d)\n", i, colliders[i]->type, colliders[i]->rect.x, colliders[i]->rect.y); // Debug Collider list
