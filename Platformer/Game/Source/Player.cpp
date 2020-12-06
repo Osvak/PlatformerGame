@@ -43,7 +43,7 @@ bool Player::Awake(pugi::xml_node& config)
 	idleAnim->loop = true;
 	idleAnim->speed = 0.2f;
 	walkAnim->loop = true;
-	walkAnim->speed = 0.4f;
+	walkAnim->speed = 0.2f;
 	jumpAnim->loop = false;
 	jumpAnim->speed = 0.25f;
 	fallAnim->loop = true;
@@ -69,8 +69,6 @@ bool Player::Awake(pugi::xml_node& config)
 		deathAnim->PushBack({ 150 + (50 * i), 296, 50, 37 });
 	for (int i = 0; i < 6; i++)
 		deathAnim->PushBack({ 50 * i, 333, 50, 37 });
-
-
 
 	return ret;
 }
@@ -354,6 +352,14 @@ void Player::UpdateLogic(float dt)
 			--position.x;
 		}
 
+		if (isTouchingGround == true && app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+		{
+			velocity.x = velocity.x * 2;
+			walkAnim->speed = 0.8f;
+		}
+
+		walkAnim->speed = 0.2f;
+
 		currentAnimation->Update();
 
 		break;
@@ -369,6 +375,14 @@ void Player::UpdateLogic(float dt)
 		{
 			++position.x;
 		}
+
+		if (isTouchingGround ==  true && app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+		{
+			velocity.x = velocity.x * 2;
+			walkAnim->speed = 0.8f;
+		}
+
+		walkAnim->speed = 0.2f;
 
 		currentAnimation->Update();
 
@@ -482,7 +496,9 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 
 	case MOVE_RIGHT:
 	{
+
 		currentAnimation = walkAnim;
+		
 		verticalDirection = 0;
 		horizontalDirection = 1;
 

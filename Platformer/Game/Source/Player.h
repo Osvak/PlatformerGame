@@ -153,9 +153,8 @@ public:
 	/////// ANIMATION SETS ////////
 	Animation* idleAnim = new Animation();
 	Animation* walkAnim = new Animation();
-	//Animation* atakAnim = new Animation();
+	//Animation* shootAnim = new Animation();
 	//Animation* damageAnim = new Animation();
-	//Animation* runAnim = new Animation();
 	Animation* jumpAnim = new Animation();
 	Animation* fallAnim = new Animation();
 	Animation* deathAnim = new Animation();
