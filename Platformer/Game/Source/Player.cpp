@@ -326,6 +326,11 @@ void Player::UpdateLogic(float dt)
 		acceleration.x = 0.0f;
 		acceleration.y = 0.0f;
 
+		/*while (((position.y + PLAYER_SIZE) > rect.y) && (isTouchingGround == true))
+		{
+			--position.y;
+		}*/
+
 		if (wallCollisionFromLeft == true)
 		{
 			while ((position.x + PLAYER_SIZE) >= rect.x)
@@ -348,6 +353,11 @@ void Player::UpdateLogic(float dt)
 
 	case MOVE_RIGHT:
 	{
+		/*while (((position.y + PLAYER_SIZE) > rect.y) && (isTouchingGround == true))
+		{
+			--position.y;
+		}*/
+
 		if (wallCollisionFromLeft == false)
 		{
 			velocity.x = PLAYER_SPEED;
@@ -372,6 +382,11 @@ void Player::UpdateLogic(float dt)
 
 	case MOVE_LEFT:
 	{
+		/*while (((position.y + PLAYER_SIZE) > rect.y) && (isTouchingGround == true))
+		{
+			--position.y;
+		}*/
+
 		if (wallCollisionFromRight == false)
 		{
 			velocity.x = -PLAYER_SPEED;
@@ -395,7 +410,7 @@ void Player::UpdateLogic(float dt)
 	}
 
 	case JUMP:
-		if (wallCollisionFromLeft == true)
+		if ((wallCollisionFromLeft == true) && (verticalDirection != 0))
 		{
 			while ((position.x + PLAYER_SIZE) > rect.x)
 			{
@@ -403,7 +418,7 @@ void Player::UpdateLogic(float dt)
 			}
 			fallStraight = true;
 		}
-		if (wallCollisionFromRight == true)
+		if ((wallCollisionFromRight == true) && (verticalDirection != 0))
 		{
 			while (position.x < (rect.x + rect.w))
 			{
@@ -412,16 +427,34 @@ void Player::UpdateLogic(float dt)
 			fallStraight = true;
 		}
 
-		if ((app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) || (app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) && (fallStraight == false))
+		if ((app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) && (fallStraight == false))
 		{
 			horizontalDirection = 1;
 			velocity.x = PLAYER_SPEED;
 		}
-		if ((app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) || (app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) && (fallStraight == false))
+		if ((app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) && (fallStraight == false))
+		{
+			horizontalDirection = 1;
+			velocity.x = PLAYER_SPEED;
+		}
+		if ((app->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN) && (fallStraight == false))
 		{
 			horizontalDirection = -1;
 			velocity.x = -PLAYER_SPEED;
 		}
+		if ((app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) && (fallStraight == false))
+		{
+			horizontalDirection = -1;
+			velocity.x = -PLAYER_SPEED;
+		}
+		if ((app->input->GetKey(SDL_SCANCODE_D) != KEY_DOWN) &&
+			(app->input->GetKey(SDL_SCANCODE_D) != KEY_REPEAT) &&
+			(app->input->GetKey(SDL_SCANCODE_A) != KEY_DOWN) &&
+			(app->input->GetKey(SDL_SCANCODE_A) != KEY_REPEAT))
+		{
+			velocity.x = 0.0f;
+		}
+
 
 		if ((canDoubleJump == true) && (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN))
 		{
@@ -544,10 +577,10 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		break;
 
 	case WINNING:
-		velocity.x = 0;
-		velocity.y = 0;
-		acceleration.x = 0;
-		acceleration.y = 0;
+		velocity.x = 0.0f;
+		velocity.y = 0.0f;
+		acceleration.x = 0.0f;
+		acceleration.y = 0.0f;
 
 		break;
 
@@ -555,10 +588,10 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		currentAnimation = deathAnim;
 		currentAnimation->Reset();
 
-		velocity.x = 0;
-		velocity.y = 0;
-		acceleration.x = 0;
-		acceleration.y = 0;
+		velocity.x = 0.0f;
+		velocity.y = 0.0f;
+		acceleration.x = 0.0f;
+		acceleration.y = 0.0f;
 
 		break;
 	}
@@ -611,11 +644,6 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::PLATFORM)
 	{
-		fallStraight = false;
-		isJumping = false;
-		isDoubleJumping = false;
-		canDoubleJump = false;
-
 		ControlPlatformCollision(c2);
 		rect = c2->rect;
 	}
@@ -670,7 +698,7 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 	case PlayerState::JUMP:
 		state = JUMP;
 		currentAnimation->Reset();
-		if (velocity.y <= 0)
+		if (velocity.y <= 0.0f)
 		{
 			currentAnimation = jumpAnim;
 		}
@@ -732,6 +760,7 @@ void Player::Jump(float dt)
 		timeInAir = 0.0f;
 		accel.y = 0.0;
 		vel.y = 0.0;
+		verticalDirection = -1;
 		isTouchingGround = false;
 		canDoubleJump = false;
 	}
@@ -769,6 +798,7 @@ void Player::Jump(float dt)
 	{
 		//Falling anim
 		currentAnimation = fallAnim;
+		verticalDirection = 1;
 	}
 	
 	
@@ -781,25 +811,38 @@ void Player::Jump(float dt)
 
 void Player::ControlWallCollision(Collider* c)
 {
-	if (position.x < (c->rect.x + c->rect.w) &&
-		horizontalDirection == -1)
+	if (isJumping == false)
 	{
-		velocity.x = 0.0f;
-		wallCollisionFromRight = true;
-	}
+		if (position.x < (c->rect.x + c->rect.w) &&
+			horizontalDirection == -1)
+		{
+			velocity.x = 0.0f;
+			wallCollisionFromRight = true;
+		}
 
-	if ((position.x + PLAYER_SIZE) > c->rect.x &&
-		horizontalDirection == 1)
-	{
-		velocity.x = 0.0f;
-		wallCollisionFromLeft = true;
+		if ((position.x + PLAYER_SIZE) > c->rect.x &&
+			horizontalDirection == 1)
+		{
+			velocity.x = 0.0f;
+			wallCollisionFromLeft = true;
+		}
 	}
 }
 
 
 void Player::ControlPlatformCollision(Collider* c)
 {
-	//if (position.y )
+	fallStraight = false;
+	isJumping = false;
+	isDoubleJumping = false;
+	canDoubleJump = false;
+
+	if ((position.y + PLAYER_SIZE) > c->rect.y)
+	{
+		velocity.y = 0.0f;
+		position.y = c->rect.y - PLAYER_SIZE;
+		isTouchingGround = true;
+	}
 }
 
 

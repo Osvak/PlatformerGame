@@ -19,8 +19,8 @@ struct Collider
 		NONE = -1,
 
 		PLAYER,
-		PLATFORM,
 		WALL,
+		PLATFORM,
 		DIE,
 		NEXT_LEVEL,
 
