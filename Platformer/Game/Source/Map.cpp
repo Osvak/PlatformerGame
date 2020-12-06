@@ -83,25 +83,37 @@ bool Map::Start()
 				{
 					tileRect = tileset->GetTileRect(tileId);
 					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-					app->collisions->AddCollider(colliderRect, Collider::ColliderType::PLATFORM, this);
+					if (app->currentScene == LEVEL1)
+					{
+						app->collisions->AddCollider(colliderRect, Collider::ColliderType::PLATFORM, this);
+					}
 				}
 				if (tileId == 308)
 				{
 					tileRect = tileset->GetTileRect(tileId);
 					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-					app->collisions->AddCollider(colliderRect, Collider::ColliderType::DIE, this);
+					if (app->currentScene == LEVEL1)
+					{
+						app->collisions->AddCollider(colliderRect, Collider::ColliderType::DIE, this);
+					}
 				}
 				if (tileId == 309)
 				{
 					tileRect = tileset->GetTileRect(tileId);
 					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-					app->collisions->AddCollider(colliderRect, Collider::ColliderType::NEXT_LEVEL, this);
+					if (app->currentScene == LEVEL1)
+					{
+						app->collisions->AddCollider(colliderRect, Collider::ColliderType::NEXT_LEVEL, this);
+					}
 				}
 				if (tileId == 310)
 				{
 					tileRect = tileset->GetTileRect(tileId);
 					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-					app->collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
+					if (app->currentScene == LEVEL1)
+					{
+						app->collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
+					}
 				}
 			}
 		}

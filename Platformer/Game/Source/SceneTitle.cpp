@@ -116,6 +116,11 @@ bool SceneTitle::PostUpdate()
 		app->fadeToBlack->Fade(this, (Module*)app->scene, 60.0f);
 		return true;
 	}
+	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
+	{
+		app->fadeToBlack->Fade(this, (Module*)app->scene, 60.0f);
+		return true;
+	}
 	
 	return ret;
 }
@@ -131,6 +136,7 @@ bool SceneTitle::CleanUp()
 	LOG("Freeing Title Sreen");
 
 	app->map->CleanUp();
+	app->tex->UnLoad(pressEnterToStart);
 	active = false;
 
 	return true;

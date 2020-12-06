@@ -110,6 +110,17 @@ bool Scene::Update(float dt)
 		app->fadeToBlack->Fade(this, (Module*)app->sceneLose, 60.0f);
 	}
 
+	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
+	{
+		app->fadeToBlack->Fade(this, this, 60.0f);
+		return true;
+	}
+	if (app->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+	{
+		app->fadeToBlack->Fade(this, this, 60.0f);
+		return true;
+	}
+
 	return true;
 }
 
