@@ -95,6 +95,12 @@ bool Scene2::Update(float dt)
 	if (app->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		app->LoadGameRequest();
 
+	if (app->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
+	{
+		app->player->position = app->player->savedPos;
+		app->player->cameraCollider->SetPos(app->player->savedPos.x, app->player->savedPos.y - TILE_SIZE * 4);
+	}
+
 	if (app->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
 	{
 		if (freeCamera == false)
