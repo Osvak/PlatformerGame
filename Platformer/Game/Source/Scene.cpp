@@ -220,6 +220,19 @@ bool Scene::PostUpdate()
 	return ret;
 }
 
+
+bool Scene::Cp1Activation()
+{
+	isCpActive = true;
+
+	app->player->savedPos.x = TILE_SIZE * 38;
+	app->player->savedPos.y = TILE_SIZE * 14;
+
+	//app->SaveGameRequest();
+
+	return true;
+}
+
 // Called before quitting
 bool Scene::CleanUp()
 {
@@ -230,6 +243,8 @@ bool Scene::CleanUp()
 		return true;
 	}
 
+	
+
 	app->collisions->CleanUp();
 	app->map->CleanUp();
 	app->player->CleanUp();
@@ -238,18 +253,6 @@ bool Scene::CleanUp()
 
 
 	active = false;
-
-	return true;
-}
-
-bool Scene::Cp1Activation()
-{
-	isCpActive = true;
-
-	app->player->savedPos.x = TILE_SIZE * 38;
-	app->player->savedPos.y = TILE_SIZE * 14;
-
-	//app->SaveGameRequest();
 
 	return true;
 }

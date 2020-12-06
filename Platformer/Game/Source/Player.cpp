@@ -5,6 +5,7 @@
 #include "Render.h"
 #include "Textures.h"
 #include "Input.h"
+#include "Audio.h"
 #include "Map.h"
 #include "Collisions.h"
 #include "Scene.h"
@@ -97,11 +98,15 @@ bool Player::Start()
 	//
 	//
 	//
+
 	// Load Player FX files
 	//
-	//
-	//
-
+	jumpFX = app->audio->LoadFX("Assets/audio/fx/jump.wav");
+	app->musicList.Add(&jumpFX);
+	secondJumpFX = app->audio->LoadFX("Assets/audio/fx/second_jump.wav");
+	app->musicList.Add(&secondJumpFX);
+	oofFX = app->audio->LoadFX("Assets/audio/fx/oof.wav");
+	app->musicList.Add(&oofFX);
 
 	//
 	// Set initial position
@@ -530,6 +535,8 @@ void Player::UpdateLogic(float dt)
 		if ((canDoubleJump == true) && (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN))
 		{
 			isDoubleJumping = true;
+
+			app->audio->PlayFX(secondJumpFX);
 		}
 
 		if (isDying == false)
@@ -709,6 +716,9 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		{
 			horizontalDirection = -1;
 		}
+
+		app->audio->PlayFX(jumpFX);
+
 		break;
 	}
 
@@ -747,6 +757,8 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		acceleration.y = 0.0f;
 
 		--lifes;
+
+		app->audio->PlayFX(oofFX);
 
 		break;
 	}
@@ -841,6 +853,27 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 
 bool Player::LoadState(pugi::xml_node& playerNode)
 {
+	// Load current scene
+	sc = playerNode.child("level").attribute("currentlevel").as_int();
+	switch (app->player->sc)
+	{
+	case 1:
+		if (app->currentScene == LEVEL2)
+		{
+			app->fadeToBlack->Fade((Module*)app->scene2, (Module*)app->scene, 60.0f);
+		}
+		app->currentScene = LEVEL1;
+		break;
+
+	case 2:
+		if (app->currentScene == LEVEL1)
+		{
+			app->fadeToBlack->Fade((Module*)app->scene, (Module*)app->scene2, 60.0f);
+		}
+		app->currentScene = LEVEL2;
+		break;
+	}
+
 	// Load position
 	position.x = playerNode.child("position").attribute("positionX").as_float();
 	position.y = playerNode.child("position").attribute("positionY").as_float();
@@ -911,28 +944,6 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 		break;
 	}
 	horizontalDirection = playerNode.child("state").attribute("horizontaldirection").as_int();
-
-	// Load current scene
-	switch (app->player->sc)
-	{
-	case 1:
-		if (app->currentScene == LEVEL2)
-		{
-			app->fadeToBlack->Fade((Module*)app->scene2, (Module*)app->scene, 60.0f);
-		}
-		app->currentScene = LEVEL1;
-		break;
-
-	case 2:
-		if (app->currentScene == LEVEL1)
-		{
-			app->fadeToBlack->Fade((Module*)app->scene, (Module*)app->scene2, 60.0f);
-		}
-		app->currentScene = LEVEL2;
-		break;
-	}
-
-
 
 	return true;
 }
@@ -1123,6 +1134,10 @@ bool Player::CleanUp()
 
 	app->tex->UnLoad(playerTexture);
 	app->tex->UnLoad(lifesTexture);
+
+	app->audio->UnloadFX(jumpFX);
+	app->audio->UnloadFX(secondJumpFX);
+	app->audio->UnloadFX(oofFX);
 
 	app->collisions->RemoveCollider(playerCollider);
 	app->collisions->RemoveCollider(cameraCollider);

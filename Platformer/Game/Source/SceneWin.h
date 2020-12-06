@@ -32,6 +32,9 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
+private:
+	unsigned int victoryFX;
+	bool playFX = true;
 };
 
 #endif // !__SCENETITLE_H__

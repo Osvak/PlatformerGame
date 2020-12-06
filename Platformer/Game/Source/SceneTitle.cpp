@@ -49,12 +49,11 @@ bool SceneTitle::Start()
 	//
 	active = true;
 	app->map->Start();
-	//app->sceneLogo->CleanUp();
 
 	//
 	// Load music
 	//
-
+	app->audio->PlayMusic("Assets/audio/music/title_screen_music.ogg");
 
 	//
 	// Move camera
@@ -141,7 +140,10 @@ bool SceneTitle::CleanUp()
 	LOG("Freeing Title Sreen");
 
 	app->map->CleanUp();
+
 	app->tex->UnLoad(pressEnterToStart);
+
+
 	active = false;
 
 	return true;

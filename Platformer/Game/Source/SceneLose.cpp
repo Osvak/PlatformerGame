@@ -49,6 +49,9 @@ bool SceneLose::Start()
 	//
 	// Load music
 	//
+	app->audio->StopMusic();
+	gameOverFX = app->audio->LoadFX("Assets/audio/fx/game_over.wav");
+	app->musicList.Add(&gameOverFX);
 
 	//
 	// Move camera
@@ -69,6 +72,12 @@ bool SceneLose::PreUpdate()
 // Called each loop iteration
 bool SceneLose::Update(float dt)
 {
+	if (playFX == true)
+	{
+		app->audio->PlayFX(gameOverFX);
+		playFX = false;
+	}
+
 	return true;
 }
 
@@ -122,6 +131,9 @@ bool SceneLose::CleanUp()
 	LOG("Freeing Lose Screen");
 
 	app->map->CleanUp();
+
+	app->audio->UnloadFX(gameOverFX);
+
 	active = false;
 
 	return true;
