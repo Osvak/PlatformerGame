@@ -86,7 +86,7 @@ bool Scene::Start()
 
 	// Checkpoint Collider
 
-	checkPointCollider = app->collisions->AddCollider({ 535, 140, 12, 20 }, Collider::ColliderType::CHECKPOINT, this);
+	checkPointCollider = app->collisions->AddCollider({ TILE_SIZE * 38, TILE_SIZE * 14, 12, 20 }, Collider::ColliderType::CHECKPOINT, this);
 
 	currentAnim = cpIdleAnim;
 
@@ -145,7 +145,7 @@ bool Scene::Update(float dt)
 
 	SDL_Rect cpRect = currentAnim->GetCurrentFrame();
 
-	app->render->DrawTexture(app->scene->cpTexture, 535, 140, &cpRect);
+	app->render->DrawTexture(app->scene->cpTexture, TILE_SIZE * 38, TILE_SIZE * 14, &cpRect);
 
 
 	if (app->player->isWinning == true)
@@ -231,7 +231,8 @@ bool Scene::Cp1Activation()
 {
 	isCpActive = true;
 
-	app->player->savedPos = { 535.0f, 145.0f };
+	app->player->savedPos.x = TILE_SIZE * 38;
+	app->player->savedPos.y = TILE_SIZE * 14;
 
 	//app->SaveGameRequest();
 

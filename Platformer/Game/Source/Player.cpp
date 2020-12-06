@@ -136,7 +136,7 @@ bool Player::Start()
 	isWinning = false;
 	isDying = false;
 	lifes = 3;
-	savedPos = { 48.0f, 176.0f };
+	savedPos = { TILE_SIZE * 8, TILE_SIZE * 16 };
 	state = IDLE;
 	if (app->lastScene == TITLE)
 	{
@@ -594,6 +594,7 @@ void Player::UpdateLogic(float dt)
 				if (lifes > 0)
 				{
 					position = savedPos;
+					cameraCollider->SetPos(savedPos.x, savedPos.y - TILE_SIZE * 4);
 				}
 
 		}
