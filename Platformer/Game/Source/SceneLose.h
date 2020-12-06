@@ -30,6 +30,10 @@ public:
 
 	// Called before quitting
 	bool CleanUp();
+
+private:
+	unsigned int gameOverFX;
+	bool playFX = true;
 };
 
 #endif // ! __SCENELOSE_H__

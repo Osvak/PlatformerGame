@@ -50,12 +50,20 @@ bool SceneWin::Start()
 	//
 	// Load music
 	//
+	app->audio->StopMusic();
+	victoryFX = app->audio->LoadFX("Assets/audio/fx/victory.wav");
+	app->musicList.Add(&victoryFX);
 
 	//
 	// Move camera
 	//
 	app->render->camera.x = 0;
 	app->render->camera.y = 0;
+
+	//
+	// Flags reset
+	//
+	playFX = true;
 
 
 	return true;
@@ -71,6 +79,12 @@ bool SceneWin::PreUpdate()
 // Called each loop iteration
 bool SceneWin::Update(float dt)
 {
+	if (playFX == true)
+	{
+		app->audio->PlayFX(victoryFX);
+		playFX = false;
+	}
+
 	return true;
 }
 
@@ -124,6 +138,9 @@ bool SceneWin::CleanUp()
 	LOG("Freeing Win Screen");
 
 	app->map->CleanUp();
+
+	app->audio->UnloadFX(victoryFX);
+
 	active = false;
 
 	return true;

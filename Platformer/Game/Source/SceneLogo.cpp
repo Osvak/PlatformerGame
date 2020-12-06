@@ -37,11 +37,10 @@ bool SceneLogo::Start()
 {
 	app->currentScene = LOGO;
 
+	//
+	// Load Map
+	//
 	img = app->tex->Load("Assets/maps/scene_logo.png");
-
-	logoFX = app->audio->LoadFX("Assets/audio/fx/logo.wav");
-	app->musicList.Add(&logoFX);
-
 	imgW = (int)app->win->GetWidth() / (int)app->win->GetScale();
 	imgH = (int)app->win->GetHeight() / (int)app->win->GetScale();
 
@@ -50,8 +49,21 @@ bool SceneLogo::Start()
 		LOG("Error on QueryTexture");
 	}
 
+	//
+	// Load music
+	//
+	logoFX = app->audio->LoadFX("Assets/audio/fx/logo.wav");
+	app->musicList.Add(&logoFX);
+
+	//
+	// Move camera
+	//
 	app->render->camera.x = app->render->camera.y = 0;
 
+
+	//
+	// Reset flags
+	//
 	nextSceneCounter = 0;
 	transition = false;
 
