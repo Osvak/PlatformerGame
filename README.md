@@ -20,7 +20,7 @@ This new revolutionary game will break the standards of 2D platformers. A new ta
  - Player double jump
  - Second level
  - Camera window
- - Game stable at 60
+ - Game stable at 60 FPS
  - Game title showing FPS data
  - Game item to increase lifes
  - Checkpoint autosave with feedback on passing
