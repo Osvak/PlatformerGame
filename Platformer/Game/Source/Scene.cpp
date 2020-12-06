@@ -83,18 +83,33 @@ bool Scene::Update(float dt)
 	if(app->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		app->LoadGameRequest();
 
-	if(app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		app->render->camera.y += 15;
+	if (app->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
+	{
+		if (freeCamera == false)
+		{
+			freeCamera = true;
+		}
+		else
+		{
+			freeCamera = false;
+		}
+	}
 
-	if(app->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		app->render->camera.y -= 15;
+	if (freeCamera == true)
+	{
 
-	if(app->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		app->render->camera.x += 15;
+		if (app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+			app->render->camera.y += 15;
 
-	if(app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-		app->render->camera.x -= 15;
+		if (app->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+			app->render->camera.y -= 15;
 
+		if (app->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+			app->render->camera.x += 15;
+
+		if (app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+			app->render->camera.x -= 15;
+	}
 
 	// Draw Map
 	app->map->Draw();

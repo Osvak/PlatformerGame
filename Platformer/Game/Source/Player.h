@@ -89,6 +89,7 @@ private:
 
 	void ControlWallCollision(Collider* c1);
 	void ControlPlatformCollision(Collider* c1);
+	void ControlCameraMovement(Collider* c1);
 
 public:
 

@@ -33,6 +33,9 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
+public:
+	bool freeCamera = false;
+
 };
 
 #endif // __SCENE_H__

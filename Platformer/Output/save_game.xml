@@ -8,9 +8,9 @@
 	<scene2 />
 	<map />
 	<player>
-		<position positionX="48" positionY="176" />
+		<position positionX="149" positionY="176" />
 		<velocity velocityX="0" velocityY="0" />
-		<state playerstate="0" horizontaldirection="1" />
+		<state playerstate="0" horizontaldirection="-1" />
 		<level currentlevel="1" />
 	</player>
 	<:anonymous />
@@ -20,6 +20,6 @@
 	<sceneLose />
 	<fade />
 	<renderer>
-		<camera x="-48" y="0" />
+		<camera x="242" y="80" />
 	</renderer>
 </save_state>

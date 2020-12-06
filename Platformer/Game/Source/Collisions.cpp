@@ -204,6 +204,9 @@ void Collisions::DebugDraw()
 		case Collider::ColliderType::GOD_MODE:
 			app->render->DrawRectangle(colliders[i]->rect, 255, 255, 255, alpha); // white
 			break;
+		case Collider::ColliderType::CAMERA_WINDOW:
+			app->render->DrawRectangle(colliders[i]->rect, 250, 110, 190, alpha); // bubble gum pink
+			break;
 		}
 		//printf("Tile id %d with Collider Type %d in (%d,%d)\n", i, colliders[i]->type, colliders[i]->rect.x, colliders[i]->rect.y); // Debug Collider list
 	}
