@@ -811,7 +811,7 @@ void Player::Jump(float dt)
 
 void Player::ControlWallCollision(Collider* c)
 {
-	if (isJumping == false)
+	if (isJumping == false || isTouchingGround == false)
 	{
 		if (position.x < (c->rect.x + c->rect.w) &&
 			horizontalDirection == -1)

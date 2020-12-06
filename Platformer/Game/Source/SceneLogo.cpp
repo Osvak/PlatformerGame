@@ -5,6 +5,7 @@
 #include "Window.h"
 #include "Render.h"
 #include "Input.h"
+#include "Map.h"
 #include "FadeToBlack.h"
 
 #include "Log.h"
@@ -74,7 +75,6 @@ bool SceneLogo::PostUpdate()
 		|| app->input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN)
 	{
 		app->fadeToBlack->Fade(this, (Module*)app->sceneTitle, 60.0f);
-		//CleanUp();
 		return true;
 	}
 
@@ -97,6 +97,7 @@ bool SceneLogo::CleanUp()
 	LOG("Freeing Logo Screen");
 
 	app->tex->UnLoad(img);
+	app->map->CleanUp();
 	active = false;
 
 	return true;

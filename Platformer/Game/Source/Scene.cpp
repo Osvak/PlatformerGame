@@ -102,7 +102,6 @@ bool Scene::Update(float dt)
 
 	if (app->player->isWinning == true)
 	{
-		CleanUp();
 		app->fadeToBlack->Fade(this, (Module*)app->sceneWin, 60.0f);
 	}
 
@@ -135,9 +134,10 @@ bool Scene::CleanUp()
 		return true;
 	}
 
-	app->map->CleanUp();
 	app->collisions->CleanUp();
+	app->map->CleanUp();
 	app->player->CleanUp();
+
 
 	active = false;
 

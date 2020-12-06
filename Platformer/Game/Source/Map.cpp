@@ -79,12 +79,6 @@ bool Map::Start()
 				coords = app->map->MapToWorld(x, y);
 				tileset = app->map->GetTilesetFromTileId(tileId);
 
-				if (tileId == 310)
-				{
-					tileRect = tileset->GetTileRect(tileId);
-					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-					app->collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
-				}
 				if (tileId == 307)
 				{
 					tileRect = tileset->GetTileRect(tileId);
@@ -102,6 +96,12 @@ bool Map::Start()
 					tileRect = tileset->GetTileRect(tileId);
 					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
 					app->collisions->AddCollider(colliderRect, Collider::ColliderType::NEXT_LEVEL, this);
+				}
+				if (tileId == 310)
+				{
+					tileRect = tileset->GetTileRect(tileId);
+					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+					app->collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
 				}
 			}
 		}
