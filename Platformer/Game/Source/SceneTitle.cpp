@@ -8,6 +8,7 @@
 #include "Map.h"
 #include "FadeToBlack.h"
 #include "SceneLogo.h"
+#include "Player.h"
 
 #include "Log.h"
 
@@ -61,6 +62,10 @@ bool SceneTitle::Start()
 	app->render->camera.x = 0;
 	app->render->camera.y = 0;
 
+	//
+	// Reset lifes counter
+	//
+	app->player->lifes = 3;
 
 	return true;
 }

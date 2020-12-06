@@ -41,6 +41,10 @@ bool Player::Awake(pugi::xml_node& config)
 
 	bool ret = true;
 
+	//
+	// Set the lifes to 3
+	//
+	lifes = 3;
 
 	//
 	// Animation pushbacks
@@ -94,11 +98,7 @@ bool Player::Start()
 	//
 	lifesTexture = app->tex->Load("Assets/textures/items/heart_sprite.png");
 
-
 	//
-	//
-	//
-
 	// Load Player FX files
 	//
 	jumpFX = app->audio->LoadFX("Assets/audio/fx/jump.wav");
@@ -148,15 +148,13 @@ bool Player::Start()
 	isJumping = false;
 	isWinning = false;
 	isDying = false;
-	lifes = 3;
 	savedPos = { TILE_SIZE * 8, TILE_SIZE * 16 };
 	state = IDLE;
+	
 	if (app->lastScene == TITLE)
 	{
 		destroyed = false;
 	}
-
-
 	return true;
 }
 

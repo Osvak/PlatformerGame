@@ -132,6 +132,14 @@ bool Scene2::Update(float dt)
 	// Draw Map
 	app->map->Draw();
 
+	SDL_Rect lifesRect;
+	lifesRect.x = app->player->cameraCollider->rect.x - (TILE_SIZE * 5);
+	lifesRect.y = app->player->cameraCollider->rect.y - (TILE_SIZE * 4);
+
+	for (int i = 0; i < app->player->lifes; i++)
+	{
+		app->render->DrawTexture(app->player->lifesTexture, lifesRect.x + 17 * i, lifesRect.y);
+	}
 
 	if (app->player->isWinning == true)
 	{

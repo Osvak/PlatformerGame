@@ -151,17 +151,18 @@ bool Scene::Update(float dt)
 
 	//SDL_Rect cpRect = currentAnim->GetCurrentFrame();
 	SDL_Rect lifesRect;
-	//lifesRect.x = app->player->cameraCollider->rect.x - (TILE_SIZE * 5);
-	//lifesRect.y = app->player->cameraCollider->rect.y - (TILE_SIZE * 4);
+	lifesRect.x = app->player->cameraCollider->rect.x - (TILE_SIZE * 5);
+	lifesRect.y = app->player->cameraCollider->rect.y - (TILE_SIZE * 4);
 
-	lifesRect.x = -(app->render->camera.x - (TILE_SIZE * 3));
-	lifesRect.y = -(app->render->camera.y - (TILE_SIZE * -18)) * 2.5f;
+	//lifesRect.x = -(app->render->camera.x - (TILE_SIZE * -3));
+	//lifesRect.y = -(app->render->camera.y - (TILE_SIZE * -13));
+		
+	for (int i = 0; i < app->player->lifes; i++)
+	{
+		app->render->DrawTexture(app->player->lifesTexture, lifesRect.x + 17 * i, lifesRect.y);
+	}
 
 	//app->render->DrawTexture(app->scene->cpTexture, TILE_SIZE * 38, TILE_SIZE * 14, &cpRect);
-
-	app->render->DrawTexture(app->player->lifesTexture, lifesRect.x, lifesRect.y);
-	
-
 
 	if (app->player->isWinning == true)
 	{
