@@ -1,5 +1,5 @@
-#ifndef __SCENE2_H__
-#define __SCENE2_H__
+#ifndef __LEVEL1_H__
+#define __LEVEL1_H__
 
 #include "Module.h"
 
@@ -7,18 +7,20 @@
 
 struct SDL_Texture;
 
-class Scene2 : public Module
+
+
+class Level1 : public Module
 {
 public:
 
-	Scene2();
+	Level1();
 
 	// Destructor
-	virtual ~Scene2();
+	virtual ~Level1();
 
 
 	// Called before render is available
-	bool Awake();
+	bool Awake(pugi::xml_node& config);
 
 	// Called before the first frame
 	bool Start();
@@ -36,10 +38,11 @@ public:
 	bool CleanUp();
 
 	// Checkpoint activation
-	bool Cp2Activation();
+	bool Cp1Activation();
 
 
 public:
+	// Checkpoint Variables
 	Collider* checkPointCollider = nullptr;
 	SDL_Texture* cpTexture = nullptr;
 
@@ -47,8 +50,6 @@ public:
 
 	Animation* cpIdleAnim = new Animation();
 	Animation* cpActiveAnim = new Animation();
-
-
 
 	// Checkpoint flags
 	bool isCpActive = false;
@@ -59,4 +60,4 @@ public:
 
 };
 
-#endif // __SCENE2_H__
+#endif // __LEVEL1_H__

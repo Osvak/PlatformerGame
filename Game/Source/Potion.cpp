@@ -40,7 +40,7 @@ bool Potion::Start()
 	//
 	// Load Lifes texture files 
 	//
-	potionTexture = app->tex->Load("Assets/textures/items/potion_sprite.png");
+	potionTexture = app->tex->Load("Assets/Textures/Items/potion_sprite.png");
 
 	//
 	// Create Potion collider

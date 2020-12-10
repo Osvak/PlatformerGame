@@ -43,7 +43,7 @@ bool SceneTitle::Start()
 	// Load map
 	//
 	app->map->Load("scene_title.tmx");
-	pressEnterToStart = app->tex->Load("Assets/maps/press_enter_to_start.png");
+	pressEnterToStart = app->tex->Load("Assets/Maps/press_enter_to_start.png");
 
 	//
 	// Activate modules
@@ -54,7 +54,7 @@ bool SceneTitle::Start()
 	//
 	// Load music
 	//
-	app->audio->PlayMusic("Assets/audio/music/title_screen_music.ogg");
+	app->audio->PlayMusic("Assets/Audio/Music/title_screen_music.ogg");
 
 	//
 	// Move camera
@@ -117,17 +117,17 @@ bool SceneTitle::PostUpdate()
 		app->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN ||
 		app->input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->scene, 60.0f);
+		app->fadeToBlack->Fade(this, (Module*)app->level1, 60.0f);
 		return true;
 	}
 	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->scene, 60.0f);
+		app->fadeToBlack->Fade(this, (Module*)app->level1, 60.0f);
 		return true;
 	}
 	if (app->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->scene2, 60.0f);
+		app->fadeToBlack->Fade(this, (Module*)app->level2, 60.0f);
 		return true;
 	}
 	

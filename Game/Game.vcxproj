@@ -101,9 +101,9 @@
     <ClCompile Include="Source\PerfTimer.cpp" />
     <ClCompile Include="Source\Player.cpp" />
     <ClCompile Include="Source\Potion.cpp" />
-    <ClCompile Include="Source\Scene.cpp" />
+    <ClCompile Include="Source\Level1.cpp" />
     <ClCompile Include="Source\Render.cpp" />
-    <ClCompile Include="Source\Scene2.cpp" />
+    <ClCompile Include="Source\Level2.cpp" />
     <ClCompile Include="Source\SceneLogo.cpp" />
     <ClCompile Include="Source\SceneLose.cpp" />
     <ClCompile Include="Source\SceneTitle.cpp" />
@@ -120,13 +120,13 @@
     <ClInclude Include="Source\Player.h" />
     <ClInclude Include="Source\Potion.h" />
     <ClInclude Include="Source\PQueue.h" />
-    <ClInclude Include="Source\Scene.h" />
+    <ClInclude Include="Source\Level1.h" />
     <ClInclude Include="Source\Audio.h" />
     <ClInclude Include="Source\Input.h" />
     <ClInclude Include="Source\App.h" />
     <ClInclude Include="Source\Module.h" />
     <ClInclude Include="Source\Render.h" />
-    <ClInclude Include="Source\Scene2.h" />
+    <ClInclude Include="Source\Level2.h" />
     <ClInclude Include="Source\SceneLogo.h" />
     <ClInclude Include="Source\SceneLose.h" />
     <ClInclude Include="Source\SceneTitle.h" />

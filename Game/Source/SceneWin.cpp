@@ -1,4 +1,4 @@
-#include "SceneLose.h"
+#include "SceneWin.h"
 
 #include "App.h"
 #include "Audio.h"
@@ -9,36 +9,37 @@
 
 #include "Log.h"
 
- // Constructor
-SceneLose::SceneLose() : Module()
+
+// Constructor
+SceneWin::SceneWin() : Module()
 {
-	name.Create("sceneLose");
+	name.Create("sceneWin");
 }
 
- // Destructor
-SceneLose::~SceneLose()
+// Destructor
+SceneWin::~SceneWin()
 {
 
 }
+
 
 // Called before render is available
-bool SceneLose::Awake()
+bool SceneWin::Awake()
 {
-	LOG("Loading Lose Screen");
+	LOG("Loading Win Screen");
 
 	return true;
 }
 
- // Called before the first frame / when activated
-bool SceneLose::Start()
+// Called before the first frame / when activated
+bool SceneWin::Start()
 {
-	
-	app->currentScene = LOSE;
+	app->currentScene = WIN;
 
 	//
 	// Load map
 	//
-	app->map->Load("scene_lose.tmx");
+	app->map->Load("scene_win.tmx");
 
 	//
 	// Activate modules
@@ -50,8 +51,8 @@ bool SceneLose::Start()
 	// Load music
 	//
 	app->audio->StopMusic();
-	gameOverFX = app->audio->LoadFX("Assets/audio/fx/game_over.wav");
-	app->musicList.Add(&gameOverFX);
+	victoryFX = app->audio->LoadFX("Assets/Audio/FX/victory.wav");
+	app->musicList.Add(&victoryFX);
 
 	//
 	// Move camera
@@ -59,29 +60,36 @@ bool SceneLose::Start()
 	app->render->camera.x = 0;
 	app->render->camera.y = 0;
 
+	//
+	// Flags reset
+	//
+	playFX = true;
+
+
 	return true;
 }
 
+
 // Called before the Update
-bool SceneLose::PreUpdate()
+bool SceneWin::PreUpdate()
 {
 	return true;
 }
 
 // Called each loop iteration
-bool SceneLose::Update(float dt)
+bool SceneWin::Update(float dt)
 {
 	if (playFX == true)
 	{
-		app->audio->PlayFX(gameOverFX);
+		app->audio->PlayFX(victoryFX);
 		playFX = false;
 	}
 
 	return true;
 }
 
- // Called after Updates
-bool SceneLose::PostUpdate()
+// Called after Updates
+bool SceneWin::PostUpdate()
 {
 	bool ret = true;
 
@@ -104,15 +112,15 @@ bool SceneLose::PostUpdate()
 		app->fadeToBlack->Fade(this, (Module*)app->sceneTitle, 60.0f);
 		return true;
 	}
-	
+
 	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->scene, 60.0f);
+		app->fadeToBlack->Fade(this, (Module*)app->level1, 60.0f);
 		return true;
 	}
 	if (app->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->scene2, 60.0f);
+		app->fadeToBlack->Fade(this, (Module*)app->level2, 60.0f);
 		return true;
 	}
 
@@ -120,18 +128,18 @@ bool SceneLose::PostUpdate()
 }
 
 // Called before quitting, frees memory and controls activa and inactive modules
-bool SceneLose::CleanUp()
+bool SceneWin::CleanUp()
 {
 	if (!active)
 	{
 		return true;
 	}
 
-	LOG("Freeing Lose Screen");
+	LOG("Freeing Win Screen");
 
 	app->map->CleanUp();
 
-	app->audio->UnloadFX(gameOverFX);
+	app->audio->UnloadFX(victoryFX);
 
 	active = false;
 

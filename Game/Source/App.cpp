@@ -5,8 +5,8 @@
 #include "Render.h"
 #include "Textures.h"
 #include "Audio.h"
-#include "Scene.h"
-#include "Scene2.h"
+#include "Level1.h"
+#include "Level2.h"
 #include "Map.h"
 #include "Player.h"
 #include "Collisions.h"
@@ -37,8 +37,8 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	render = new Render();
 	tex = new Textures();
 	audio = new Audio();
-	scene = new Scene();
-	scene2 = new Scene2();
+	level1 = new Level1();
+	level2 = new Level2();
 	map = new Map();
 	player = new Player();
 	collisions = new Collisions();
@@ -55,8 +55,8 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(input);
 	AddModule(tex);
 	AddModule(audio);
-	AddModule(scene);
-	AddModule(scene2);
+	AddModule(level1);
+	AddModule(level2);
 	AddModule(map);
 	AddModule(player);
 	AddModule(collisions);
@@ -73,8 +73,8 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 
 	// Start inactive
 	sceneTitle->active = false;
-	scene->active = false;
-	scene2->active = false;
+	level1->active = false;
+	level2->active = false;
 	sceneWin->active = false;
 	sceneLose->active = false;
 	player->active = false;

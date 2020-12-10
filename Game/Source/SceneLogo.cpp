@@ -40,7 +40,7 @@ bool SceneLogo::Start()
 	//
 	// Load Map
 	//
-	img = app->tex->Load("Assets/maps/scene_logo.png");
+	img = app->tex->Load("Assets/Maps/scene_logo.png");
 	imgW = (int)app->win->GetWidth() / (int)app->win->GetScale();
 	imgH = (int)app->win->GetHeight() / (int)app->win->GetScale();
 
@@ -52,7 +52,7 @@ bool SceneLogo::Start()
 	//
 	// Load music
 	//
-	logoFX = app->audio->LoadFX("Assets/audio/fx/logo.wav");
+	logoFX = app->audio->LoadFX("Assets/Audio/FX/logo.wav");
 	app->musicList.Add(&logoFX);
 
 	//
@@ -120,14 +120,14 @@ bool SceneLogo::PostUpdate()
 
 	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->scene, 60.0f);
+		app->fadeToBlack->Fade(this, (Module*)app->level1, 60.0f);
 		transition = true;
 		nextSceneCounter = 0;
 		return true;
 	}
 	if (app->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->scene2, 60.0f);
+		app->fadeToBlack->Fade(this, (Module*)app->level2, 60.0f);
 		transition = true;
 		nextSceneCounter = 0;
 		return true;

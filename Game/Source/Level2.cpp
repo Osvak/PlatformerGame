@@ -1,4 +1,4 @@
-#include "Scene.h"
+#include "Level2.h"
 
 #include "App.h"
 #include "Input.h"
@@ -10,26 +10,26 @@
 #include "Player.h"
 #include "Collisions.h"
 #include "FadeToBlack.h"
+#include "Potion.h"
 
 #include "Log.h"
 
 #include "SDL/include/SDL_rect.h"
 
-
 // Constructor
-Scene::Scene() : Module()
+Level2::Level2() : Module()
 {
-	name.Create("scene");
+	name.Create("level2");
 }
 
 // Destructor
-Scene::~Scene()
+Level2::~Level2()
 {}
 
 // Called before render is available
-bool Scene::Awake(pugi::xml_node& config)
+bool Level2::Awake()
 {
-	LOG("Loading Scene");
+	LOG("Loading Scene 2");
 	bool ret = true;
 
 	//
@@ -50,41 +50,46 @@ bool Scene::Awake(pugi::xml_node& config)
 }
 
 // Called before the first frame
-bool Scene::Start()
+bool Level2::Start()
 {
-	app->currentScene = LEVEL1;
+	app->currentScene = LEVEL2;
 
 	//
 	// Activate modules
 	//
 	active = true;
 	app->player->Start();
-	
+
 	//
 	// Load map
 	//
-	app->map->Load("map.tmx");
+	app->map->Load("map2.tmx");
 	app->map->Start();
 
 	//
 	// Load textures
 	//
-	cpTexture = app->tex->Load("Assets/textures/items/checkpoint_sheet.png");
+	cpTexture = app->tex->Load("Assets/Textures/Items/checkpoint_sheet.png");
 
 	//
 	// Load music
 	//
-	app->audio->PlayMusic("Assets/audio/music/map_1_music.ogg");
+	app->audio->PlayMusic("Assets/Audio/Music/map2_music.ogg");
 
 	//
 	// Move Camera to starting position
 	//
 	app->render->camera.x = -((int)app->win->GetScale() * TILE_SIZE);
-	app->render->camera.y = -((int)app->win->GetScale() * TILE_SIZE * 2);
+	app->render->camera.y = -((int)app->win->GetScale() * TILE_SIZE * 14);
 
 	// Checkpoint collider
 
-	checkPointCollider = app->collisions->AddCollider({ TILE_SIZE * 38, TILE_SIZE * 14, 12, 20 }, Collider::ColliderType::CHECKPOINT, this);
+	checkPointCollider = app->collisions->AddCollider({ TILE_SIZE * 44, TILE_SIZE * 20, 12, 20 }, Collider::ColliderType::CHECKPOINT, this);
+	app->potion->potionCollider = app->collisions->AddCollider({ app->potion->potionPosition.x, app->potion->potionPosition.y, 8, 10 }, Collider::ColliderType::POTION, this);
+
+	// Set savedPos to the start of the level 2
+	app->player->savedPos.x = TILE_SIZE * 3;
+	app->player->savedPos.y = TILE_SIZE * 24;
 
 	//
 	// Set current animation
@@ -96,21 +101,21 @@ bool Scene::Start()
 }
 
 // Called each loop iteration
-bool Scene::PreUpdate()
+bool Level2::PreUpdate()
 {
 	return true;
 }
 
 // Called each loop iteration
-bool Scene::Update(float dt)
+bool Level2::Update(float dt)
 {
-    //
+	//
 	// Scene controls
 	//
-	if(app->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
+	if (app->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
 		app->SaveGameRequest();
 
-	if(app->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
+	if (app->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 		app->LoadGameRequest();
 
 	if (app->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
@@ -150,39 +155,44 @@ bool Scene::Update(float dt)
 	// Draw Map
 	app->map->Draw();
 
-	//SDL_Rect cpRect = currentAnim->GetCurrentFrame();
 	SDL_Rect lifesRect;
 	SDL_Rect cpRect;
 
 	// Lifes HUD Draw
 	lifesRect.x = app->player->cameraCollider->rect.x - (TILE_SIZE * 5);
 	lifesRect.y = app->player->cameraCollider->rect.y - (TILE_SIZE * 4);
-		
+
+
 	for (int i = 0; i < app->player->lifes; i++)
 	{
 		app->render->DrawTexture(app->player->lifesTexture, lifesRect.x + 17 * i, lifesRect.y);
 	}
 
 	// Checkpoint Draw
-	
+
 	// Animation Update
-	
+
 	currentAnim->Update();
 
 	cpRect = currentAnim->GetCurrentFrame();
 
-	app->render->DrawTexture(app->scene->cpTexture, TILE_SIZE * 38, TILE_SIZE * 14 - 4, &cpRect);
+	app->render->DrawTexture(app->level2->cpTexture, TILE_SIZE * 44, TILE_SIZE * 20 - 4, &cpRect);
 
 
+
+	if (app->potion->isCollected == false)
+	{
+		app->render->DrawTexture(app->potion->potionTexture, app->potion->potionPosition.x, app->potion->potionPosition.y);
+	}
 
 	if (app->player->isWinning == true)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->scene2, 60.0f);
+		app->fadeToBlack->Fade(this, (Module*)app->sceneWin, 60.0f);
 	}
 
 	if (app->player->isDying == true)
 	{
-	if (app->player->lifes <= 0)
+		if (app->player->lifes <= 0)
 		{
 			app->fadeToBlack->Fade(this, (Module*)app->sceneLose, 60.0f);
 		}
@@ -190,12 +200,12 @@ bool Scene::Update(float dt)
 
 	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
-		app->fadeToBlack->Fade(this, this, 60.0f);
+		app->fadeToBlack->Fade(this, (Module*)app->level1, 60.0f);
 		return true;
 	}
 	if (app->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
 	{
-		app->fadeToBlack->Fade(this, (Module*)app->scene2, 60.0f);
+		app->fadeToBlack->Fade(this, this, 60.0f);
 		return true;
 	}
 	if (app->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
@@ -204,55 +214,41 @@ bool Scene::Update(float dt)
 		return true;
 	}
 
-	
-
-	if (isCpActive == true)
-	{
-
-		currentAnim = cpActiveAnim;
-	}
-
 	return true;
 }
 
 // Called each loop iteration
-bool Scene::PostUpdate()
+bool Level2::PostUpdate()
 {
 	bool ret = true;
 
-	if(app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-
+	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 		ret = false;
 
 	return ret;
 }
 
 
-bool Scene::Cp1Activation()
+bool Level2::Cp2Activation()
 {
 	isCpActive = true;
 
-	currentAnim = cpActiveAnim;
-
-	app->player->savedPos.x = TILE_SIZE * 38;
-	app->player->savedPos.y = TILE_SIZE * 14;
-
-	//app->SaveGameRequest();
+	app->player->savedPos.x = TILE_SIZE * 44;
+	app->player->savedPos.y = TILE_SIZE * 20;
 
 	return true;
 }
 
 // Called before quitting
-bool Scene::CleanUp()
+bool Level2::CleanUp()
 {
-	LOG("Freeing scene");
+	LOG("Freeing Level 2");
 
 	if (!active)
 	{
 		return true;
 	}
 
-	
 	app->tex->UnLoad(cpTexture);
 
 	app->collisions->CleanUp();
@@ -260,7 +256,6 @@ bool Scene::CleanUp()
 	app->player->CleanUp();
 
 	isCpActive = false;
-
 
 	active = false;
 

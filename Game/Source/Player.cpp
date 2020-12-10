@@ -8,10 +8,9 @@
 #include "Audio.h"
 #include "Map.h"
 #include "Collisions.h"
-#include "Scene.h"
 #include "FadeToBlack.h"
-#include "Scene.h"
-#include "Scene2.h"
+#include "Level1.h"
+#include "Level2.h"
 #include "Potion.h"
 
 #include "Log.h"
@@ -92,25 +91,25 @@ bool Player::Start()
 	//
 	// Load Player textures files
 	//
-	playerTexture = app->tex->Load("Assets/textures/character/adventurer-v1.5-Sheet.png");
+	playerTexture = app->tex->Load("Assets/Textures/Player/player_sheet.png");
 
 	//
 	// Load Lifes texture files 
 	//
-	lifesTexture = app->tex->Load("Assets/textures/items/heart_sprite.png");
+	lifesTexture = app->tex->Load("Assets/Textures/Items/heart_sprite.png");
 
 	//
 	// Load Player FX files
 	//
-	jumpFX = app->audio->LoadFX("Assets/audio/fx/jump.wav");
+	jumpFX = app->audio->LoadFX("Assets/Audio/FX/jump.wav");
 	app->musicList.Add(&jumpFX);
-	secondJumpFX = app->audio->LoadFX("Assets/audio/fx/second_jump.wav");
+	secondJumpFX = app->audio->LoadFX("Assets/Audio/FX/second_jump.wav");
 	app->musicList.Add(&secondJumpFX);
-	oofFX = app->audio->LoadFX("Assets/audio/fx/oof.wav");
+	oofFX = app->audio->LoadFX("Assets/Audio/FX/oof.wav");
 	app->musicList.Add(&oofFX);
-	checkpointFX = app->audio->LoadFX("Assets/audio/fx/checkpoint.wav");
+	checkpointFX = app->audio->LoadFX("Assets/Audio/FX/checkpoint.wav");
 	app->musicList.Add(&checkpointFX);
-	nextLevelFX = app->audio->LoadFX("Assets/audio/fx/next_level.wav");
+	nextLevelFX = app->audio->LoadFX("Assets/Audio/FX/next_level.wav");
 
 	//
 	// Set initial position
@@ -654,7 +653,7 @@ void Player::UpdateLogic(float dt)
 	//
 	// Update Camera Position
 	//
-	if (app->scene->freeCamera == false)
+	if (app->level1->freeCamera == false)
 	{
 		app->render->camera.x = -(cameraCollider->rect.x - (TILE_SIZE * 6)) * (int)app->win->GetScale();
 		app->render->camera.y = -(cameraCollider->rect.y - (TILE_SIZE * 5)) * (int)app->win->GetScale();
@@ -837,11 +836,11 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 		app->audio->PlayFX(checkpointFX, 0);
 		if (app->currentScene == LEVEL1)
 		{
-			app->scene->Cp1Activation();
+			app->level1->Cp1Activation();
 		}
 		if (app->currentScene == LEVEL2)
 		{
-			app->scene2->Cp2Activation();
+			app->level2->Cp2Activation();
 		}
 	}
 
@@ -869,7 +868,7 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 	case 1:
 		if (app->currentScene == LEVEL2)
 		{
-			app->fadeToBlack->Fade((Module*)app->scene2, (Module*)app->scene, 60.0f);
+			app->fadeToBlack->Fade((Module*)app->level2, (Module*)app->level1, 60.0f);
 		}
 		app->currentScene = LEVEL1;
 		break;
@@ -877,7 +876,7 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 	case 2:
 		if (app->currentScene == LEVEL1)
 		{
-			app->fadeToBlack->Fade((Module*)app->scene, (Module*)app->scene2, 60.0f);
+			app->fadeToBlack->Fade((Module*)app->level1, (Module*)app->level2, 60.0f);
 		}
 		app->currentScene = LEVEL2;
 		break;
