@@ -64,7 +64,6 @@ bool Level1::Start()
 	// Load map
 	//
 	app->map->Load("map1.tmx");
-	app->map->Start();
 
 	//
 	// Load textures

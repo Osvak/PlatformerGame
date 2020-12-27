@@ -11,7 +11,7 @@
  </tileset>
  <layer id="2" name="background" width="27" height="15">
   <properties>
-   <property name="visible" type="bool" value="true"/>
+   <property name="visible" type="int" value="1"/>
   </properties>
   <data>
    <tile gid="10"/>
@@ -422,6 +422,9 @@
   </data>
  </layer>
  <layer id="3" name="details" width="27" height="15">
+  <properties>
+   <property name="visible" type="int" value="1"/>
+  </properties>
   <data>
    <tile/>
    <tile/>
@@ -832,7 +835,7 @@
  </layer>
  <layer id="4" name="text" width="27" height="15">
   <properties>
-   <property name="visible" type="bool" value="true"/>
+   <property name="visible" type="int" value="1"/>
   </properties>
   <data>
    <tile/>

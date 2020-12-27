@@ -125,11 +125,16 @@ public:
     // Called before render is available
     bool Awake(pugi::xml_node& conf);
 
-	// Called before the first frame
-	bool Start();
 
-    // Called each loop iteration
+	// Creates the colliders off the map layers
+	bool CreateColliders();
+
+    // Draws the map
     void Draw();
+
+	// Draw each layer of the map
+	void DrawLayer( int num);
+
 
     // Called before quitting
     bool CleanUp();

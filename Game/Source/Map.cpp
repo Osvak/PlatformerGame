@@ -28,19 +28,16 @@ Map::~Map()
 // Ask for the value of a custom property
 int Properties::GetProperty(const char* value, int defaultValue) const
 {
-	for (int i = 0; i < propertyList.Count(); i++)
+	ListItem<Property*>* item = propertyList.start;
+
+	while (item != NULL)
 	{
-		if (strcmp(propertyList.At(i)->data->name.GetString(), value) == 0) // Checks the name of the property
+		if (item->data->name == value)
 		{
-			if (propertyList.At(i)->data->value != defaultValue) // Checks if the value the property has is different than what we gave
-			{
-				return propertyList.At(i)->data->value; // Returns the new value
-			}
-			else 
-			{
-				return defaultValue;
-			}
+			return item->data->value;
 		}
+
+		item = item->next;
 	}
 
 	return defaultValue;
@@ -58,7 +55,7 @@ bool Map::Awake(pugi::xml_node& config)
 }
 
 // Called before the first frame
-bool Map::Start()
+bool Map::CreateColliders()
 {
 	MapLayer* layer;
 	TileSet* tileset;
@@ -79,83 +76,29 @@ bool Map::Start()
 				coords = app->map->MapToWorld(x, y);
 				tileset = app->map->GetTilesetFromTileId(tileId);
 
-				if (app->currentScene == LEVEL1)
+				if (tileId == 1)
 				{
-					if (tileId == 307)
-					{
-						tileRect = tileset->GetTileRect(tileId);
-						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-						if (app->currentScene == LEVEL1)
-						{
-							app->collisions->AddCollider(colliderRect, Collider::ColliderType::PLATFORM, this);
-						}
-					}
-					if (tileId == 308)
-					{
-						tileRect = tileset->GetTileRect(tileId);
-						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-						if (app->currentScene == LEVEL1)
-						{
-							app->collisions->AddCollider(colliderRect, Collider::ColliderType::DIE, this);
-						}
-					}
-					if (tileId == 309)
-					{
-						tileRect = tileset->GetTileRect(tileId);
-						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-						if (app->currentScene == LEVEL1)
-						{
-							app->collisions->AddCollider(colliderRect, Collider::ColliderType::NEXT_LEVEL, this);
-						}
-					}
-					if (tileId == 310)
-					{
-						tileRect = tileset->GetTileRect(tileId);
-						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-						if (app->currentScene == LEVEL1)
-						{
-							app->collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
-						}
-					}
+					tileRect = tileset->GetTileRect(tileId);
+					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+					app->collisions->AddCollider(colliderRect, Collider::ColliderType::PLATFORM, this);
 				}
-				if (app->currentScene == LEVEL2)
+				if (tileId == 2)
 				{
-					if (tileId == 995)
-					{
-						tileRect = tileset->GetTileRect(tileId);
-						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-						if (app->currentScene == LEVEL2)
-						{
-							app->collisions->AddCollider(colliderRect, Collider::ColliderType::PLATFORM, this);
-						}
-					}
-					if (tileId == 996)
-					{
-						tileRect = tileset->GetTileRect(tileId);
-						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-						if (app->currentScene == LEVEL2)
-						{
-							app->collisions->AddCollider(colliderRect, Collider::ColliderType::DIE, this);
-						}
-					}
-					if (tileId == 997)
-					{
-						tileRect = tileset->GetTileRect(tileId);
-						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-						if (app->currentScene == LEVEL2)
-						{
-							app->collisions->AddCollider(colliderRect, Collider::ColliderType::NEXT_LEVEL, this);
-						}
-					}
-					if (tileId == 998)
-					{
-						tileRect = tileset->GetTileRect(tileId);
-						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-						if (app->currentScene == LEVEL2)
-						{
-							app->collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
-						}
-					}
+					tileRect = tileset->GetTileRect(tileId);
+					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+					app->collisions->AddCollider(colliderRect, Collider::ColliderType::DIE, this);
+				}
+				if (tileId == 3)
+				{
+					tileRect = tileset->GetTileRect(tileId);
+					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+					app->collisions->AddCollider(colliderRect, Collider::ColliderType::NEXT_LEVEL, this);
+				}
+				if (tileId == 4)
+				{
+					tileRect = tileset->GetTileRect(tileId);
+					colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+					app->collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
 				}
 			}
 		}
@@ -167,46 +110,47 @@ bool Map::Start()
 	return true;
 }
 
-// Draw the map (all requried layers)
+// Draw the map
 void Map::Draw()
 {
 	if (mapLoaded == false) return;
 
-	// Prepare the loop to draw all tilesets + DrawTexture()
-	MapLayer* layer;
-	TileSet* tileset;
-	iPoint coord;
-
-
-	// Make sure we draw all the layers and not just the first one
-	for (ListItem<MapLayer*>* item = data.layers.start; item; item = item->next)
+	for (int i = 0; i < data.layers.Count(); i++)
 	{
-		layer = item->data;
+		if (data.layers[i]->properties.GetProperty("visible", 1) != 0)
+		{
+			DrawLayer(i);
+		}
+	}
+}
+
+// Draw each layer of the map
+void Map::DrawLayer(int num)
+{
+	if (num < data.layers.Count())
+	{
+		MapLayer* layer = data.layers[num];
 
 		for (int y = 0; y < data.height; ++y)
 		{
 			for (int x = 0; x < data.width; ++x)
 			{
 				int tileId = layer->Get(x, y);
-				coord = MapToWorld(x, y);
-				tileset = GetTilesetFromTileId(tileId);
 
 				if (tileId > 0)
 				{
-					// Complete the draw function
-					for (int i = 0; i < data.tilesets.Count(); ++i)
-					{
-						if ((data.layers.At(i)->data->properties.GetProperty("visible", true)) == true)
-						{
-							SDL_Rect rect = data.tilesets.At(i)->data->GetTileRect(tileId);
-							app->render->DrawTexture(tileset->texture, coord.x, coord.y, &rect);
-						}
-					}
+					TileSet* tileset = GetTilesetFromTileId(tileId);
+
+					SDL_Rect rec = tileset->GetTileRect(tileId);
+					iPoint pos = MapToWorld(x, y);
+
+					app->render->DrawTexture(tileset->texture, pos.x + tileset->offsetX, pos.y + tileset->offsetY, &rec);
 				}
 			}
 		}
 	}
 }
+
 
 // Method that translates x,y coordinates from map positions to world positions
 iPoint Map::MapToWorld(int x, int y) const
@@ -286,15 +230,15 @@ TileSet* Map::GetTilesetFromTileId(int id) const
 
 	if (app->currentScene == LEVEL1)
 	{
-		if (id < 137) // Checks for first tileset (tileset)
+		if (id < 5) // Checks for first tileset (collider)
 		{
 
 		}
-		else if (id >= 137 && id < 307) // Checks for second tileset (background)
+		else if (id >= 5 && id < 141) // Checks for second tileset (tileset)
 		{
 			item = item->next;
 		}
-		else if (id >= 307) // Checks for third tileset (collider / walls)
+		else if (id >= 141) // Checks for third tileset (background)
 		{
 			item = item->next;
 			item = item->next;
@@ -303,20 +247,20 @@ TileSet* Map::GetTilesetFromTileId(int id) const
 
 	if (app->currentScene == LEVEL2)
 	{
-		if (id < 859) // Checks for first tileset (background_2)
+		if (id < 5) // Checks for first tileset (collider)
 		{
 
 		}
-		else if (id >= 859 && id < 995) // Checks for second tileset (tileset)
+		else if (id >= 5 && id < 141) // Checks for second tileset (tileset)
 		{
 			item = item->next;
 		}
-		else if (id >= 995 && id < 999) // Checks for third tileset (collider)
+		else if (id >= 141 && id < 205) // Checks for third tileset (clouds)
 		{
 			item = item->next;
 			item = item->next;
 		}
-		else if (id >= 999) // Checks for fourth tileset (clouds)
+		else if (id >= 205) // Checks for fourth tileset (background)
 		{
 			item = item->next;
 			item = item->next;
@@ -447,7 +391,6 @@ bool Map::Load(const char* filename)
 		TileSet* set = new TileSet();
 
 		if (ret == true) ret = LoadTilesetDetails(tileset, set);
-
 		if (ret == true) ret = LoadTilesetImage(tileset, set);
 
 		data.tilesets.Add(set);
@@ -457,31 +400,19 @@ bool Map::Load(const char* filename)
 
 
 	// Load layer info
-	pugi::xml_node layerNode;
-	for (layerNode = mapFile.child("map").child("layer"); layerNode && ret; layerNode = layerNode.next_sibling("layer"))
+	pugi::xml_node layer;
+	for (layer = mapFile.child("map").child("layer"); layer && ret; layer = layer.next_sibling("layer"))
 	{
 		MapLayer* lay = new MapLayer();
 
-		ret = LoadLayer(layerNode, lay);
+		ret = LoadLayer(layer, lay);
 
-		if (ret == true)
-		{
-			//ret = LoadLayer(layerNode, lay);
-			data.layers.Add(lay);
-		}
-
-		//data.layers.Add(lay);
-
-		pugi::xml_node propertiesNode;
-		for (propertiesNode = layerNode.child("properties"); propertiesNode && ret; propertiesNode = propertiesNode.next_sibling("properties"))
-		{
-			Properties* property = new Properties();
-
-			ret = LoadProperties(propertiesNode, *property);
-
-			lay->properties = *property;
-		}
+		if (ret == true) data.layers.Add(lay);
 	}
+
+
+	CreateColliders();
+
 
 	if (ret == true)
 	{
@@ -618,32 +549,34 @@ bool Map::LoadTilesetImage(pugi::xml_node& tileset_node, TileSet* set)
 bool Map::LoadLayer(pugi::xml_node& node, MapLayer* layer)
 {
 	bool ret = true;
-	
-	// Load a single layer
-	// Header data
-	layer->name = node.attribute("name").as_string("");
-	layer->width = node.attribute("width").as_int(0);
-	layer->height = node.attribute("height").as_int(0);
 
-	// Tile array for the layer
-	uint* pointer = new uint[layer->width * layer->height];
-	memset(pointer, 0, layer->width * layer->height);
-	layer->data = pointer;
-	
-	if (layer->data == 0)
+	layer->name = node.attribute("name").as_string();
+	layer->width = node.attribute("width").as_int();
+	layer->height = node.attribute("height").as_int();
+	pugi::xml_node layerData = node.child("data");
+
+	if (layerData == NULL)
 	{
-		LOG("Array creation error");
+		LOG("Error with XML file.");
+
 		ret = false;
+		RELEASE(layer);
 	}
 	else
 	{
-		pugi::xml_node tileGidNode = node.child("data").child("tile");
+		layer->data = new uint[layer->width * layer->height];
+		memset(layer->data, 0, layer->width * layer->height);
 
-		for (int i = 0; tileGidNode && ret; tileGidNode = tileGidNode.next_sibling("tile"), ++i)
+		pugi::xml_node tile = layerData.child("tile");
+		for (int i = 0; tile; ++i)
 		{
-			layer->data[i] = tileGidNode.attribute("gid").as_uint(0);
+			layer->data[i] = tile.attribute("gid").as_int(0);
+			tile = tile.next_sibling("tile");
 		}
 	}
+
+	// Load layer properties
+	LoadProperties(node, layer->properties);
 
 	return ret;
 }
@@ -652,29 +585,24 @@ bool Map::LoadLayer(pugi::xml_node& node, MapLayer* layer)
 // Load a group of properties from a node and fill a list with it
 bool Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 {
-	bool ret = true;
+	bool ret = false;
 
-	pugi::xml_node propertyNode = node.child("property");
+	pugi::xml_node data = node.child("properties");
 
-
-	for (propertyNode; propertyNode && ret; propertyNode = propertyNode.next_sibling("property"))
+	if (data != NULL)
 	{
-		Properties::Property* propertyID = new Properties::Property();
-		propertyID->name = propertyNode.attribute("name").as_string("");
+		pugi::xml_node property;
 
-		Properties::Property* propertyType = new Properties::Property();
-		propertyType->name = propertyNode.attribute("type").as_string("");
-
-
-		if (propertyType->name == "int")
+		for (property = data.child("property"); property; property = property.next_sibling("property"))
 		{
-			propertyID->value = propertyNode.attribute("value").as_int(0);
+			Properties::Property* newProperty = new Properties::Property();
+
+			newProperty->name = property.attribute("name").as_string();
+			newProperty->value = property.attribute("value").as_int();
+
+			properties.propertyList.Add(newProperty);
 		}
-		if (propertyType->name == "bool")
-		{
-			propertyID->value = propertyNode.attribute("value").as_bool(false);
-		}
-		properties.propertyList.Add(propertyID);
 	}
+
 	return ret;
 }

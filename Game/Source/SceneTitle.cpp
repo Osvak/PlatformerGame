@@ -49,7 +49,6 @@ bool SceneTitle::Start()
 	// Activate modules
 	//
 	active = true;
-	app->map->Start();
 
 	//
 	// Load music
