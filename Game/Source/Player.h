@@ -76,6 +76,8 @@ public:
 
 	bool LoadState(pugi::xml_node&) override;
 
+	void LoadPlayerPosition();
+
 	bool SaveState(pugi::xml_node&) const override;
 
 
@@ -128,8 +130,13 @@ public:
 	int st = 0; // current state for save/load
 	int sc = 0; // current scene for save/load
 
-	// Player position saved
-	fPoint savedPos;
+	// Player position from checkpoints
+	fPoint checkpointPos;
+
+	// Player position form Save File
+	fPoint savedPos = { 0,0 };
+	iPoint cameraCollPos = { 0,0 };
+	bool loadPos = false;
 
 	// Lifes variable
 	int lifes = 3;

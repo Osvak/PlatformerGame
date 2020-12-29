@@ -139,6 +139,13 @@ public:
 
 	List<unsigned int*> musicList;
 
+
+	mutable bool saveGameRequested = false;
+	bool loadGameRequested = false;
+
+	mutable bool saveConfigRequested = false;
+	bool loadConfigRequested = false;
+
 private:
 
 	int argc;
@@ -149,11 +156,6 @@ private:
 	List<Module *> modules;
 
 
-	mutable bool saveGameRequested = false;
-	bool loadGameRequested = false;
-
-	mutable bool saveConfigRequested = false;
-	bool loadConfigRequested = false;
 	SString filenameGame = "save_game.xml";
 	SString filenameConfig = "config.xml";
 

@@ -103,19 +103,37 @@ bool Level1::PreUpdate()
 // Called each loop iteration
 bool Level1::Update(float dt)
 {
-    //
+    
+
+	return true;
+}
+
+// Called each loop iteration
+bool Level1::PostUpdate()
+{
+	bool ret = true;
+
+	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	{
+		ret = false;
+	}
+
+	//
 	// Scene controls
 	//
-	if(app->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
+	if (app->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
+	{
 		app->SaveGameRequest();
-
-	if(app->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
+	}
+	if (app->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
+	{
 		app->LoadGameRequest();
+	}
 
 	if (app->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
 	{
-		app->player->position = app->player->savedPos;
-		app->player->cameraCollider->SetPos(app->player->savedPos.x, app->player->savedPos.y - TILE_SIZE * 4);
+		app->player->position = app->player->checkpointPos;
+		app->player->cameraCollider->SetPos(app->player->checkpointPos.x, app->player->checkpointPos.y - TILE_SIZE * 4);
 	}
 
 	if (app->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
@@ -156,16 +174,16 @@ bool Level1::Update(float dt)
 	// Lifes HUD Draw
 	lifesRect.x = app->player->cameraCollider->rect.x - (TILE_SIZE * 5);
 	lifesRect.y = app->player->cameraCollider->rect.y - (TILE_SIZE * 4);
-		
+
 	for (int i = 0; i < app->player->lifes; i++)
 	{
 		app->render->DrawTexture(app->player->lifesTexture, lifesRect.x + 17 * i, lifesRect.y);
 	}
 
 	// Checkpoint Draw
-	
+
 	// Animation Update
-	
+
 	currentAnim->Update();
 
 	cpRect = currentAnim->GetCurrentFrame();
@@ -181,7 +199,7 @@ bool Level1::Update(float dt)
 
 	if (app->player->isDying == true)
 	{
-	if (app->player->lifes <= 0)
+		if (app->player->lifes <= 0)
 		{
 			app->fadeToBlack->Fade(this, (Module*)app->sceneLose, 60.0f);
 		}
@@ -203,25 +221,13 @@ bool Level1::Update(float dt)
 		return true;
 	}
 
-	
+
 
 	if (isCpActive == true)
 	{
 
 		currentAnim = cpActiveAnim;
 	}
-
-	return true;
-}
-
-// Called each loop iteration
-bool Level1::PostUpdate()
-{
-	bool ret = true;
-
-	if(app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-
-		ret = false;
 
 	return ret;
 }
@@ -233,8 +239,8 @@ bool Level1::Cp1Activation()
 
 	currentAnim = cpActiveAnim;
 
-	app->player->savedPos.x = TILE_SIZE * 38;
-	app->player->savedPos.y = TILE_SIZE * 14;
+	app->player->checkpointPos.x = TILE_SIZE * 38;
+	app->player->checkpointPos.y = TILE_SIZE * 14;
 
 	//app->SaveGameRequest();
 

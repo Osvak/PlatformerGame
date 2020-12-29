@@ -54,7 +54,7 @@ bool FadeToBlack::Update(float dt)
 			}
 			if (moduleToEnable->active == false)
 			{
-				moduleToEnable->Init();
+				//moduleToEnable->Init();
 				moduleToEnable->Start();
 			}
 		}

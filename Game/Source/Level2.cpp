@@ -87,8 +87,8 @@ bool Level2::Start()
 	app->potion->potionCollider = app->collisions->AddCollider({ app->potion->potionPosition.x, app->potion->potionPosition.y, 8, 10 }, Collider::ColliderType::POTION, this);
 
 	// Set savedPos to the start of the level 2
-	app->player->savedPos.x = TILE_SIZE * 3;
-	app->player->savedPos.y = TILE_SIZE * 24;
+	app->player->checkpointPos.x = TILE_SIZE * 3;
+	app->player->checkpointPos.y = TILE_SIZE * 24;
 
 	//
 	// Set current animation
@@ -108,19 +108,37 @@ bool Level2::PreUpdate()
 // Called each loop iteration
 bool Level2::Update(float dt)
 {
+
+	return true;
+}
+
+// Called each loop iteration
+bool Level2::PostUpdate()
+{
+	bool ret = true;
+
+	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	{
+		ret = false;
+	}
+
+
 	//
 	// Scene controls
 	//
 	if (app->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
+	{
 		app->SaveGameRequest();
-
+	}
 	if (app->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
+	{
 		app->LoadGameRequest();
+	}
 
 	if (app->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
 	{
-		app->player->position = app->player->savedPos;
-		app->player->cameraCollider->SetPos(app->player->savedPos.x, app->player->savedPos.y - TILE_SIZE * 4);
+		app->player->position = app->player->checkpointPos;
+		app->player->cameraCollider->SetPos(app->player->checkpointPos.x, app->player->checkpointPos.y - TILE_SIZE * 4);
 	}
 
 	if (app->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
@@ -213,17 +231,6 @@ bool Level2::Update(float dt)
 		return true;
 	}
 
-	return true;
-}
-
-// Called each loop iteration
-bool Level2::PostUpdate()
-{
-	bool ret = true;
-
-	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-		ret = false;
-
 	return ret;
 }
 
@@ -232,8 +239,8 @@ bool Level2::Cp2Activation()
 {
 	isCpActive = true;
 
-	app->player->savedPos.x = TILE_SIZE * 44;
-	app->player->savedPos.y = TILE_SIZE * 20;
+	app->player->checkpointPos.x = TILE_SIZE * 44;
+	app->player->checkpointPos.y = TILE_SIZE * 20;
 
 	return true;
 }

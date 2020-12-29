@@ -114,16 +114,25 @@ bool Player::Start()
 	//
 	// Set initial position
 	//
-	if (app->currentScene == LEVEL1)
+	
+	if (loadPos == true)
 	{
-		position.x = TILE_SIZE * 8; // Tile size * Tile ammount
-		position.y = TILE_SIZE * 16; // Tile size * Tile ammount
+		LoadPlayerPosition();
 	}
-	if (app->currentScene == LEVEL2)
+	else
 	{
-		position.x = TILE_SIZE * 3; // Tile size * Tile ammount
-		position.y = TILE_SIZE * 24; // Tile size * Tile ammount
+		if (app->currentScene == LEVEL1)
+		{
+			position.x = TILE_SIZE * 8; // Tile size * Tile ammount
+			position.y = TILE_SIZE * 16; // Tile size * Tile ammount
+		}
+		if (app->currentScene == LEVEL2)
+		{
+			position.x = TILE_SIZE * 3; // Tile size * Tile ammount
+			position.y = TILE_SIZE * 24; // Tile size * Tile ammount
+		}
 	}
+	
 
 
 	//
@@ -150,7 +159,7 @@ bool Player::Start()
 	isJumping = false;
 	isWinning = false;
 	isDying = false;
-	savedPos = { TILE_SIZE * 8, TILE_SIZE * 16 };
+	checkpointPos = { TILE_SIZE * 8, TILE_SIZE * 16 };
 	state = IDLE;
 	
 	if (app->lastScene == TITLE)
@@ -608,8 +617,8 @@ void Player::UpdateLogic(float dt)
 
 				if (lifes > 0)
 				{
-					position = savedPos;
-					cameraCollider->SetPos(savedPos.x, savedPos.y - TILE_SIZE * 4);
+					position = checkpointPos;
+					cameraCollider->SetPos(checkpointPos.x, checkpointPos.y - TILE_SIZE * 4);
 				}
 
 		}
@@ -634,6 +643,11 @@ void Player::UpdateLogic(float dt)
 
 	position.x += velocity.x /** dt*/;
 	position.y += velocity.y /** dt*/;
+
+	/*if (loadPos == true)
+	{
+		LoadPlayerPosition();
+	}*/
 
 
 	//
@@ -866,9 +880,13 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 	switch (app->player->sc)
 	{
 	case 1:
+		if (app->currentScene == LEVEL1)
+		{
+			app->fadeToBlack->Fade((Module*)app->level1, (Module*)app->level1, 10.0f);
+		}
 		if (app->currentScene == LEVEL2)
 		{
-			app->fadeToBlack->Fade((Module*)app->level2, (Module*)app->level1, 60.0f);
+			app->fadeToBlack->Fade((Module*)app->level2, (Module*)app->level1, 40.0f);
 		}
 		app->currentScene = LEVEL1;
 		break;
@@ -876,15 +894,23 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 	case 2:
 		if (app->currentScene == LEVEL1)
 		{
-			app->fadeToBlack->Fade((Module*)app->level1, (Module*)app->level2, 60.0f);
+			app->fadeToBlack->Fade((Module*)app->level1, (Module*)app->level2, 40.0f);
+		}
+		if (app->currentScene == LEVEL2)
+		{
+			app->fadeToBlack->Fade((Module*)app->level2, (Module*)app->level2, 10.0f);
 		}
 		app->currentScene = LEVEL2;
 		break;
 	}
 
 	// Load position
-	position.x = playerNode.child("position").attribute("positionX").as_float();
-	position.y = playerNode.child("position").attribute("positionY").as_float();
+	savedPos.x = playerNode.child("position").attribute("positionX").as_float();
+	savedPos.y = playerNode.child("position").attribute("positionY").as_float();
+	cameraCollPos.x = playerNode.child("cameracollider").attribute("cameracolliderX").as_int();
+	cameraCollPos.y = playerNode.child("cameracollider").attribute("cameracolliderY").as_int();
+	loadPos = true;
+
 
 	// Load velocity
 	velocity.x = playerNode.child("velocity").attribute("velocityX").as_float();
@@ -956,12 +982,27 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 	return true;
 }
 
+void Player::LoadPlayerPosition()
+{
+	position.x = savedPos.x;
+	position.y = savedPos.y;
+
+	cameraCollider->rect.x = cameraCollPos.x;
+	cameraCollider->rect.y = cameraCollPos.y;
+
+	loadPos = false;
+}
+
 
 bool Player::SaveState(pugi::xml_node& playerNode) const
 {
 	pugi::xml_node player = playerNode.append_child("position");
 	player.append_attribute("positionX").set_value(position.x);
 	player.append_attribute("positionY").set_value(position.y);
+
+	player = playerNode.append_child("cameracollider");
+	player.append_attribute("cameracolliderX").set_value(cameraCollider->rect.x);
+	player.append_attribute("cameracolliderY").set_value(cameraCollider->rect.y);
 
 	player = playerNode.append_child("velocity");
 	player.append_attribute("velocityX").set_value(velocity.x);

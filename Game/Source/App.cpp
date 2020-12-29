@@ -427,7 +427,7 @@ bool App::LoadGame(SString filename)
 		ret = false;
 	}
 
-
+	
 	loadGameRequested = false;
 
 	return ret;
