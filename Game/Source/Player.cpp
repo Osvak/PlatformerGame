@@ -123,13 +123,13 @@ bool Player::Start()
 	{
 		if (app->currentScene == LEVEL1)
 		{
-			position.x = TILE_SIZE * 8; // Tile size * Tile ammount
+			position.x = TILE_SIZE * 9; // Tile size * Tile ammount
 			position.y = TILE_SIZE * 16; // Tile size * Tile ammount
 		}
 		if (app->currentScene == LEVEL2)
 		{
-			position.x = TILE_SIZE * 3; // Tile size * Tile ammount
-			position.y = TILE_SIZE * 24; // Tile size * Tile ammount
+			position.x = TILE_SIZE * 10; // Tile size * Tile ammount
+			position.y = TILE_SIZE * 31; // Tile size * Tile ammount
 		}
 	}
 	
@@ -159,7 +159,7 @@ bool Player::Start()
 	isJumping = false;
 	isWinning = false;
 	isDying = false;
-	checkpointPos = { TILE_SIZE * 8, TILE_SIZE * 16 };
+	checkpointPos = { TILE_SIZE * 9, TILE_SIZE * 16 };
 	state = IDLE;
 	
 	if (app->lastScene == TITLE)

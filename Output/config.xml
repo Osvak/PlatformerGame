@@ -2,8 +2,8 @@
 <!-- L01: DONE 1: Create configuration file-->
 <config>
   <app>
-    <title>Game Development Testbed</title>
-    <organization>UPC</organization>
+    <title>Lato Viridi</title>
+    <organization>UPC (unicoos Team)</organization>
   </app>
 
   <renderer>

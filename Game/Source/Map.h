@@ -133,7 +133,7 @@ public:
     void Draw();
 
 	// Draw each layer of the map
-	void DrawLayer( int num);
+	void DrawLayer(int num, bool parallax);
 
 
     // Called before quitting

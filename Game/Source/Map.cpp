@@ -79,7 +79,7 @@ bool Map::CreateColliders()
 				{
 					tileset = app->map->GetTilesetFromTileId(tileId);
 
-					/*if (app->currentScene == LEVEL1 || app->currentScene == LEVEL2)
+					if (app->currentScene == LEVEL1 || app->currentScene == LEVEL2)
 					{
 						if (tileId == 1)
 						{
@@ -105,7 +105,7 @@ bool Map::CreateColliders()
 							colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
 							app->collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
 						}
-					}*/
+					}
 				}
 			}
 		}
@@ -126,13 +126,20 @@ void Map::Draw()
 	{
 		if (data.layers[i]->properties.GetProperty("visible", 1) != 0)
 		{
-			DrawLayer(i);
+			if (data.layers[i]->properties.GetProperty("parallax", 1) != 0)
+			{
+				DrawLayer(i, true);
+			}
+			else
+			{
+				DrawLayer(i, false);
+			}
 		}
 	}
 }
 
 // Draw each layer of the map
-void Map::DrawLayer(int num)
+void Map::DrawLayer(int num, bool parallax)
 {
 	if (num < data.layers.Count())
 	{
@@ -151,7 +158,14 @@ void Map::DrawLayer(int num)
 					SDL_Rect rec = tileset->GetTileRect(tileId);
 					iPoint pos = MapToWorld(x, y);
 
-					app->render->DrawTexture(tileset->texture, pos.x + tileset->offsetX, pos.y + tileset->offsetY, &rec);
+					if (parallax == true)
+					{
+						app->render->DrawTexture(tileset->texture, pos.x + tileset->offsetX, pos.y + tileset->offsetY, &rec, 1.3f);
+					}
+					else
+					{
+						app->render->DrawTexture(tileset->texture, pos.x + tileset->offsetX, pos.y + tileset->offsetY, &rec);
+					}
 				}
 			}
 		}
