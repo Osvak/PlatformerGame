@@ -168,6 +168,8 @@ public:
     // Add your struct for map info
 	MapData data;
 
+	int cameraMaxBottomPosition;
+
 private:
 
     pugi::xml_document mapFile;

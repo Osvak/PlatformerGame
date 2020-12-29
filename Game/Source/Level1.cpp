@@ -55,15 +55,15 @@ bool Level1::Start()
 	app->currentScene = LEVEL1;
 
 	//
+	// Load map
+	//
+	app->map->Load("map1.tmx");
+
+	//
 	// Activate modules
 	//
 	active = true;
 	app->player->Start();
-	
-	//
-	// Load map
-	//
-	app->map->Load("map1.tmx");
 
 	//
 	// Load textures
@@ -82,8 +82,7 @@ bool Level1::Start()
 	app->render->camera.y = -((int)app->win->GetScale() * TILE_SIZE * 2);
 
 	// Checkpoint collider
-
-	checkPointCollider = app->collisions->AddCollider({ TILE_SIZE * 38, TILE_SIZE * 14, 12, 20 }, Collider::ColliderType::CHECKPOINT, this);
+	checkPointCollider = app->collisions->AddCollider({ TILE_SIZE * 39, TILE_SIZE * 14, 12, 20 }, Collider::ColliderType::CHECKPOINT, this);
 
 	//
 	// Set current animation
@@ -188,7 +187,8 @@ bool Level1::PostUpdate()
 
 	cpRect = currentAnim->GetCurrentFrame();
 
-	app->render->DrawTexture(app->level1->cpTexture, TILE_SIZE * 38, TILE_SIZE * 14 - 4, &cpRect);
+	// Draw Checkpoint
+	app->render->DrawTexture(app->level1->cpTexture, TILE_SIZE * 39, TILE_SIZE * 14 - 4, &cpRect);
 
 
 

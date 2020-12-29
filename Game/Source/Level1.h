@@ -56,8 +56,6 @@ public:
 
 public:
 	bool freeCamera = false;
-
-
 };
 
 #endif // __LEVEL1_H__

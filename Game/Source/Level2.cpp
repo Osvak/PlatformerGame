@@ -55,15 +55,15 @@ bool Level2::Start()
 	app->currentScene = LEVEL2;
 
 	//
+	// Load map
+	//
+	app->map->Load("map2.tmx");
+
+	//
 	// Activate modules
 	//
 	active = true;
 	app->player->Start();
-
-	//
-	// Load map
-	//
-	app->map->Load("map2.tmx");
 
 	//
 	// Load textures
@@ -78,8 +78,8 @@ bool Level2::Start()
 	//
 	// Move Camera to starting position
 	//
-	app->render->camera.x = -((int)app->win->GetScale() * TILE_SIZE);
-	app->render->camera.y = -((int)app->win->GetScale() * TILE_SIZE * 14);
+	app->render->camera.x = -((int)app->win->GetScale() * TILE_SIZE * 2);
+	app->render->camera.y = -((int)app->win->GetScale() * TILE_SIZE * 21);
 
 	// Checkpoint collider
 
@@ -87,8 +87,8 @@ bool Level2::Start()
 	app->potion->potionCollider = app->collisions->AddCollider({ app->potion->potionPosition.x, app->potion->potionPosition.y, 8, 10 }, Collider::ColliderType::POTION, this);
 
 	// Set savedPos to the start of the level 2
-	app->player->checkpointPos.x = TILE_SIZE * 3;
-	app->player->checkpointPos.y = TILE_SIZE * 24;
+	app->player->checkpointPos.x = TILE_SIZE * 10;
+	app->player->checkpointPos.y = TILE_SIZE * 31;
 
 	//
 	// Set current animation

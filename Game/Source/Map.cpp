@@ -445,6 +445,9 @@ bool Map::Load(const char* filename)
 	CreateColliders();
 
 
+	cameraMaxBottomPosition = (app->map->data.height * TILE_SIZE) - (TILE_SIZE * 12);
+
+
 	if (ret == true)
 	{
 		// LOG all the data loaded iterate all tilesets and LOG everything

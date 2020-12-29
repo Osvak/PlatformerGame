@@ -142,6 +142,7 @@ bool Player::Start()
 	cameraCollider = app->collisions->AddCollider({ (int)position.x, (int)position.y - (TILE_SIZE * 4), TILE_SIZE * 6, TILE_SIZE * 5 }, Collider::ColliderType::CAMERA_WINDOW, this);
 
 
+
 	//
 	// Set current animation
 	//
@@ -159,6 +160,7 @@ bool Player::Start()
 	isJumping = false;
 	isWinning = false;
 	isDying = false;
+	canDoubleJump = true;
 	checkpointPos = { TILE_SIZE * 9, TILE_SIZE * 16 };
 	state = IDLE;
 	
@@ -669,10 +671,12 @@ void Player::UpdateLogic(float dt)
 	//
 	if (app->level1->freeCamera == false)
 	{
+		if ((cameraCollider->rect.y) <= app->map->cameraMaxBottomPosition)
+		{
+			app->render->camera.y = -(cameraCollider->rect.y - (TILE_SIZE * 5)) * (int)app->win->GetScale();
+		}
 		app->render->camera.x = -(cameraCollider->rect.x - (TILE_SIZE * 6)) * (int)app->win->GetScale();
-		app->render->camera.y = -(cameraCollider->rect.y - (TILE_SIZE * 5)) * (int)app->win->GetScale();
 	}
-
 }
 
 // Change the State

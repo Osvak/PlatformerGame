@@ -4,6 +4,9 @@
 #include "Module.h"
 
 #include "Animation.h"
+#include "Render.h"
+#include "App.h"
+#include "Map.h"
 
 #include "Point.h"
 
@@ -116,6 +119,7 @@ public:
 
 	// Collider for the Camera Window
 	Collider* cameraCollider = nullptr;
+	
 
 	// Jump handlers
 	fPoint accel = { 0.0, 0.0 };
@@ -164,7 +168,7 @@ public:
 
 	// Flag to know if the player is jumping
 	bool isJumping = false;
-	bool canDoubleJump = false;
+	bool canDoubleJump = true;
 	bool isDoubleJumping = false;
 
 	// Flog to know if the God Mode is activated
