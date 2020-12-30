@@ -11292,7 +11292,7 @@
    <tile/>
   </data>
  </layer>
- <layer id="1" name="walls" width="74" height="38" opacity="0.67">
+ <layer id="2" name="walls" width="74" height="38" opacity="0.67">
   <properties>
    <property name="parallax" type="int" value="0"/>
    <property name="visible" type="int" value="0"/>
@@ -14112,7 +14112,7 @@
    <tile/>
   </data>
  </layer>
- <layer id="2" name="colliders" width="74" height="38" opacity="0.5">
+ <layer id="1" name="colliders" width="74" height="38" opacity="0.5">
   <properties>
    <property name="parallax" type="int" value="0"/>
    <property name="visible" type="int" value="0"/>
