@@ -160,7 +160,8 @@ bool Player::Start()
 	isJumping = false;
 	isWinning = false;
 	isDying = false;
-	canDoubleJump = true;
+	canDoubleJump = false;
+	isDoubleJumping = false;
 	checkpointPos = { TILE_SIZE * 9, TILE_SIZE * 16 };
 	state = IDLE;
 	

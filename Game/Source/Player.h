@@ -168,7 +168,7 @@ public:
 
 	// Flag to know if the player is jumping
 	bool isJumping = false;
-	bool canDoubleJump = true;
+	bool canDoubleJump = false;
 	bool isDoubleJumping = false;
 
 	// Flog to know if the God Mode is activated
