@@ -1,7 +1,7 @@
 #include "SceneLose.h"
 
 #include "App.h"
-#include "Audio.h"
+#include "AudioManager.h"
 #include "Render.h"
 #include "Input.h"
 #include "Map.h"
@@ -10,46 +10,32 @@
 #include "Log.h"
 
  // Constructor
-SceneLose::SceneLose() : Module()
+SceneLose::SceneLose()
 {
+	LOG("Loading Lose Screen");
+
 	name.Create("sceneLose");
 }
 
  // Destructor
 SceneLose::~SceneLose()
 {
-
 }
 
-// Called before render is available
-bool SceneLose::Awake()
-{
-	LOG("Loading Lose Screen");
-
-	return true;
-}
 
  // Called before the first frame / when activated
-bool SceneLose::Start()
+bool SceneLose::Load(Textures* tex)
 {
-	
-	app->currentScene = LOSE;
-
 	//
 	// Load map
 	//
 	app->map->Load("scene_lose.tmx");
 
 	//
-	// Activate modules
-	//
-	active = true;
-
-	//
 	// Load music
 	//
-	app->audio->StopMusic();
-	gameOverFX = app->audio->LoadFX("Assets/Audio/FX/game_over.wav");
+	app->audioManager->StopMusic();
+	gameOverFX = app->audioManager->LoadFX("Assets/Audio/FX/game_over.wav");
 	app->musicList.Add(&gameOverFX);
 
 	//
@@ -58,81 +44,78 @@ bool SceneLose::Start()
 	app->render->camera.x = 0;
 	app->render->camera.y = 0;
 
-	return true;
-}
-
-// Called before the Update
-bool SceneLose::PreUpdate()
-{
-	return true;
+	return false;
 }
 
 // Called each loop iteration
-bool SceneLose::Update(float dt)
+bool SceneLose::Update(Input* input, float dt)
 {
 	if (playFX == true)
 	{
-		app->audio->PlayFX(gameOverFX);
+		app->audioManager->PlayFX(gameOverFX);
 		playFX = false;
+	}
+
+
+	//
+	// Scene controls
+	//
+	bool ret = false;
+
+	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	{
+		ret = true;
+	}
+	if (app->input->GetKey(SDL_SCANCODE_KP_ENTER) == KEY_DOWN ||
+		app->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN ||
+		app->input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN)
+	{
+		TransitionToScene(SceneType::TITLE);
+		return false;
+	}
+
+	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
+	{
+		TransitionToScene(SceneType::LEVEL1);
+		return false;
+	}
+	if (app->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+	{
+		TransitionToScene(SceneType::LEVEL2);
+		return false;
 	}
 
 	return true;
 }
 
  // Called after Updates
-bool SceneLose::PostUpdate()
+bool SceneLose::Draw(Render* render)
 {
-	bool ret = true;
-
 	//
 	// Draw map
 	//
 	app->map->Draw();
 
-	//
-	// Scene controls
-	//
-	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-	{
-		ret = false;
-	}
-	if (app->input->GetKey(SDL_SCANCODE_KP_ENTER) == KEY_DOWN ||
-		app->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN ||
-		app->input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN)
-	{
-		app->fadeToBlack->Fade(this, (Module*)app->sceneTitle, 60.0f);
-		return true;
-	}
-	
-	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
-	{
-		app->fadeToBlack->Fade(this, (Module*)app->level1, 60.0f);
-		return true;
-	}
-	if (app->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
-	{
-		app->fadeToBlack->Fade(this, (Module*)app->level2, 60.0f);
-		return true;
-	}
 
-	return ret;
+	return false;
 }
 
+
 // Called before quitting, frees memory and controls activa and inactive modules
-bool SceneLose::CleanUp()
+bool SceneLose::Unload()
 {
 	if (!active)
 	{
-		return true;
+		return false;
 	}
 
 	LOG("Freeing Lose Screen");
 
 	app->map->CleanUp();
 
-	app->audio->UnloadFX(gameOverFX);
+	app->audioManager->UnloadFX(gameOverFX);
 
 	active = false;
 
-	return true;
+	return false;
 }

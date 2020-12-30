@@ -1,36 +1,34 @@
 #ifndef __SCENEWIN_H__
 #define __SCENEWIN_H__
 
-#include "Module.h"
+#include "Scene.h"
+
+#include "Map.h"
+#include "Player.h"
 
 
-class SceneWin : public Module
+class SceneWin : public Scene
 {
 public:
+
 	// Constructor
 	SceneWin();
-
 	// Destructor
-	~SceneWin();
+	virtual ~SceneWin();
 
-
-	// Called before render is available
-	bool Awake();
 
 	// Called before the first frame / when activated
-	bool Start();
-
-	// Called before all Updates
-	bool PreUpdate();
+	bool Load(Textures* tex);
 
 	// Called each loop iteration
-	bool Update(float dt);
+	bool Update(Input* input, float dt);
 
 	// Called after Updates
-	bool PostUpdate();
+	bool Draw(Render* render);
+
 
 	// Called before quitting
-	bool CleanUp();
+	bool Unload();
 
 private:
 	unsigned int victoryFX;

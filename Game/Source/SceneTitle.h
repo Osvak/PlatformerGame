@@ -1,40 +1,36 @@
 #ifndef __SCENETITLE_H__
 #define __SCENETITLE_H__
 
-#include "Module.h"
+#include "Scene.h"
+
+//#include "GuiButton.h"
 
 #define BLINK_TIME 35
 
 
 struct SDL_Texture;
 
-class SceneTitle : public Module
+class SceneTitle : public Scene
 {
 public:
+
 	// Constructor
 	SceneTitle();
-
 	// Destructor
-	~SceneTitle();
+	virtual ~SceneTitle();
 
-
-	// Called before render is available
-	bool Awake();
 
 	// Called before the first frame / when activated
-	bool Start();
-
-	// Called before all Updates
-	bool PreUpdate();
+	bool Load(Textures* tex);
 
 	// Called each loop iteration
-	bool Update(float dt);
+	bool Update(Input* input, float dt);
 
 	// Called after Updates
-	bool PostUpdate();
+	bool Draw(Render* render);
 
 	// Called before quitting
-	bool CleanUp();
+	bool Unload();
 
 private:
 

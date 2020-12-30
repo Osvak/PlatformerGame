@@ -1,4 +1,4 @@
-#include "Audio.h"
+#include "AudioManager.h"
 
 #include "App.h"
 
@@ -11,18 +11,18 @@
 
 
 
-Audio::Audio() : Module()
+AudioManager::AudioManager() : Module()
 {
 	music = NULL;
 	name.Create("audio");
 }
 
 // Destructor
-Audio::~Audio()
+AudioManager::~AudioManager()
 {}
 
 // Called before render is available
-bool Audio::Awake(pugi::xml_node& config)
+bool AudioManager::Awake(pugi::xml_node& config)
 {
 	LOG("Loading Audio Mixer");
 	bool ret = true;
@@ -58,7 +58,7 @@ bool Audio::Awake(pugi::xml_node& config)
 }
 
 // Called before quitting
-bool Audio::CleanUp()
+bool AudioManager::CleanUp()
 {
 	if(!active)
 		return true;
@@ -84,7 +84,7 @@ bool Audio::CleanUp()
 }
 
 // Play a music file
-bool Audio::PlayMusic(const char* path, float fade_time)
+bool AudioManager::PlayMusic(const char* path, float fade_time)
 {
 	bool ret = true;
 
@@ -138,14 +138,14 @@ bool Audio::PlayMusic(const char* path, float fade_time)
 }
 
 
-void Audio::StopMusic()
+void AudioManager::StopMusic()
 {
 	Mix_HaltMusic();
 }
 
 
 // Load WAV
-unsigned int Audio::LoadFX(const char* path)
+unsigned int AudioManager::LoadFX(const char* path)
 {
 	unsigned int ret = 0;
 
@@ -167,7 +167,7 @@ unsigned int Audio::LoadFX(const char* path)
 	return ret;
 }
 
-bool Audio::UnloadFX(unsigned int id)
+bool AudioManager::UnloadFX(unsigned int id)
 {
 	bool ret = false;
 	if (fx[id - 1] != nullptr)
@@ -182,7 +182,7 @@ bool Audio::UnloadFX(unsigned int id)
 
 
 // Play WAV
-bool Audio::PlayFX(unsigned int id, int repeat)
+bool AudioManager::PlayFX(unsigned int id, int repeat)
 {
 	bool ret = false;
 

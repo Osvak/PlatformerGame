@@ -1,41 +1,38 @@
 #ifndef __LEVEL1_H__
 #define __LEVEL1_H__
 
-#include "Module.h"
+#include "Scene.h"
 
+#include "Map.h"
+#include "Player.h"
 #include "Animation.h"
 
 struct SDL_Texture;
 
 
-
-class Level1 : public Module
+class Level1 : public Scene
 {
 public:
 
+	// Constructor
 	Level1();
-
 	// Destructor
 	virtual ~Level1();
 
 
-	// Called before render is available
-	bool Awake(pugi::xml_node& config);
-
 	// Called before the first frame
-	bool Start();
-
-	// Called before all Updates
-	bool PreUpdate();
+	bool Load(Textures* tex);
 
 	// Called each loop iteration
-	bool Update(float dt);
+	bool Update(Input* input, float dt);
 
 	// Called before all Updates
-	bool PostUpdate();
+	bool Draw(Render* render);
+
 
 	// Called before quitting
-	bool CleanUp();
+	bool Unload();
+
 
 	// Checkpoint activation
 	bool Cp1Activation();
@@ -53,9 +50,6 @@ public:
 
 	// Checkpoint flags
 	bool isCpActive = false;
-
-public:
-	bool freeCamera = false;
 };
 
 #endif // __LEVEL1_H__

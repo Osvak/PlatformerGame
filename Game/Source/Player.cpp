@@ -5,7 +5,7 @@
 #include "Render.h"
 #include "Textures.h"
 #include "Input.h"
-#include "Audio.h"
+#include "AudioManager.h"
 #include "Map.h"
 #include "Collisions.h"
 #include "FadeToBlack.h"
@@ -101,15 +101,15 @@ bool Player::Start()
 	//
 	// Load Player FX files
 	//
-	jumpFX = app->audio->LoadFX("Assets/Audio/FX/jump.wav");
+	jumpFX = app->audioManager->LoadFX("Assets/Audio/FX/jump.wav");
 	app->musicList.Add(&jumpFX);
-	secondJumpFX = app->audio->LoadFX("Assets/Audio/FX/second_jump.wav");
+	secondJumpFX = app->audioManager->LoadFX("Assets/Audio/FX/second_jump.wav");
 	app->musicList.Add(&secondJumpFX);
-	oofFX = app->audio->LoadFX("Assets/Audio/FX/oof.wav");
+	oofFX = app->audioManager->LoadFX("Assets/Audio/FX/oof.wav");
 	app->musicList.Add(&oofFX);
-	checkpointFX = app->audio->LoadFX("Assets/Audio/FX/checkpoint.wav");
+	checkpointFX = app->audioManager->LoadFX("Assets/Audio/FX/checkpoint.wav");
 	app->musicList.Add(&checkpointFX);
-	nextLevelFX = app->audio->LoadFX("Assets/Audio/FX/next_level.wav");
+	nextLevelFX = app->audioManager->LoadFX("Assets/Audio/FX/next_level.wav");
 
 	//
 	// Set initial position
@@ -548,7 +548,7 @@ void Player::UpdateLogic(float dt)
 		{
 			isDoubleJumping = true;
 
-			app->audio->PlayFX(secondJumpFX);
+			app->audioManager->PlayFX(secondJumpFX);
 		}
 
 		if (isDying == false)
@@ -736,7 +736,7 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 			horizontalDirection = -1;
 		}
 
-		app->audio->PlayFX(jumpFX);
+		app->audioManager->PlayFX(jumpFX);
 
 		break;
 	}
@@ -778,7 +778,7 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 
 		--lifes;
 
-		app->audio->PlayFX(oofFX);
+		app->audioManager->PlayFX(oofFX);
 
 		break;
 	}
@@ -841,7 +841,7 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::NEXT_LEVEL)
 	{
-		app->audio->PlayFX(nextLevelFX, 0);
+		app->audioManager->PlayFX(nextLevelFX, 0);
 		isWinning = true;
 	}
 
@@ -852,7 +852,7 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::CHECKPOINT)
 	{
-		app->audio->PlayFX(checkpointFX, 0);
+		app->audioManager->PlayFX(checkpointFX, 0);
 		if (app->currentScene == LEVEL1)
 		{
 			app->level1->Cp1Activation();
@@ -1189,11 +1189,11 @@ bool Player::CleanUp()
 	app->tex->UnLoad(playerTexture);
 	app->tex->UnLoad(lifesTexture);
 
-	app->audio->UnloadFX(jumpFX);
-	app->audio->UnloadFX(secondJumpFX);
-	app->audio->UnloadFX(oofFX);
-	app->audio->UnloadFX(checkpointFX);
-	app->audio->UnloadFX(nextLevelFX);
+	app->audioManager->UnloadFX(jumpFX);
+	app->audioManager->UnloadFX(secondJumpFX);
+	app->audioManager->UnloadFX(oofFX);
+	app->audioManager->UnloadFX(checkpointFX);
+	app->audioManager->UnloadFX(nextLevelFX);
 
 	app->collisions->RemoveCollider(playerCollider);
 	app->collisions->RemoveCollider(cameraCollider);

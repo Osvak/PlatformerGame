@@ -1,58 +1,60 @@
 #include "SceneLogo.h"
 
 #include "App.h"
-#include "Textures.h"
 #include "Window.h"
-#include "Render.h"
-#include "Input.h"
-#include "Audio.h"
+#include "AudioManager.h"
 #include "Map.h"
 #include "FadeToBlack.h"
+
+#include "Input.h"
+#include "Render.h"
+#include "Textures.h"
 
 #include "Log.h"
 
 
 // Constructor
-SceneLogo::SceneLogo() : Module()
+SceneLogo::SceneLogo()
 {
+	LOG("Loading SceneLogo");
+
 	name.Create("sceneLogo");
+
+	//
+	// Reset flags
+	//
+	nextSceneCounter = 0;
+	transition = false;
+
 }
 
 // Destructor
 SceneLogo::~SceneLogo()
 {
-
 }
 
-// Called before render is available
-bool SceneLogo::Awake()
-{
-	LOG("Loading SceneLogo");
-	bool ret = true;
-	return ret;
-}
 
 // Called before the first frame
-bool SceneLogo::Start()
+bool SceneLogo::Load(Textures* tex)
 {
-	app->currentScene = LOGO;
+	//app->currentScene = LOGO;
 
 	//
 	// Load Map
 	//
-	img = app->tex->Load("Assets/Maps/scene_logo.png");
+	img = tex->Load("Assets/Maps/scene_logo.png");
 	imgW = (int)app->win->GetWidth() / (int)app->win->GetScale();
 	imgH = (int)app->win->GetHeight() / (int)app->win->GetScale();
 
 	if (SDL_QueryTexture(img, NULL, NULL, &imgW, &imgH) != 0)
 	{
-		LOG("Error on QueryTexture");
+		LOG("Error on SceneLogo QueryTexture");
 	}
 
 	//
 	// Load music
 	//
-	logoFX = app->audio->LoadFX("Assets/Audio/FX/logo.wav");
+	logoFX = app->audioManager->LoadFX("Assets/Audio/FX/logo.wav");
 	app->musicList.Add(&logoFX);
 
 	//
@@ -61,83 +63,83 @@ bool SceneLogo::Start()
 	app->render->camera.x = app->render->camera.y = 0;
 
 
-	//
-	// Reset flags
-	//
-	nextSceneCounter = 0;
-	transition = false;
-
-
 	return true;
 }
 
-// Called before all Updates
-bool SceneLogo::PreUpdate()
-{
-	return true;
-}
 
 // Called each loop iteration
-bool SceneLogo::Update(float dt)
+bool SceneLogo::Update(Input* input, float dt)
 {
+	//
+	// Check sound
+	//
 	if (nextSceneCounter < NEXT_SCENE_TIME && transition == false)
 	{
 		++nextSceneCounter;
 		if (nextSceneCounter == 15)
 		{
-			app->audio->PlayFX(logoFX);
+			app->audioManager->PlayFX(logoFX);
 		}
+	}
+
+	//
+	// Handle key inputs
+	//
+	bool ret = true;
+
+	if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	{
+		ret = false;
+	}
+
+	if (input->GetKey(SDL_SCANCODE_KP_ENTER) == KEY_DOWN ||
+		input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN ||
+		input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN ||
+		nextSceneCounter == NEXT_SCENE_TIME)
+	{
+		//app->fadeToBlack->Fade(this, (Module*)app->sceneTitle, 60.0f); // remove
+		TransitionToScene(SceneType::TITLE);
+		transition = true;
+		nextSceneCounter = 0;
+		return true;
+	}
+
+	if (input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
+	{
+		//app->fadeToBlack->Fade(this, (Module*)app->level1, 60.0f); // remove
+		TransitionToScene(SceneType::LEVEL1);
+		transition = true;
+		nextSceneCounter = 0;
+		return true;
+	}
+	if (input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+	{
+		//app->fadeToBlack->Fade(this, (Module*)app->level2, 60.0f); // remove
+		TransitionToScene(SceneType::LEVEL2);
+		transition = true;
+		nextSceneCounter = 0;
+		return true;
 	}
 
 	return true;
 }
 
-//Called after Updates
-bool SceneLogo::PostUpdate()
-{
-	bool ret = true;
 
+bool SceneLogo::Draw(Render* render)
+{
 	//
-	// Drawp map
+	// Draw map
 	//
-	if (app->render->DrawTexture(img, 0, 0) == false)
+	if (render->DrawTexture(img, 0, 0) == false)
 	{
 		LOG("Error drawing Scene Logo");
 	}
 
-
-	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-		ret = false;
-
-	if (app->input->GetKey(SDL_SCANCODE_KP_ENTER) == KEY_DOWN || app->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN
-		|| app->input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN || nextSceneCounter == NEXT_SCENE_TIME)
-	{
-		app->fadeToBlack->Fade(this, (Module*)app->sceneTitle, 60.0f);
-		transition = true;
-		nextSceneCounter = 0;
-		return true;
-	}
-
-	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
-	{
-		app->fadeToBlack->Fade(this, (Module*)app->level1, 60.0f);
-		transition = true;
-		nextSceneCounter = 0;
-		return true;
-	}
-	if (app->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
-	{
-		app->fadeToBlack->Fade(this, (Module*)app->level2, 60.0f);
-		transition = true;
-		nextSceneCounter = 0;
-		return true;
-	}
-
-	return ret;
+	return true;
 }
 
 // Called before quitting, frees memory
-bool SceneLogo::CleanUp()
+bool SceneLogo::Unload()
 {
 	if (!active)
 	{
@@ -148,7 +150,7 @@ bool SceneLogo::CleanUp()
 
 	app->tex->UnLoad(img);
 
-	app->audio->UnloadFX(logoFX);
+	app->audioManager->UnloadFX(logoFX);
 
 	app->map->CleanUp();
 	active = false;

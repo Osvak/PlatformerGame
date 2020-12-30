@@ -3,7 +3,7 @@
 #include "App.h"
 #include "Input.h"
 #include "Textures.h"
-#include "Audio.h"
+#include "AudioManager.h"
 #include "Render.h"
 #include "Window.h"
 #include "Map.h"
@@ -17,20 +17,11 @@
 
 
 // Constructor
-Level1::Level1() : Module()
-{
-	name.Create("level1");
-}
-
-// Destructor
-Level1::~Level1()
-{}
-
-// Called before render is available
-bool Level1::Awake(pugi::xml_node& config)
+Level1::Level1()
 {
 	LOG("Loading Level1");
-	bool ret = true;
+
+	name.Create("level1");
 
 	//
 	// Animation pushbacks
@@ -45,15 +36,17 @@ bool Level1::Awake(pugi::xml_node& config)
 
 	for (int i = 0; i < 3; i++)
 		cpActiveAnim->PushBack({ i * 12, 20, 12, 20 });
-
-	return ret;
 }
 
-// Called before the first frame
-bool Level1::Start()
+// Destructor
+Level1::~Level1()
 {
-	app->currentScene = LEVEL1;
+}
 
+
+// Called before the first frame
+bool Level1::Load(Textures* tex)
+{
 	//
 	// Load map
 	//
@@ -62,18 +55,17 @@ bool Level1::Start()
 	//
 	// Activate modules
 	//
-	active = true;
 	app->player->Start();
 
 	//
 	// Load textures
 	//
-	cpTexture = app->tex->Load("Assets/Textures/Items/checkpoint_sheet.png");
+	cpTexture = tex->Load("Assets/Textures/Items/checkpoint_sheet.png");
 
 	//
 	// Load music
 	//
-	app->audio->PlayMusic("Assets/Audio/Music/map1_music.ogg");
+	app->audioManager->PlayMusic("Assets/Audio/Music/map1_music.ogg");
 
 	//
 	// Move Camera to starting position
@@ -82,7 +74,7 @@ bool Level1::Start()
 	app->render->camera.y = -((int)app->win->GetScale() * TILE_SIZE * 2);
 
 	// Checkpoint collider
-	checkPointCollider = app->collisions->AddCollider({ TILE_SIZE * 39, TILE_SIZE * 14, 12, 20 }, Collider::ColliderType::CHECKPOINT, this);
+	//checkPointCollider = app->collisions->AddCollider({ TILE_SIZE * 39, TILE_SIZE * 14, 12, 20 }, Collider::ColliderType::CHECKPOINT, this);
 
 	//
 	// Set current animation
@@ -94,75 +86,75 @@ bool Level1::Start()
 }
 
 // Called each loop iteration
-bool Level1::PreUpdate()
+bool Level1::Update(Input* input, float dt)
 {
-	return true;
-}
+	bool ret = false;
 
-// Called each loop iteration
-bool Level1::Update(float dt)
-{
-    
-
-	return true;
-}
-
-// Called each loop iteration
-bool Level1::PostUpdate()
-{
-	bool ret = true;
-
-	if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 	{
-		ret = false;
+		ret = true;
 	}
 
 	//
 	// Scene controls
 	//
-	if (app->input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
+	if (input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
 	{
 		app->SaveGameRequest();
 	}
-	if (app->input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
+	if (input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 	{
 		app->LoadGameRequest();
 	}
 
-	if (app->input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
+	if (input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
 	{
 		app->player->position = app->player->checkpointPos;
 		app->player->cameraCollider->SetPos(app->player->checkpointPos.x, app->player->checkpointPos.y - TILE_SIZE * 4);
 	}
 
-	if (app->input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
+	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
-		if (freeCamera == false)
+		TransitionToScene(SceneType::LEVEL1);
+		return false;
+	}
+	if (app->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+	{
+		TransitionToScene(SceneType::LEVEL2);
+		return false;
+	}
+	if (app->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+	{
+		TransitionToScene(SceneType::LEVEL1);
+		return false;
+	}
+
+
+	if (app->player->isWinning == true)
+	{
+		TransitionToScene(SceneType::LEVEL2);
+	}
+
+	if (app->player->isDying == true)
+	{
+		if (app->player->lifes <= 0)
 		{
-			freeCamera = true;
-		}
-		else
-		{
-			freeCamera = false;
+			TransitionToScene(SceneType::LOSE);
 		}
 	}
 
-	if (freeCamera == true)
+	if (isCpActive == true)
 	{
 
-		if (app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-			app->render->camera.y += 15;
-
-		if (app->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-			app->render->camera.y -= 15;
-
-		if (app->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-			app->render->camera.x += 15;
-
-		if (app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-			app->render->camera.x -= 15;
+		currentAnim = cpActiveAnim;
 	}
 
+	return false;
+}
+
+// Called each loop iteration
+bool Level1::Draw(Render* render)
+{
 	// Draw Map
 	app->map->Draw();
 
@@ -176,7 +168,7 @@ bool Level1::PostUpdate()
 
 	for (int i = 0; i < app->player->lifes; i++)
 	{
-		app->render->DrawTexture(app->player->lifesTexture, lifesRect.x + 17 * i, lifesRect.y);
+		render->DrawTexture(app->player->lifesTexture, lifesRect.x + 17 * i, lifesRect.y);
 	}
 
 	// Checkpoint Draw
@@ -188,73 +180,21 @@ bool Level1::PostUpdate()
 	cpRect = currentAnim->GetCurrentFrame();
 
 	// Draw Checkpoint
-	app->render->DrawTexture(app->level1->cpTexture, TILE_SIZE * 39, TILE_SIZE * 14 - 4, &cpRect);
+	//app->render->DrawTexture(app->level1->cpTexture, TILE_SIZE * 39, TILE_SIZE * 14 - 4, &cpRect);
 
 
-
-	if (app->player->isWinning == true)
-	{
-		app->fadeToBlack->Fade(this, (Module*)app->level2, 60.0f);
-	}
-
-	if (app->player->isDying == true)
-	{
-		if (app->player->lifes <= 0)
-		{
-			app->fadeToBlack->Fade(this, (Module*)app->sceneLose, 60.0f);
-		}
-	}
-
-	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
-	{
-		app->fadeToBlack->Fade(this, this, 60.0f);
-		return true;
-	}
-	if (app->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
-	{
-		app->fadeToBlack->Fade(this, (Module*)app->level2, 60.0f);
-		return true;
-	}
-	if (app->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
-	{
-		app->fadeToBlack->Fade(this, this, 60.0f);
-		return true;
-	}
-
-
-
-	if (isCpActive == true)
-	{
-
-		currentAnim = cpActiveAnim;
-	}
-
-	return ret;
+	return false;
 }
 
-
-bool Level1::Cp1Activation()
-{
-	isCpActive = true;
-
-	currentAnim = cpActiveAnim;
-
-	app->player->checkpointPos.x = TILE_SIZE * 38;
-	app->player->checkpointPos.y = TILE_SIZE * 14;
-
-	//app->SaveGameRequest();
-
-	return true;
-}
 
 // Called before quitting
-bool Level1::CleanUp()
+bool Level1::Unload()
 {
 	LOG("Freeing Level 1");
 
 	if (!active)
 	{
-		return true;
+		return false;
 	}
 
 	
@@ -269,5 +209,20 @@ bool Level1::CleanUp()
 
 	active = false;
 
-	return true;
+	return false;
+}
+
+
+bool Level1::Cp1Activation()
+{
+	isCpActive = true;
+
+	currentAnim = cpActiveAnim;
+
+	app->player->checkpointPos.x = TILE_SIZE * 38;
+	app->player->checkpointPos.y = TILE_SIZE * 14;
+
+	//app->SaveGameRequest();
+
+	return false;
 }

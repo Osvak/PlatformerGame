@@ -4,17 +4,13 @@
 #include "Input.h"
 #include "Render.h"
 #include "Textures.h"
-#include "Audio.h"
-#include "Level1.h"
-#include "Level2.h"
+#include "AudioManager.h"
+//#include "EntityManager.h"
+#include "SceneManager.h"
+// v
 #include "Map.h"
 #include "Player.h"
 #include "Collisions.h"
-#include "SceneLogo.h"
-#include "SceneTitle.h"
-#include "SceneWin.h"
-#include "SceneLose.h"
-#include "FadeToBlack.h"
 #include "Potion.h"
 
 #include "Defs.h"
@@ -36,17 +32,13 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	input = new Input();
 	render = new Render();
 	tex = new Textures();
-	audio = new Audio();
-	level1 = new Level1();
-	level2 = new Level2();
+	audioManager = new AudioManager();
+	//entityManager = new EntityManager();
+	sceneManager = new SceneManager(input, render, tex);
+	// v
 	map = new Map();
 	player = new Player();
 	collisions = new Collisions();
-	sceneLogo = new SceneLogo();
-	sceneTitle = new SceneTitle();
-	sceneWin = new SceneWin();
-	sceneLose = new SceneLose();
-	fadeToBlack = new FadeToBlack();
 	potion = new Potion();
 
 	// Ordered for awake / Start / Update
@@ -54,17 +46,13 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(win);
 	AddModule(input);
 	AddModule(tex);
-	AddModule(audio);
-	AddModule(level1);
-	AddModule(level2);
+	AddModule(audioManager);
+	//AddModule(entityManager);
+	AddModule(sceneManager);
+	// v
 	AddModule(map);
 	AddModule(player);
 	AddModule(collisions);
-	AddModule(sceneLogo);
-	AddModule(sceneTitle);
-	AddModule(sceneWin);
-	AddModule(sceneLose);
-	AddModule(fadeToBlack);
 	AddModule(potion);
 
 	// Render last to swap buffer
@@ -72,11 +60,6 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 
 
 	// Start inactive
-	sceneTitle->active = false;
-	level1->active = false;
-	level2->active = false;
-	sceneWin->active = false;
-	sceneLose->active = false;
 	player->active = false;
 	map->active = false;
 

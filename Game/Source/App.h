@@ -17,30 +17,14 @@ class Window;
 class Input;
 class Render;
 class Textures;
-class Audio;
-class Level1;
-class Level2;
+class AudioManager;
+//class EntityManager;
+class SceneManager;
 class Map;
 class Player;
 class Collisions;
-class SceneLogo;
-class SceneTitle;
-class SceneWin;
-class SceneLose;
-class FadeToBlack;
 class Potion;
 
-// All the Scenes
-enum GameScenes
-{
-	NONE = 0,
-	LOGO,
-	TITLE,
-	LEVEL1,
-	LEVEL2,
-	WIN,
-	LOSE,
-};
 
 // Main Application
 class App
@@ -115,22 +99,13 @@ public:
 	Input* input;
 	Render* render;
 	Textures* tex;
-	Audio* audio;
-	Level1* level1;
-	Level2* level2;
+	AudioManager* audioManager;
+	//EntityManager* entityManager;
+	SceneManager* sceneManager;
 	Map* map;
 	Player* player;
 	Collisions* collisions;
-	SceneLogo* sceneLogo;
-	SceneTitle* sceneTitle;
-	SceneWin* sceneWin;
-	SceneLose* sceneLose;
-	FadeToBlack* fadeToBlack;
 	Potion* potion;
-
-
-	GameScenes lastScene = NONE;
-	GameScenes currentScene = LOGO;
 
 	const int frameRate = 60;
 	const int screenTicks = 1000 / frameRate;

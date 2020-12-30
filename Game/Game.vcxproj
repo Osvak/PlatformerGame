@@ -95,7 +95,7 @@
     <ClCompile Include="Source\FadeToBlack.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\App.cpp" />
-    <ClCompile Include="Source\Audio.cpp" />
+    <ClCompile Include="Source\AudioManager.cpp" />
     <ClCompile Include="Source\Input.cpp" />
     <ClCompile Include="Source\Map.cpp" />
     <ClCompile Include="Source\PerfTimer.cpp" />
@@ -106,6 +106,7 @@
     <ClCompile Include="Source\Level2.cpp" />
     <ClCompile Include="Source\SceneLogo.cpp" />
     <ClCompile Include="Source\SceneLose.cpp" />
+    <ClCompile Include="Source\SceneManager.cpp" />
     <ClCompile Include="Source\SceneTitle.cpp" />
     <ClCompile Include="Source\SceneWin.cpp" />
     <ClCompile Include="Source\Textures.cpp" />
@@ -121,14 +122,16 @@
     <ClInclude Include="Source\Potion.h" />
     <ClInclude Include="Source\PQueue.h" />
     <ClInclude Include="Source\Level1.h" />
-    <ClInclude Include="Source\Audio.h" />
+    <ClInclude Include="Source\AudioManager.h" />
     <ClInclude Include="Source\Input.h" />
     <ClInclude Include="Source\App.h" />
     <ClInclude Include="Source\Module.h" />
     <ClInclude Include="Source\Render.h" />
     <ClInclude Include="Source\Level2.h" />
+    <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\SceneLogo.h" />
     <ClInclude Include="Source\SceneLose.h" />
+    <ClInclude Include="Source\SceneManager.h" />
     <ClInclude Include="Source\SceneTitle.h" />
     <ClInclude Include="Source\SceneWin.h" />
     <ClInclude Include="Source\Textures.h" />

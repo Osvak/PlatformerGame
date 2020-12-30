@@ -1,40 +1,36 @@
 #ifndef __SCENELOGO_H__
 #define __SCENELOGO_H__
 
-#include "Module.h"
+#include "Scene.h"
 
 #define NEXT_SCENE_TIME 80
 
 
 struct SDL_Texture;
 
-class SceneLogo : public Module
+class SceneLogo : public Scene
 {
 public:
+
 	// Constructor
 	SceneLogo();
-
 	// Destructor
-	~SceneLogo();
+	virtual ~SceneLogo();
 
-
-	// Called before render is available
-	bool Awake();
 
 	// Called before the first frame / when activated
-	bool Start();
+	bool Load(Textures* tex);
 
-	// Called before all Updates
-	bool PreUpdate();
 
 	// Called each loop iteration
-	bool Update(float dt);
+	bool Update(Input* input, float dt);
 
-	// Called after Updates
-	bool PostUpdate();
+	bool Draw(Render* render);
+
 
 	// Called before quitting
-	bool CleanUp();
+	bool Unload();
+
 
 private:
 	SDL_Texture* img;

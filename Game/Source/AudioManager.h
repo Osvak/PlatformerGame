@@ -1,5 +1,5 @@
-#ifndef __AUDIO_H__
-#define __AUDIO_H__
+#ifndef __AUDIOMANAGER_H__
+#define __AUDIOMANAGER_H__
 
 #include "Module.h"
 
@@ -12,14 +12,14 @@
 struct _Mix_Music;
 struct Mix_Chunk;
 
-class Audio : public Module
+class AudioManager : public Module
 {
 public:
 
-	Audio();
+	AudioManager();
 
 	// Destructor
-	virtual ~Audio();
+	virtual ~AudioManager();
 
 	// Called before render is available
 	bool Awake(pugi::xml_node&);
@@ -45,4 +45,4 @@ private:
 	List<Mix_Chunk *>	fx;
 };
 
-#endif // __AUDIO_H__
+#endif // __AUDIOMANAGER_H__

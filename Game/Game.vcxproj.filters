@@ -45,9 +45,6 @@
     <ClCompile Include="Source\Level2.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Audio.cpp">
-      <Filter>Modules</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Collisions.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
@@ -65,6 +62,12 @@
     </ClCompile>
     <ClCompile Include="Source\Map.cpp">
       <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneManager.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AudioManager.cpp">
+      <Filter>Modules</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -135,9 +138,6 @@
     <ClInclude Include="Source\Level2.h">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Audio.h">
-      <Filter>Modules</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Collisions.h">
       <Filter>Modules</Filter>
     </ClInclude>
@@ -158,6 +158,15 @@
     </ClInclude>
     <ClInclude Include="Source\Map.h">
       <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneManager.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AudioManager.h">
+      <Filter>Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

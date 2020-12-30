@@ -1,35 +1,34 @@
 #ifndef  __SCENELOSE_H__
 #define  __SCENELOSE_H__
 
-#include "Module.h"
+#include "Scene.h"
 
-class SceneLose : public Module
+#include "Map.h"
+#include "Player.h"
+
+
+class SceneLose : public Scene
 {
 public:
+
 	// Constructor
 	SceneLose();
-
 	// Destructor
-	~SceneLose();
+	virtual ~SceneLose();
 
-
-	// Called before render is available
-	bool Awake();
 
 	// Called before the first frame / when activated
-	bool Start();
-
-	// Called before all Updates
-	bool PreUpdate();
+	bool Load(Textures* tex);
 
 	// Called each loop iteration
-	bool Update(float dt);
+	bool Update(Input* input, float dt);
 
 	// Called after Updates
-	bool PostUpdate();
+	bool Draw(Render* render);
+
 
 	// Called before quitting
-	bool CleanUp();
+	bool Unload();
 
 private:
 	unsigned int gameOverFX;
