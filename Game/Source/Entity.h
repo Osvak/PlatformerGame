@@ -4,7 +4,7 @@
 #include "Point.h"
 #include "SString.h"
 
-enum class EntityType
+enum EntityType
 {
     PLAYER,
     ENEMY,
@@ -20,6 +20,11 @@ public:
     Entity(EntityType type) : type(type), active(true) {}
 
     virtual bool Update(float dt)
+    {
+        return true;
+    }
+
+    virtual bool CleanUp()
     {
         return true;
     }

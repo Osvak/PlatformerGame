@@ -3,41 +3,61 @@
 
 #include "Scene.h"
 
-#define NEXT_SCENE_TIME 80
+#include "Map.h"
 
 
-struct SDL_Texture;
+#define NEXT_SCENE_TIME 400
+
+
+class Input;
+class Render;
+class Textures;
+class AudioManager;
+class EntityManager;
+
+class SDL_Texture;
 
 class SceneLogo : public Scene
 {
 public:
 
 	// Constructor
-	SceneLogo();
+	SceneLogo(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
 	// Destructor
 	virtual ~SceneLogo();
 
 
 	// Called before the first frame / when activated
-	bool Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager);
+	bool Load();
 
 
 	// Called each loop iteration
-	bool Update(Input* input, float dt);
+	bool Update(float dt);
 
-	bool Draw(Render* render);
+	bool Draw();
 
 
 	// Called before quitting
-	bool Unload(Textures* tex, AudioManager* audioManager);
+	bool Unload();
 
 
 private:
-	SDL_Texture* img = nullptr;
+
+	SString name;
+
 	unsigned int logoFX;
 	int imgW = 0, imgH = 0;
 	bool transition = false;
 	int nextSceneCounter = 0;
+
+	//Map* map;
+	SDL_Texture* img;
+
+	Input* input;
+	Render* render;
+	Textures* tex;
+	AudioManager* audioManager;
+	EntityManager* entityManager;
 };
 
 #endif // !__SCENELOGO_H__

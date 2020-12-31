@@ -1,20 +1,14 @@
 #include "Player.h"
 
-#include "App.h"
-#include "Window.h"
+#include "Input.h"
 #include "Render.h"
 #include "Textures.h"
-#include "Input.h"
 #include "AudioManager.h"
-#include "Map.h"
-#include "Collisions.h"
-#include "Level1.h"
-#include "Level2.h"
-#include "Potion.h"
+
+#include "Collider.h" // TODO: remove
 
 #include "Log.h"
 #include "Defs.h"
-
 
 #include "SDL/include/SDL_rect.h"
 
@@ -22,13 +16,20 @@
 
 
 // Constructor
-Player::Player() : Entity(EntityType::PLAYER)
+Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioManager) : Entity(EntityType::PLAYER)
 {
 	LOG("Loading Player");
 	
 	name.Create("player");
 
 
+	this->input = input;
+	this->render = render;
+	this->tex = tex;
+	this->audioManager = audioManager;
+
+
+	
 	//
 	// Set the lifes to 3
 	//
@@ -60,44 +61,27 @@ Player::Player() : Entity(EntityType::PLAYER)
 		deathAnim->PushBack({ 150 + (50 * i), 296, 50, 37 });
 	for (int i = 0; i < 6; i++)
 		deathAnim->PushBack({ 50 * i, 333, 50, 37 });
-}
-
-// Destructor
-Player::~Player()
-{
-
-}
-
-
-// Called when the module is activated
-bool Player::Awake(pugi::xml_node& config)
-{
-	bool ret = true;
 
 	LOG("+++++ Loading player textures");
 
 	//
 	// Load Player textures files
 	//
-	playerTexture = app->tex->Load("Assets/Textures/Player/player_sheet.png");
+	playerTexture = tex->Load("Assets/Textures/Player/player_sheet.png");
 
-	//
-	// Load Lifes texture files 
-	//
-	lifesTexture = app->tex->Load("Assets/Textures/Items/heart_sprite.png");
 
 	//
 	// Load Player FX files
 	//
-	jumpFX = app->audioManager->LoadFX("Assets/Audio/FX/jump.wav");
-	app->audioManager->musicList.Add(&jumpFX);
-	secondJumpFX = app->audioManager->LoadFX("Assets/Audio/FX/second_jump.wav");
-	app->audioManager->musicList.Add(&secondJumpFX);
-	oofFX = app->audioManager->LoadFX("Assets/Audio/FX/oof.wav");
-	app->audioManager->musicList.Add(&oofFX);
-	checkpointFX = app->audioManager->LoadFX("Assets/Audio/FX/checkpoint.wav");
-	app->audioManager->musicList.Add(&checkpointFX);
-	nextLevelFX = app->audioManager->LoadFX("Assets/Audio/FX/next_level.wav");
+	jumpFX = audioManager->LoadFX("Assets/Audio/FX/jump.wav");
+	audioManager->musicList.Add(&jumpFX);
+	secondJumpFX = audioManager->LoadFX("Assets/Audio/FX/second_jump.wav");
+	audioManager->musicList.Add(&secondJumpFX);
+	oofFX = audioManager->LoadFX("Assets/Audio/FX/oof.wav");
+	audioManager->musicList.Add(&oofFX);
+	checkpointFX = audioManager->LoadFX("Assets/Audio/FX/checkpoint.wav");
+	audioManager->musicList.Add(&checkpointFX);
+	nextLevelFX = audioManager->LoadFX("Assets/Audio/FX/next_level.wav");
 
 	//
 	// Set initial position
@@ -107,8 +91,8 @@ bool Player::Awake(pugi::xml_node& config)
 	//
 	// Create Player collider
 	//
-	//playerCollider = app->collisions->AddCollider({ (int)position.x , (int)position.y, PLAYER_SIZE, PLAYER_SIZE }, Collider::ColliderType::PLAYER, this);
-	//cameraCollider = app->collisions->AddCollider({ (int)position.x, (int)position.y - (TILE_SIZE * 4), TILE_SIZE * 6, TILE_SIZE * 5 }, Collider::ColliderType::CAMERA_WINDOW, this);
+	//playerCollider = collisions->AddCollider({ (int)position.x , (int)position.y, PLAYER_SIZE, PLAYER_SIZE }, Collider::ColliderType::PLAYER, this);
+	//cameraCollider = collisions->AddCollider({ (int)position.x, (int)position.y - (TILE_SIZE * 4), TILE_SIZE * 6, TILE_SIZE * 5 }, Collider::ColliderType::CAMERA_WINDOW, this);
 
 	//
 	// Set current animation
@@ -128,12 +112,14 @@ bool Player::Awake(pugi::xml_node& config)
 	isDying = false;
 	canDoubleJump = false;
 	isDoubleJumping = false;
-	checkpointPos = { TILE_SIZE * 9, TILE_SIZE * 16 };
+	//checkpointPos = { TILE_SIZE * 9, TILE_SIZE * 16 };
 	state = IDLE;
 	destroyed = false;
-	
+}
+// Destructor
+Player::~Player()
+{
 
-	return ret;
 }
 
 
@@ -145,7 +131,6 @@ bool Player::Update(float dt)
 
 	return true;
 }
-
 // Control input and states
 void Player::UpdateState()
 {
@@ -153,25 +138,25 @@ void Player::UpdateState()
 	{
 	case IDLE:
 	{
-		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN)
+		if (input->GetKey(SDL_SCANCODE_D) == KEY_DOWN)
 		{
 			ChangeState(state, MOVE_RIGHT);
 			break;
 		}
 
-		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN)
+		if (input->GetKey(SDL_SCANCODE_A) == KEY_DOWN)
 		{
 			ChangeState(state, MOVE_LEFT);
 			break;
 		}
 
-		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		if (input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
 			ChangeState(state, JUMP);
 			break;
 		}
 		
-		if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+		if (input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
 		{
 			ChangeState(state, GOD_MODE);
 			break;
@@ -194,25 +179,25 @@ void Player::UpdateState()
 
 	case MOVE_RIGHT:
 	{
-		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		if (input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
 			ChangeState(state, JUMP);
 			break;
 		}
 
-		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+		if (input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
 			ChangeState(state, MOVE_LEFT);
 			break;
 		}
 
-		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+		if (input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
 			ChangeState(state, MOVE_RIGHT);
 			break;
 		}
 
-		if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+		if (input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
 		{
 			ChangeState(state, GOD_MODE);
 			break;
@@ -237,25 +222,25 @@ void Player::UpdateState()
 
 	case MOVE_LEFT:
 	{
-		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		if (input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
 			ChangeState(state, JUMP);
 			break;
 		}
 
-		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+		if (input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
 			ChangeState(state, MOVE_RIGHT);
 			break;
 		}
 
-		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+		if (input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
 			ChangeState(state, MOVE_LEFT);
 			break;
 		}
 		
-		if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+		if (input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
 		{
 			ChangeState(state, GOD_MODE);
 			break;
@@ -283,13 +268,13 @@ void Player::UpdateState()
 	{
 		if (isTouchingGround == true)
 		{
-			if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+			if (input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 			{
 				ChangeState(state, MOVE_RIGHT);
 				break;
 			}
 
-			if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+			if (input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 			{
 				ChangeState(state, MOVE_LEFT);
 				break;
@@ -310,7 +295,7 @@ void Player::UpdateState()
 			ChangeState(state, IDLE);
 		}
 
-		if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+		if (input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
 		{
 			ChangeState(state, GOD_MODE);
 			break;
@@ -333,7 +318,7 @@ void Player::UpdateState()
 
 	case GOD_MODE:
 	{
-		if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+		if (input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
 		{
 			//playerCollider->type = Collider::ColliderType::PLAYER;
 			
@@ -362,7 +347,6 @@ void Player::UpdateState()
 		break;
 	}
 }
-
 // Control what each state does
 void Player::UpdateLogic(float dt)
 {
@@ -416,7 +400,7 @@ void Player::UpdateLogic(float dt)
 			--position.x;
 		}
 
-		if (isTouchingGround == true && app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+		if (isTouchingGround == true && input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
 		{
 			velocity.x = velocity.x * 2;
 			walkAnim->speed = 0.8f;
@@ -445,7 +429,7 @@ void Player::UpdateLogic(float dt)
 			++position.x;
 		}
 
-		if (isTouchingGround == true && app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+		if (isTouchingGround == true && input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
 		{
 			velocity.x = velocity.x * 2;
 			walkAnim->speed = 0.8f;
@@ -477,40 +461,40 @@ void Player::UpdateLogic(float dt)
 			fallStraight = true;
 		}
 
-		if ((app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) && (fallStraight == false))
+		if ((input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) && (fallStraight == false))
 		{
 			horizontalDirection = 1;
 			velocity.x = PLAYER_SPEED;
 		}
-		if ((app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) && (fallStraight == false))
+		if ((input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) && (fallStraight == false))
 		{
 			horizontalDirection = 1;
 			velocity.x = PLAYER_SPEED;
 		}
-		if ((app->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN) && (fallStraight == false))
+		if ((input->GetKey(SDL_SCANCODE_A) == KEY_DOWN) && (fallStraight == false))
 		{
 			horizontalDirection = -1;
 			velocity.x = -PLAYER_SPEED;
 		}
-		if ((app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) && (fallStraight == false))
+		if ((input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) && (fallStraight == false))
 		{
 			horizontalDirection = -1;
 			velocity.x = -PLAYER_SPEED;
 		}
-		if ((app->input->GetKey(SDL_SCANCODE_D) != KEY_DOWN) &&
-			(app->input->GetKey(SDL_SCANCODE_D) != KEY_REPEAT) &&
-			(app->input->GetKey(SDL_SCANCODE_A) != KEY_DOWN) &&
-			(app->input->GetKey(SDL_SCANCODE_A) != KEY_REPEAT))
+		if ((input->GetKey(SDL_SCANCODE_D) != KEY_DOWN) &&
+			(input->GetKey(SDL_SCANCODE_D) != KEY_REPEAT) &&
+			(input->GetKey(SDL_SCANCODE_A) != KEY_DOWN) &&
+			(input->GetKey(SDL_SCANCODE_A) != KEY_REPEAT))
 		{
 			velocity.x = 0.0f;
 		}
 
 
-		if ((canDoubleJump == true) && (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN))
+		if ((canDoubleJump == true) && (input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN))
 		{
 			isDoubleJumping = true;
 
-			app->audioManager->PlayFX(secondJumpFX);
+			audioManager->PlayFX(secondJumpFX);
 		}
 
 		if (isDying == false)
@@ -524,38 +508,38 @@ void Player::UpdateLogic(float dt)
 
 	case GOD_MODE:
 	{
-		if ((app->input->GetKey(SDL_SCANCODE_W) == KEY_DOWN) ||
-			(app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT))
+		if ((input->GetKey(SDL_SCANCODE_W) == KEY_DOWN) ||
+			(input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT))
 		{
 			velocity.y = -PLAYER_SPEED * GOD_MODE_MULT;
 		}
-		if ((app->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN) ||
-			(app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT))
+		if ((input->GetKey(SDL_SCANCODE_S) == KEY_DOWN) ||
+			(input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT))
 		{
 			velocity.y = PLAYER_SPEED * GOD_MODE_MULT;
 		}
-		if ((app->input->GetKey(SDL_SCANCODE_W) != KEY_DOWN) &&
-			(app->input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT) &&
-			(app->input->GetKey(SDL_SCANCODE_S) != KEY_DOWN) &&
-			(app->input->GetKey(SDL_SCANCODE_S) != KEY_REPEAT))
+		if ((input->GetKey(SDL_SCANCODE_W) != KEY_DOWN) &&
+			(input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT) &&
+			(input->GetKey(SDL_SCANCODE_S) != KEY_DOWN) &&
+			(input->GetKey(SDL_SCANCODE_S) != KEY_REPEAT))
 		{
 			velocity.y = 0;
 		}
 
-		if ((app->input->GetKey(SDL_SCANCODE_A) == KEY_DOWN) ||
-			(app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT))
+		if ((input->GetKey(SDL_SCANCODE_A) == KEY_DOWN) ||
+			(input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT))
 		{
 			velocity.x = -PLAYER_SPEED * GOD_MODE_MULT;
 		}
-		if ((app->input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) ||
-			(app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT))
+		if ((input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) ||
+			(input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT))
 		{
 			velocity.x = PLAYER_SPEED * GOD_MODE_MULT;
 		}
-		if ((app->input->GetKey(SDL_SCANCODE_A) != KEY_DOWN) &&
-			(app->input->GetKey(SDL_SCANCODE_A) != KEY_REPEAT) &&
-			(app->input->GetKey(SDL_SCANCODE_D) != KEY_DOWN) &&
-			(app->input->GetKey(SDL_SCANCODE_D) != KEY_REPEAT))
+		if ((input->GetKey(SDL_SCANCODE_A) != KEY_DOWN) &&
+			(input->GetKey(SDL_SCANCODE_A) != KEY_REPEAT) &&
+			(input->GetKey(SDL_SCANCODE_D) != KEY_DOWN) &&
+			(input->GetKey(SDL_SCANCODE_D) != KEY_REPEAT))
 		{
 			velocity.x = 0;
 		}
@@ -582,7 +566,7 @@ void Player::UpdateLogic(float dt)
 
 				if (lifes > 0)
 				{
-					position = checkpointPos;
+					//position = checkpointPos;
 					//cameraCollider->SetPos(checkpointPos.x, checkpointPos.y - TILE_SIZE * 4);
 				}
 
@@ -632,17 +616,16 @@ void Player::UpdateLogic(float dt)
 	//
 	// Update Camera Position
 	//
-	/*if (app->level1->freeCamera == false)
+	/*if (level1->freeCamera == false)
 	{
-		if ((cameraCollider->rect.y) <= app->map->cameraMaxBottomPosition)
+		if ((cameraCollider->rect.y) <= map->cameraMaxBottomPosition)
 		{
-			app->render->camera.y = -(cameraCollider->rect.y - (TILE_SIZE * 5)) * (int)app->win->GetScale();
+			render->camera.y = -(cameraCollider->rect.y - (TILE_SIZE * 5)) * (int)win->GetScale();
 		}
-		app->render->camera.x = -(cameraCollider->rect.x - (TILE_SIZE * 6)) * (int)app->win->GetScale();
+		render->camera.x = -(cameraCollider->rect.x - (TILE_SIZE * 6)) * (int)win->GetScale();
 	}*/
 	// TODO: Fix camera position
 }
-
 // Change the State
 void Player::ChangeState(PlayerState previousState, PlayerState newState)
 {
@@ -699,7 +682,7 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 			horizontalDirection = -1;
 		}
 
-		app->audioManager->PlayFX(jumpFX);
+		audioManager->PlayFX(jumpFX);
 
 		break;
 	}
@@ -741,7 +724,7 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 
 		--lifes;
 
-		app->audioManager->PlayFX(oofFX);
+		audioManager->PlayFX(oofFX);
 
 		break;
 	}
@@ -756,7 +739,7 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 
 
 // Post Update
-bool Player::Draw(Render* render)
+bool Player::Draw()
 {
 	//
 	// Draw Player
@@ -778,6 +761,7 @@ bool Player::Draw(Render* render)
 
 	return true;
 }
+
 
 // Controls what the player does when it collides with another collider
 /*void Player::OnCollision(Collider* c1, Collider* c2)
@@ -805,7 +789,7 @@ bool Player::Draw(Render* render)
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::NEXT_LEVEL)
 	{
-		app->audioManager->PlayFX(nextLevelFX, 0);
+		audioManager->PlayFX(nextLevelFX, 0);
 		isWinning = true;
 	}
 
@@ -816,14 +800,14 @@ bool Player::Draw(Render* render)
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::CHECKPOINT)
 	{
-		app->audioManager->PlayFX(checkpointFX, 0);
-		if (app->currentScene == LEVEL1)
+		audioManager->PlayFX(checkpointFX, 0);
+		if (currentScene == LEVEL1)
 		{
-			app->level1->Cp1Activation();
+			level1->Cp1Activation();
 		}
-		if (app->currentScene == LEVEL2)
+		if (currentScene == LEVEL2)
 		{
-			app->level2->Cp2Activation();
+			level2->Cp2Activation();
 		}
 	}
 
@@ -838,7 +822,7 @@ bool Player::Draw(Render* render)
 
 	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::POTION) {
 		++lifes;
-		app->potion->isCollected = true;
+		potion->isCollected = true;
 	}
 }*/
 
@@ -848,30 +832,30 @@ bool Player::Draw(Render* render)
 {
 	// Load current scene
 	sc = playerNode.child("level").attribute("currentlevel").as_int();
-	switch (app->player->sc)
+	switch (player->sc)
 	{
 	case 1:
-		if (app->currentScene == LEVEL1)
+		if (currentScene == LEVEL1)
 		{
-			app->fadeToBlack->Fade((Module*)app->level1, (Module*)app->level1, 10.0f);
+			fadeToBlack->Fade((Module*)level1, (Module*)level1, 10.0f);
 		}
-		if (app->currentScene == LEVEL2)
+		if (currentScene == LEVEL2)
 		{
-			app->fadeToBlack->Fade((Module*)app->level2, (Module*)app->level1, 40.0f);
+			fadeToBlack->Fade((Module*)level2, (Module*)level1, 40.0f);
 		}
-		app->currentScene = LEVEL1;
+		currentScene = LEVEL1;
 		break;
 
 	case 2:
-		if (app->currentScene == LEVEL1)
+		if (currentScene == LEVEL1)
 		{
-			app->fadeToBlack->Fade((Module*)app->level1, (Module*)app->level2, 40.0f);
+			fadeToBlack->Fade((Module*)level1, (Module*)level2, 40.0f);
 		}
-		if (app->currentScene == LEVEL2)
+		if (currentScene == LEVEL2)
 		{
-			app->fadeToBlack->Fade((Module*)app->level2, (Module*)app->level2, 10.0f);
+			fadeToBlack->Fade((Module*)level2, (Module*)level2, 10.0f);
 		}
-		app->currentScene = LEVEL2;
+		currentScene = LEVEL2;
 		break;
 	}
 
@@ -981,37 +965,37 @@ void Player::LoadPlayerPosition()
 	switch (state)
 	{
 	case IDLE:
-		app->player->st = 0;
+		player->st = 0;
 		break;
 
 	case MOVE_RIGHT:
-		app->player->st = 1;
+		player->st = 1;
 		break;
 
 	case MOVE_LEFT:
-		app->player->st = 2;
+		player->st = 2;
 		break;
 
 	case JUMP:
-		app->player->st = 3;
+		player->st = 3;
 		break;
 
 	case GOD_MODE:
-		app->player->st = 4;
+		player->st = 4;
 		break;
 	}
 	player.append_attribute("playerstate").set_value(st);
 	player.append_attribute("horizontaldirection").set_value(horizontalDirection);
 
 	player = playerNode.append_child("level");
-	switch (app->currentScene)
+	switch (currentScene)
 	{
 	case LEVEL1:
-		app->player->sc = 1;
+		player->sc = 1;
 		break;
 
 	case LEVEL2:
-		app->player->sc = 2;
+		player->sc = 2;
 		break;
 	}
 	player.append_attribute("currentlevel").set_value(sc);
@@ -1138,7 +1122,7 @@ void Player::ControlCameraMovement(Collider* c)
 
 
 // Clean Up
-bool Player::CleanUp(Textures* tex, AudioManager* audioManager)
+bool Player::CleanUp()
 {
 	if (!active)
 	{
@@ -1146,7 +1130,6 @@ bool Player::CleanUp(Textures* tex, AudioManager* audioManager)
 	}
 
 	tex->UnLoad(playerTexture);
-	tex->UnLoad(lifesTexture);
 
 	audioManager->UnloadFX(jumpFX);
 	audioManager->UnloadFX(secondJumpFX);

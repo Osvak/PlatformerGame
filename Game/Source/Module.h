@@ -4,13 +4,9 @@
 #include "SString.h"
 
 #include "PugiXml/src/pugixml.hpp"
-#include "External/SDL/include/SDL_rect.h"
 
 
-class App;
 class Collider;
-class Textures;
-class AudioManager;
 
 class Module
 {
@@ -56,7 +52,7 @@ public:
 	}
 
 	// Called before quitting
-	virtual bool CleanUp(Textures* tex, AudioManager* audioManager)
+	virtual bool CleanUp()
 	{
 		return true;
 	}

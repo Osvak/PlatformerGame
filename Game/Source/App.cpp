@@ -24,11 +24,11 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	PERF_START(pTimer);
 
 	win = new Window();
-	input = new Input();
+	input = new Input(win);
 	render = new Render(win);
-	tex = new Textures();
+	tex = new Textures(render);
 	audioManager = new AudioManager();
-	entityManager = new EntityManager(tex);
+	entityManager = new EntityManager(win, input, render, tex, audioManager);
 	sceneManager = new SceneManager(input, render, tex, audioManager, entityManager);
 	
 
@@ -206,9 +206,9 @@ void App::FinishUpdate()
 	}
 
 
-	SString title("Lato Viridi | FPS: %.2f | Avg.FPS: %.2f | Last-Frame MS: %.2f | Time since startup: %.3f | Frame Count: %I64u | VSync: %s", fps, averageFps, fpsMSecondsAfter, secondsSinceStartup, frameCount, usingVSync.GetString());
+	SString title("Lato Viridi | FPS: %.2f | Avg.FPS: %.2f | Last-Frame MS: %.2f | Time since startup: %.3f | Frame Count: %I64u | VSync: %s", fps, averageFps, fpsMSecondsAfter, secondsSinceStartup, frameCount, render->usingVSync.GetString());
 	
-	app->win->SetTitle(title.GetString());
+	win->SetTitle(title.GetString());
 
 
 	if (fpsMSecondsAfter < screenTicks)
@@ -296,7 +296,7 @@ bool App::CleanUp()
 	{
 		if (item->data->active == true)
 		{
-			ret = item->data->CleanUp(tex, audioManager);
+			ret = item->data->CleanUp();
 		}
 		item = item->prev;
 	}

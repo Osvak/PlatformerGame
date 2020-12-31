@@ -1,23 +1,27 @@
 #include "SceneLogo.h"
 
-#include "App.h" // erase
-#include "Window.h" // erase
-
 #include "Input.h"
 #include "Render.h"
 #include "Textures.h"
-
+#include "AudioManager.h"
 #include "EntityManager.h"
 
 #include "Log.h"
 
 
 // Constructor
-SceneLogo::SceneLogo()
+SceneLogo::SceneLogo(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	LOG("Loading SceneLogo");
 
 	name.Create("sceneLogo");
+
+
+	this->input = input;
+	this->render = render;
+	this->tex = tex;
+	this->audioManager = audioManager;
+	this->entityManager = entityManager;
 
 	//
 	// Reset flags
@@ -34,18 +38,19 @@ SceneLogo::~SceneLogo()
 
 
 // Called before the first frame
-bool SceneLogo::Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager)
+bool SceneLogo::Load()
 {
 	//
 	// Load Map
 	//
+	//map = (Map*)entityManager->CreateEntity(EntityType::MAP);
+	//map->Load("scene_logo.tmx");
 	img = tex->Load("Assets/Maps/scene_logo.png");
-	imgW = (int)app->win->GetWidth() / (int)app->win->GetScale();
-	imgH = (int)app->win->GetHeight() / (int)app->win->GetScale();
-
+	imgW = (int)render->camera.w / (int)render->scale;
+	imgH = (int)render->camera.h / (int)render->scale;
 	if (SDL_QueryTexture(img, NULL, NULL, &imgW, &imgH) != 0)
 	{
-		LOG("Error on SceneLogo QueryTexture");
+		LOG("Error on QueryTexture");
 	}
 
 	//
@@ -57,16 +62,15 @@ bool SceneLogo::Load(Textures* tex, EntityManager* entityManager, AudioManager* 
 	//
 	// Move camera
 	//
-	//app->render->camera.x = app->render->camera.y = 0;
-	// TODO: Fix camera starting position
+	render->camera.x = render->camera.y = 0;
 
 
-	return true;
+	return false;
 }
 
 
 // Called each loop iteration
-bool SceneLogo::Update(Input* input, float dt)
+bool SceneLogo::Update(float dt)
 {
 	//
 	// Check sound
@@ -74,10 +78,9 @@ bool SceneLogo::Update(Input* input, float dt)
 	if (nextSceneCounter < NEXT_SCENE_TIME && transition == false)
 	{
 		++nextSceneCounter;
-		if (nextSceneCounter == 15)
+		if (nextSceneCounter == 200)
 		{
-			app->audioManager->PlayFX(logoFX);
-			// TODO: Fix sound in update
+			audioManager->PlayFX(logoFX);
 		}
 	}
 
@@ -117,38 +120,38 @@ bool SceneLogo::Update(Input* input, float dt)
 		return true;
 	}
 
-	return true;
+	return false;
 }
 
 
-bool SceneLogo::Draw(Render* render)
+bool SceneLogo::Draw()
 {
 	//
 	// Draw map
 	//
+	//map->Draw();
 	if (render->DrawTexture(img, 0, 0) == false)
 	{
 		LOG("Error drawing Scene Logo");
 	}
 
-	return true;
+	return false;
 }
 
 // Called before quitting, frees memory
-bool SceneLogo::Unload(Textures* tex, AudioManager* audioManager)
+bool SceneLogo::Unload()
 {
 	if (!active)
 	{
-		return true;
+		return false;
 	}
 
 	LOG("Freeing Logo Screen");
 
+	//entityManager->DestroyEntity(map);
 	tex->UnLoad(img);
-	audioManager->UnloadFX(logoFX);
-
 
 	active = false;
 
-	return true;
+	return false;
 }

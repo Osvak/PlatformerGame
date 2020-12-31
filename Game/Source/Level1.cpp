@@ -1,5 +1,9 @@
 #include "Level1.h"
 
+#include "Input.h"
+#include "Render.h"
+#include "Textures.h"
+#include "AudioManager.h"
 #include "EntityManager.h"
 
 #include "Log.h"
@@ -8,11 +12,18 @@
 
 
 // Constructor
-Level1::Level1()
+Level1::Level1(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	LOG("Loading Level1");
 
 	name.Create("level1");
+
+
+	this->input = input;
+	this->render = render;
+	this->tex = tex;
+	this->audioManager = audioManager;
+	this->entityManager = entityManager;
 }
 
 // Destructor
@@ -22,7 +33,7 @@ Level1::~Level1()
 
 
 // Called before the first frame
-bool Level1::Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager)
+bool Level1::Load()
 {
 	//
 	// Load map
@@ -44,16 +55,15 @@ bool Level1::Load(Textures* tex, EntityManager* entityManager, AudioManager* aud
 	//
 	// Move Camera to starting position
 	//
-	//app->render->camera.x = -((int)app->win->GetScale() * TILE_SIZE);
-	//app->render->camera.y = -((int)app->win->GetScale() * TILE_SIZE * 2);
-	// TODO: Fix camera starting position
+	render->camera.x = -((int)render->scale * TILE_SIZE);
+	render->camera.y = -((int)render->scale * TILE_SIZE * 2);
 
 
-	return true;
+	return false;
 }
 
 // Called each loop iteration
-bool Level1::Update(Input* input, float dt)
+bool Level1::Update(float dt)
 {
 	//
 	// Player Update
@@ -65,41 +75,41 @@ bool Level1::Update(Input* input, float dt)
 	//
 	// Scene controls
 	//
-	bool ret = false;
+	bool ret = true;
 
-	if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	/*if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
 	{
-		ret = true;
-	}
+		ret = false;
+	}*/
 	if (input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
 	{
-		app->SaveGameRequest();
+		//app->SaveGameRequest();
 	}
 	if (input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 	{
-		app->LoadGameRequest();
+		//app->LoadGameRequest();
 	}
 
 	if (input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
 	{
-		player->position = player->checkpointPos;
-		//app->player->cameraCollider->SetPos(app->player->checkpointPos.x, app->player->checkpointPos.y - TILE_SIZE * 4);
+		//player->position = player->checkpointPos;
+		//player->cameraCollider->SetPos(player->checkpointPos.x, player->checkpointPos.y - TILE_SIZE * 4);
 	}
 
-	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
+	if (input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
 		TransitionToScene(SceneType::LEVEL1);
-		return false;
+		return true;
 	}
-	if (app->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
+	if (input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
 	{
 		TransitionToScene(SceneType::LEVEL2);
-		return false;
+		return true;
 	}
-	if (app->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+	if (input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
 	{
 		TransitionToScene(SceneType::LEVEL1);
-		return false;
+		return true;
 	}
 
 	//
@@ -119,45 +129,29 @@ bool Level1::Update(Input* input, float dt)
 	}
 
 
-	return false;
+	return true;
 }
 
 // Called each loop iteration
-bool Level1::Draw(Render* render)
+bool Level1::Draw()
 {
 	//
 	// Draw Map
 	//
-	map->Draw(render);
+	map->Draw();
 
 	//
 	// Draw Player
 	//
-	player->Draw(render);
-
-	//SDL_Rect cpRect = currentAnim->GetCurrentFrame();
-	SDL_Rect lifesRect;
-	SDL_Rect cpRect;
-
-	// Lifes HUD Draw
-	//lifesRect.x = app->player->cameraCollider->rect.x - (TILE_SIZE * 5);
-	//lifesRect.y = app->player->cameraCollider->rect.y - (TILE_SIZE * 4);
-
-	/*for (int i = 0; i < app->player->lifes; i++)
-	{
-		render->DrawTexture(app->player->lifesTexture, lifesRect.x + 17 * i, lifesRect.y);
-	}*/
-
-	// Draw Checkpoint
-	//app->render->DrawTexture(app->level1->cpTexture, TILE_SIZE * 39, TILE_SIZE * 14 - 4, &cpRect);
-
+	player->Draw();
+	
 
 	return false;
 }
 
 
 // Called before quitting
-bool Level1::Unload(Textures* tex, AudioManager* audioManager)
+bool Level1::Unload()
 {
 	if (!active)
 	{
@@ -166,8 +160,8 @@ bool Level1::Unload(Textures* tex, AudioManager* audioManager)
 
 	LOG("Freeing Level 1");
 
-	map->CleanUp();
-	player->CleanUp(tex, audioManager);
+	entityManager->DestroyEntity(map);
+	entityManager->DestroyEntity(player);
 
 
 	active = false;

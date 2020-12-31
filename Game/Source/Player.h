@@ -2,14 +2,8 @@
 #define __PLAYER_H__
 
 #include "Entity.h"
-#include "Input.h"
-#include "Render.h"
 
 #include "Animation.h"
-#include "Render.h"
-#include "App.h"
-#include "Map.h"
-
 #include "Point.h"
 #include "SString.h"
 
@@ -25,6 +19,11 @@
 
 
 
+class Input;
+class Render;
+class Textures;
+class AudioManager;
+
 struct SDL_Texture;
 struct SDL_Rect;
 struct Collider;
@@ -32,7 +31,7 @@ struct Collider;
 // Different states of the player
 enum PlayerState
 {
-	IDLE,
+	IDLE = 0,
 	MOVE_RIGHT,
 	MOVE_LEFT,
 	JUMP,
@@ -50,13 +49,9 @@ class Player : public Entity
 public:
 
 	// Constructor
-	Player();
+	Player(Input* input, Render* render, Textures* tex, AudioManager* audioManager);
 	// Destructor
 	virtual ~Player();
-
-
-	// Called when the module is activated, does animation pushbacks
-	bool Awake(pugi::xml_node&);
 
 
 	// Called at the middle of the application loop
@@ -75,26 +70,26 @@ public:
 
 	// Called at the end of the application loop
 	// Performs the render call of the player sprite
-	bool Draw(Render* render);
+	bool Draw();
+
+
+	// Clean up
+	bool CleanUp();
+
 
 	//bool LoadState(pugi::xml_node&) override;
-
-	void LoadPlayerPosition();
-
+	
 	//bool SaveState(pugi::xml_node&) const override;
 
 
 	// Collision callback, called when the player intersects with another collider
 	//void OnCollision(Collider* c1, Collider* c2) override;
 
-
-	// Clean up
-	bool CleanUp(Textures* tex, AudioManager* audioManager);
-
 private:
 
-	void Jump(float dt);
+	void LoadPlayerPosition();
 
+	void Jump(float dt);
 	void ControlWallCollision(Collider* c1);
 	void ControlPlatformCollision(Collider* c1);
 	void ControlCameraMovement(Collider* c1);
@@ -118,33 +113,19 @@ public:
 	Animation* currentAnimation;
 	
 
-	// Jump handlers
-	fPoint accel = { 0.0, 0.0 };
-	fPoint vel = { 0.0, 0.0 };
-	float timeInAir = 0.0f;
-	float jumpImpulseTime = 0.05f;
-	float jumpImpulseVel = -4.0f;
-	float jumpAccel = 4.0f;
-
 	// Auxiliar variables
 	SDL_Rect rect;
 	int st = 0; // current state for save/load
 	int sc = 0; // current scene for save/load
 
-	// Player position from checkpoints
-	fPoint checkpointPos;
 
 	// Player position form Save File
-	fPoint savedPos = { 0,0 };
-	iPoint cameraCollPos = { 0,0 };
+	fPoint savedPos = { 0.0f,0.0f };
+	fPoint cameraCollPos = { 0.0f,0.0f };
 	bool loadPos = false;
 
 	// Lifes variable
 	int lifes = 3;
-
-	// The life sprite loaded into an SDL_Texture
-	SDL_Texture* lifesTexture = nullptr;
-
 	////////////////////////////////
 
 
@@ -152,7 +133,6 @@ public:
 	///////// Player Flags /////////
 	// The horizontal direction where the player is facing -> -1 for LEFT // 1 for RIGHT // 0 for IDLE
 	int horizontalDirection = 1;
-
 	// The horizontal direction where the player is facing -> -1 for UP // 1 for DOWN // 0 for IDLE
 	int verticalDirection = 0;
 
@@ -182,8 +162,6 @@ public:
 	///////////////////////////////
 
 
-
-
 	/////// ANIMATION SETS ////////
 	Animation* idleAnim = new Animation();
 	Animation* walkAnim = new Animation();
@@ -202,6 +180,23 @@ public:
 	unsigned int checkpointFX;
 	unsigned int nextLevelFX;
 	///////////////////////////////
+
+private:
+
+	// Jump handlers
+	fPoint accel = { 0.0, 0.0 };
+	fPoint vel = { 0.0, 0.0 };
+	float timeInAir = 0.0f;
+	float jumpImpulseTime = 0.05f;
+	float jumpImpulseVel = -4.0f;
+	float jumpAccel = 4.0f;
+
+private:
+
+	Input* input;
+	Render* render;
+	Textures* tex;
+	AudioManager* audioManager;
 
 };
 

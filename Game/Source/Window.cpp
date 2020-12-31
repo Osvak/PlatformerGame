@@ -1,7 +1,5 @@
 #include "Window.h"
 
-#include "App.h"
-
 #include "Defs.h"
 #include "Log.h"
 
@@ -24,7 +22,7 @@ Window::~Window()
 // Called before render is available
 bool Window::Awake(pugi::xml_node& config)
 {
-	LOG("Init SDL window & surface");
+	LOG("Window.Awake(): Init SDL window & surface");
 	bool ret = true;
 
 	if(SDL_Init(SDL_INIT_VIDEO) < 0)
@@ -51,7 +49,7 @@ bool Window::Awake(pugi::xml_node& config)
 		if(resizable == true) flags |= SDL_WINDOW_RESIZABLE;
 		if(fullscreen_window == true) flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
-		window = SDL_CreateWindow(app->GetTitle(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+		window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 
 		if(window == NULL)
 		{

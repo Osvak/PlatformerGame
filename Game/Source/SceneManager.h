@@ -2,7 +2,9 @@
 #define __SCENEMANAGER_H__
 
 #include "Module.h"
+
 #include "Scene.h"
+
 
 class GuiButton;
 
@@ -16,13 +18,13 @@ class SceneManager : public Module
 {
 public:
 
+	// Constructor
 	SceneManager(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
-
 	// Destructor
 	virtual ~SceneManager();
 
 	// Called before render is available
-	bool Awake();
+	bool Awake(pugi::xml_node&);
 
 	// Called before the first frame
 	bool Start();
@@ -41,12 +43,6 @@ public:
 
 private:
 
-	Input* input;
-	Render* render;
-	Textures* tex;
-	AudioManager* audioManager;
-	EntityManager* entityManager;
-
 	Scene* current;
 	Scene* next;
 
@@ -56,6 +52,12 @@ private:
 	float transitionAlpha;
 
 	bool freeCamera = false;
+
+	Input* input;
+	Render* render;
+	Textures* tex;
+	AudioManager* audioManager;
+	EntityManager* entityManager;
 };
 
 #endif // __SCENEMANAGER_H__

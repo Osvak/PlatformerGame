@@ -24,7 +24,7 @@ AudioManager::~AudioManager()
 // Called before render is available
 bool AudioManager::Awake(pugi::xml_node& config)
 {
-	LOG("Loading Audio Mixer");
+	LOG("AudioManager.Awake(): Loading Audio Mixer");
 	bool ret = true;
 	SDL_Init(0);
 

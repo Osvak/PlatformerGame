@@ -44,9 +44,9 @@ SceneManager::~SceneManager()
 
 
 // Called before render is available
-bool SceneManager::Awake()
+bool SceneManager::Awake(pugi::xml_node&)
 {
-	LOG("Loading Scene manager");
+	LOG("SceneManager.Awake(): Loading Scene manager");
 	bool ret = true;
 
 	return ret;
@@ -55,8 +55,10 @@ bool SceneManager::Awake()
 // Called before the first frame
 bool SceneManager::Start()
 {
-	current = new SceneLogo();
-	current->Load(tex, entityManager, audioManager);
+	LOG("SceneManager.Start(): Making SceneLogo be the first Scene");
+
+	current = new SceneLogo(input, render, tex, audioManager, entityManager);
+	current->Load();
 
 	next = nullptr;
 
@@ -102,7 +104,7 @@ bool SceneManager::Update(float dt)
 	{
 		if (input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
 		{
-			!freeCamera;
+			freeCamera = !freeCamera;
 		}
 
 		if (freeCamera == true)
@@ -113,7 +115,7 @@ bool SceneManager::Update(float dt)
 			if (input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) render->camera.x += 1;
 		}
 
-		current->Update(input, dt);
+		current->Update(dt);
 	}
 	else
 	{
@@ -127,8 +129,8 @@ bool SceneManager::Update(float dt)
 			{
 				transitionAlpha = 1.0f;
 
-				current->Unload(tex, audioManager);	// Unload current screen
-				next->Load(tex, entityManager, audioManager);	// Load next screen
+				current->Unload();	// Unload current screen
+				next->Load();	// Load next screen
 
 				RELEASE(current);	// Free current pointer
 				current = next;		// Assign next pointer
@@ -152,7 +154,7 @@ bool SceneManager::Update(float dt)
 	}
 
 	// Draw current scene
-	current->Draw(render);
+	current->Draw();
 
 	// Draw full screen rectangle in front of everything
 	if (onTransition)
@@ -184,12 +186,12 @@ bool SceneManager::Update(float dt)
 
 		switch (current->nextScene)
 		{
-		case SceneType::LOGO: next = new SceneLogo(); break;
-		case SceneType::TITLE: next = new SceneTitle(); break;
-		case SceneType::LEVEL1: next = new Level1(); break;
-		case SceneType::LEVEL2: next = new Level2(); break;
-		case SceneType::WIN: next = new SceneWin(); break;
-		case SceneType::LOSE: next = new SceneLose(); break;
+		case SceneType::LOGO: next = new SceneLogo(input, render, tex, audioManager, entityManager); break;
+		case SceneType::TITLE: next = new SceneTitle(input, render, tex, audioManager, entityManager); break;
+		case SceneType::LEVEL1: next = new Level1(input, render, tex, audioManager, entityManager); break;
+		case SceneType::LEVEL2: next = new Level2(input, render, tex, audioManager, entityManager); break;
+		case SceneType::WIN: next = new SceneWin(input, render, tex, audioManager, entityManager); break;
+		case SceneType::LOSE: next = new SceneLose(input, render, tex, audioManager, entityManager); break;
 		default: break;
 		}
 
@@ -214,7 +216,7 @@ bool SceneManager::CleanUp()
 {
 	LOG("Freeing scene");
 
-	if (current != nullptr) current->Unload(tex, audioManager);
+	if (current != nullptr) current->Unload();
 
 	return true;
 }

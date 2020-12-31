@@ -1,10 +1,8 @@
 #include "Map.h"
 
-#include "App.h"
+#include "Textures.h"
 #include "Window.h"
 #include "Render.h"
-#include "Textures.h"
-#include "Collisions.h"
 
 #include "PQueue.h"
 #include "DynArray.h"
@@ -14,8 +12,7 @@
 #include "PugiXml\src\pugixml.hpp"
 
 #include <math.h>
-
-
+#include <string.h>
 
 
 // Ask for the value of a custom property
@@ -40,7 +37,7 @@ int Properties::GetProperty(const char* value, int defaultValue) const
 
 
 // Constructor of the Map
-Map::Map(Textures* texture) : Entity(EntityType::MAP)
+Map::Map(Textures* texture, Window* win, Render* render) : Entity(EntityType::MAP)
 {
 	LOG("Loading Map Parser");
 
@@ -48,8 +45,12 @@ Map::Map(Textures* texture) : Entity(EntityType::MAP)
 	name.Create("map");
 	folder.Create("Assets/Maps/");
 
-	tex = texture;
-	scale = app->win->GetScale();
+	this->tex = tex;
+	this->win = win;
+	this->render = render;
+	scale = win->GetScale();
+
+	LOG("Map Entity created");
 }
 
 // Destructor
@@ -69,46 +70,46 @@ Map::~Map()
 	SDL_Rect tileRect;
 	SDL_Rect colliderRect;
 
-	for (ListItem<MapLayer*>* item = app->map->data.layers.start; item; item = item->next)
+	for (ListItem<MapLayer*>* item = data.layers.start; item; item = item->next)
 	{
 		layer = item->data;
 
-		for (int y = 0; y < app->map->data.height; ++y)
+		for (int y = 0; y < data.height; ++y)
 		{
-			for (int x = 0; x < app->map->data.width; ++x)
+			for (int x = 0; x < data.width; ++x)
 			{
 				int tileId = layer->Get(x, y);
-				coords = app->map->MapToWorld(x, y);
+				coords = MapToWorld(x, y);
 
 				if (tileId > 0)
 				{
-					tileset = app->map->GetTilesetFromTileId(tileId);
+					tileset = GetTilesetFromTileId(tileId);
 
-					if (app->currentScene == LEVEL1 || app->currentScene == LEVEL2)
+					if (currentScene == LEVEL1 || currentScene == LEVEL2)
 					{
 						if (tileId == 1)
 						{
 							tileRect = tileset->GetTileRect(tileId);
 							colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-							app->collisions->AddCollider(colliderRect, Collider::ColliderType::PLATFORM, this);
+							collisions->AddCollider(colliderRect, Collider::ColliderType::PLATFORM, this);
 						}
 						if (tileId == 2)
 						{
 							tileRect = tileset->GetTileRect(tileId);
 							colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-							app->collisions->AddCollider(colliderRect, Collider::ColliderType::DIE, this);
+							collisions->AddCollider(colliderRect, Collider::ColliderType::DIE, this);
 						}
 						if (tileId == 3)
 						{
 							tileRect = tileset->GetTileRect(tileId);
 							colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-							app->collisions->AddCollider(colliderRect, Collider::ColliderType::NEXT_LEVEL, this);
+							collisions->AddCollider(colliderRect, Collider::ColliderType::NEXT_LEVEL, this);
 						}
 						if (tileId == 4)
 						{
 							tileRect = tileset->GetTileRect(tileId);
 							colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-							app->collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
+							collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
 						}
 					}
 				}
@@ -120,7 +121,7 @@ Map::~Map()
 }*/
 
 // Draw the map
-void Map::Draw(Render* render)
+void Map::Draw()
 {
 	if (mapLoaded == false) return;
 
@@ -133,24 +134,24 @@ void Map::Draw(Render* render)
 		{
 			if (data.layers[i]->properties.GetProperty("parallax", 1) != 0)
 			{
-				DrawLayer(render, i, true);
+				DrawLayer(i, true);
 			}
 			else
 			{
-				DrawLayer(render, i, false);
+				DrawLayer(i, false);
 			}
 		}
 	}
 }
 
 // Draw each layer of the map
-void Map::DrawLayer(Render* render, int num, bool parallax)
+void Map::DrawLayer(int num, bool parallax)
 {
 	if (num < data.layers.Count())
 	{
 		MapLayer* layer = data.layers[num];
 
-		render->scale = scale;
+		//render->scale = scale;
 
 		for (int y = 0; y < data.height; ++y)
 		{
@@ -177,7 +178,7 @@ void Map::DrawLayer(Render* render, int num, bool parallax)
 			}
 		}
 
-		render->scale = 1; // ???
+		//render->scale = 1; // ???
 	}
 }
 
@@ -449,15 +450,26 @@ bool Map::LoadMap()
 bool Map::LoadTilesetDetails(pugi::xml_node& tileset_node, TileSet* set)
 {
 	bool ret = true;
-	
-	// Load Tileset attributes
+
+	// L03: DONE: Load Tileset attributes
 	set->name.Create(tileset_node.attribute("name").as_string());
 	set->firstgid = tileset_node.attribute("firstgid").as_int();
+	set->tileWidth = tileset_node.attribute("tilewidth").as_int();
+	set->tileHeight = tileset_node.attribute("tileheight").as_int();
 	set->margin = tileset_node.attribute("margin").as_int();
 	set->spacing = tileset_node.attribute("spacing").as_int();
-	set->tileHeight = tileset_node.attribute("tileheight").as_int();
-	set->tileWidth = tileset_node.attribute("tilewidth").as_int();
-	set->tilecount = tileset_node.attribute("tilecount").as_int();
+	pugi::xml_node offset = tileset_node.child("tileoffset");
+
+	if (offset != NULL)
+	{
+		//set->offsetX = offset.attribute("x").as_int();
+		//set->offsetY = offset.attribute("y").as_int();
+	}
+	else
+	{
+		set->offsetX = 0;
+		set->offsetY = 0;
+	}
 
 	return ret;
 }
@@ -476,8 +488,8 @@ bool Map::LoadTilesetImage(pugi::xml_node& tileset_node, TileSet* set)
 	else
 	{
 		// Load Tileset image
-
-		set->texture = tex->Load(PATH(folder.GetString(), image.attribute("source").as_string()));
+		const char* path = PATH(folder.GetString(), image.attribute("source").as_string());
+		set->texture = tex->Load(path);
 		set->texHeight = image.attribute("height").as_int();
 		set->texWidth = image.attribute("width").as_int();
 		set->numTilesHeight = set->texHeight / set->tileHeight;

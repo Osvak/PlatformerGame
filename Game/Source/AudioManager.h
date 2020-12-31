@@ -16,8 +16,8 @@ class AudioManager : public Module
 {
 public:
 
+	// Constructor
 	AudioManager();
-
 	// Destructor
 	virtual ~AudioManager();
 
@@ -34,7 +34,6 @@ public:
 	// Load a WAV in memory
 	unsigned int LoadFX(const char* path);
 	bool UnloadFX(unsigned int id);
-
 	// Play a previously loaded WAV
 	bool PlayFX(unsigned int fx, int repeat = 0);
 	

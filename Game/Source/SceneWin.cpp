@@ -1,18 +1,28 @@
 #include "SceneWin.h"
 
 #include "Input.h"
-
+#include "Render.h"
+#include "Textures.h"
+#include "AudioManager.h"
 #include "EntityManager.h"
 
 #include "Log.h"
 
 
 // Constructor
-SceneWin::SceneWin()
+SceneWin::SceneWin(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	LOG("Loading Win Screen");
 
 	name.Create("sceneWin");
+
+
+	this->input = input;
+	this->render = render;
+	this->tex = tex;
+	this->audioManager = audioManager;
+	this->entityManager = entityManager;
+
 
 
 	//
@@ -30,7 +40,7 @@ SceneWin::~SceneWin()
 
 
 // Called before the first frame / when activated
-bool SceneWin::Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager)
+bool SceneWin::Load()
 {
 	//
 	// Load map
@@ -48,8 +58,7 @@ bool SceneWin::Load(Textures* tex, EntityManager* entityManager, AudioManager* a
 	//
 	// Move camera
 	//
-	//app->render->camera.x = app->render->camera.y = 0;
-	// TODO: Fix camera starting position
+	render->camera.x = render->camera.y = 0;
 
 
 	return false;
@@ -57,11 +66,11 @@ bool SceneWin::Load(Textures* tex, EntityManager* entityManager, AudioManager* a
 
 
 // Called each loop iteration
-bool SceneWin::Update(Input* input, float dt)
+bool SceneWin::Update(float dt)
 {
 	if (playFX == true)
 	{
-		app->audioManager->PlayFX(victoryFX); // TODO: Fix audio in update
+		audioManager->PlayFX(victoryFX); // TODO: Fix audio in update
 		playFX = false;
 	}
 
@@ -97,12 +106,12 @@ bool SceneWin::Update(Input* input, float dt)
 }
 
 // Called after Updates
-bool SceneWin::Draw(Render* render)
+bool SceneWin::Draw()
 {
 	//
 	// Draw map
 	//
-	map->Draw(render);
+	map->Draw();
 
 	
 	return false;
@@ -110,7 +119,7 @@ bool SceneWin::Draw(Render* render)
 
 
 // Called before quitting, frees memory and controls activa and inactive modules
-bool SceneWin::Unload(Textures* tex, AudioManager* audioManager)
+bool SceneWin::Unload()
 {
 	if (!active)
 	{
@@ -119,7 +128,7 @@ bool SceneWin::Unload(Textures* tex, AudioManager* audioManager)
 
 	LOG("Freeing Win Screen");
 
-	map->CleanUp();
+	entityManager->DestroyEntity(map);
 	audioManager->UnloadFX(victoryFX);
 
 

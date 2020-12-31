@@ -1,5 +1,9 @@
 #include "Level2.h"
 
+#include "Input.h"
+#include "Render.h"
+#include "Textures.h"
+#include "AudioManager.h"
 #include "EntityManager.h"
 
 #include "Log.h"
@@ -7,11 +11,18 @@
 #include "SDL/include/SDL_rect.h"
 
 // Constructor
-Level2::Level2()
+Level2::Level2(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	LOG("Loading Level2");
 
 	name.Create("level2");
+
+
+	this->input = input;
+	this->render = render;
+	this->tex = tex;
+	this->audioManager = audioManager;
+	this->entityManager = entityManager;
 }
 
 // Destructor
@@ -21,7 +32,7 @@ Level2::~Level2()
 
 
 // Called before the first frame
-bool Level2::Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager)
+bool Level2::Load()
 {
 	//
 	// Load map
@@ -43,16 +54,15 @@ bool Level2::Load(Textures* tex, EntityManager* entityManager, AudioManager* aud
 	//
 	// Move Camera to starting position
 	//
-	//app->render->camera.x = -((int)app->win->GetScale() * TILE_SIZE * 2);
-	//app->render->camera.y = -((int)app->win->GetScale() * TILE_SIZE * 21);
-	// TODO: Fix camera starting position
+	render->camera.x = -((int)render->scale * TILE_SIZE * 2);
+	render->camera.y = -((int)render->scale * TILE_SIZE * 21);
 
 
 	return true;
 }
 
 // Called each loop iteration
-bool Level2::Update(Input* input, float dt)
+bool Level2::Update(float dt)
 {
 	//
 	// Player Update
@@ -73,17 +83,17 @@ bool Level2::Update(Input* input, float dt)
 
 	if (input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
 	{
-		app->SaveGameRequest();
+		//app->SaveGameRequest();
 	}
 	if (input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
 	{
-		app->LoadGameRequest();
+		//app->LoadGameRequest();
 	}
 
 	if (input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
 	{
-		player->position = player->checkpointPos;
-		//app->player->cameraCollider->SetPos(app->player->checkpointPos.x, app->player->checkpointPos.y - TILE_SIZE * 4);
+		//player->position = player->checkpointPos;
+		//player->cameraCollider->SetPos(player->checkpointPos.x, player->checkpointPos.y - TILE_SIZE * 4);
 	}
 
 	if (input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
@@ -96,7 +106,7 @@ bool Level2::Update(Input* input, float dt)
 		TransitionToScene(SceneType::LEVEL2);
 		return true;
 	}
-	if (app->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
+	if (input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
 	{
 		TransitionToScene(SceneType::LEVEL2);
 		return true;
@@ -118,38 +128,22 @@ bool Level2::Update(Input* input, float dt)
 		}
 	}
 
+
 	return true;
 }
 
 // Called each loop iteration
-bool Level2::Draw(Render* render)
+bool Level2::Draw()
 {
 	//
 	// Draw Map
 	//
-	map->Draw(render);
+	map->Draw();
 
 	//
 	// Draw Player
 	//
-	player->Draw(render);
-
-
-	SDL_Rect lifesRect;
-	SDL_Rect cpRect;
-
-	// Lifes HUD Draw
-	//lifesRect.x = app->player->cameraCollider->rect.x - (TILE_SIZE * 5);
-	//lifesRect.y = app->player->cameraCollider->rect.y - (TILE_SIZE * 4);
-
-
-	/*for (int i = 0; i < app->player->lifes; i++)
-	{
-		render->DrawTexture(app->player->lifesTexture, lifesRect.x + 17 * i, lifesRect.y);
-	}*/
-
-	// Checkpoint Draw
-	//app->render->DrawTexture(app->level2->cpTexture, TILE_SIZE * 44, TILE_SIZE * 20 - 4, &cpRect);
+	player->Draw();
 
 
 	return false;
@@ -157,7 +151,7 @@ bool Level2::Draw(Render* render)
 
 
 // Called before quitting
-bool Level2::Unload(Textures* tex, AudioManager* audioManager)
+bool Level2::Unload()
 {
 	if (!active)
 	{
@@ -166,8 +160,8 @@ bool Level2::Unload(Textures* tex, AudioManager* audioManager)
 
 	LOG("Freeing Level 2");
 
-	map->CleanUp();
-	player->CleanUp(tex, audioManager);
+	entityManager->DestroyEntity(map);
+	entityManager->DestroyEntity(player);
 
 
 	active = false;

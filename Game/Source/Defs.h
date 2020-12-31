@@ -57,7 +57,7 @@ template <class VALUE_TYPE> void SWAP(VALUE_TYPE& a, VALUE_TYPE& b)
 inline const char* const PATH(const char* folder, const char* file)
 {
 	static char path[MID_STR];
-	sprintf_s(path, MID_STR, "%s/%s", folder, file);
+	sprintf_s(path, MID_STR, "%s%s", folder, file);
 	return path;
 }
 

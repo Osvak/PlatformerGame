@@ -5,6 +5,8 @@
 
 #include "Point.h"
 
+#include "SDL/include/SDL_rect.h"
+
 struct SDL_Texture;
 struct SDL_Rect;
 struct Collider;

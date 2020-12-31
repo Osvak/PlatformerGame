@@ -12,8 +12,8 @@ class Window : public Module
 {
 public:
 
+	// Constructor
 	Window();
-
 	// Destructor
 	virtual ~Window();
 
@@ -23,7 +23,9 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-	// Changae title
+
+
+	// Change title
 	void SetTitle(const char* title);
 
 	// Retrive window size
@@ -39,6 +41,7 @@ public:
 	uint GetHeight() const;
 
 public:
+
 	// The window we'll be rendering to
 	SDL_Window* window;
 
@@ -46,6 +49,7 @@ public:
 	SDL_Surface* screenSurface;
 
 private:
+
 	SString title;
 	uint width;
 	uint height;

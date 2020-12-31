@@ -4,38 +4,48 @@
 #include "Scene.h"
 
 #include "Map.h"
-#include "Player.h" // ???
 
+class Input;
+class Render;
+class Textures;
+class AudioManager;
+class EntityManager;
 
 class SceneWin : public Scene
 {
 public:
 
 	// Constructor
-	SceneWin();
+	SceneWin(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
 	// Destructor
 	virtual ~SceneWin();
 
 
 	// Called before the first frame / when activated
-	bool Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager);
+	bool Load();
 
 	// Called each loop iteration
-	bool Update(Input* input, float dt);
+	bool Update(float dt);
 
 	// Called after Updates
-	bool Draw(Render* render);
+	bool Draw();
 
 
 	// Called before quitting
-	bool Unload(Textures* tex, AudioManager* audioManager);
+	bool Unload();
 
 private:
 
-	Map* map = nullptr;
-
 	unsigned int victoryFX;
 	bool playFX = true;
+
+	Map* map = nullptr;
+
+	Input* input;
+	Render* render;
+	Textures* tex;
+	AudioManager* audioManager;
+	EntityManager* entityManager;
 };
 
 #endif // !__SCENETITLE_H__

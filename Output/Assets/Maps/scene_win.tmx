@@ -11,6 +11,7 @@
  </tileset>
  <layer id="2" name="background" width="27" height="15">
   <properties>
+   <property name="parallax" type="int" value="0"/>
    <property name="visible" type="int" value="1"/>
   </properties>
   <data>
@@ -423,6 +424,7 @@
  </layer>
  <layer id="3" name="details" width="27" height="15">
   <properties>
+   <property name="parallax" type="int" value="0"/>
    <property name="visible" type="int" value="1"/>
   </properties>
   <data>
@@ -835,6 +837,7 @@
  </layer>
  <layer id="4" name="text" width="27" height="15">
   <properties>
+   <property name="parallax" type="int" value="0"/>
    <property name="visible" type="int" value="1"/>
   </properties>
   <data>

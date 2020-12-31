@@ -2,8 +2,6 @@
 #define __MAP_H__
 
 #include "Entity.h"
-#include "Render.h"
-#include "Textures.h"
 
 #include "Point.h"
 #include "List.h"
@@ -120,12 +118,17 @@ struct MapData
 	List<MapLayer*> layers;
 };
 
+
+class Window;
+class Textures;
+class Render;
+
 class Map : public Entity
 {
 public:
 
 	// Constructor
-    Map(Textures* texture);
+    Map(Textures* tex, Window* win, Render* render);
     // Destructor
     virtual ~Map();
 
@@ -134,9 +137,9 @@ public:
 	//bool CreateColliders();
 
     // Draws the map
-    void Draw(Render* render);
+    void Draw();
 	// Draw each layer of the map
-	void DrawLayer(Render* render, int num, bool parallax);
+	void DrawLayer(int num, bool parallax);
 
 
     // Called before quitting
@@ -182,6 +185,8 @@ public:
 private:
 
 	Textures* tex;
+	Window* win;
+	Render* render;
 
     pugi::xml_document mapFile;
     SString folder;

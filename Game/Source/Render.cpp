@@ -28,7 +28,7 @@ Render::~Render()
 // Called before render is available
 bool Render::Awake(pugi::xml_node& config)
 {
-	LOG("Create SDL rendering context");
+	LOG("Render.Awake(): Create SDL rendering context");
 	bool ret = true;
 
 	Uint32 flags = SDL_RENDERER_ACCELERATED;
@@ -37,15 +37,16 @@ bool Render::Awake(pugi::xml_node& config)
 	{
 		flags |= SDL_RENDERER_PRESENTVSYNC;
 		LOG("Using VSync");
-		app->usingVSync = "ON";
+		usingVSync = "ON";
 	}
 	else
 	{
 		LOG("NOT Using VSync");
-		app->usingVSync = "OFF";
+		usingVSync = "OFF";
 	}
 
-	renderer = SDL_CreateRenderer(app->win->window, -1, flags);
+	renderer = SDL_CreateRenderer(win->window, -1, flags);
+	scale = win->GetScale();
 
 	if(renderer == NULL)
 	{
@@ -67,7 +68,7 @@ bool Render::Awake(pugi::xml_node& config)
 // Called before the first frame
 bool Render::Start()
 {
-	LOG("render start");
+	LOG("Render.Start()");
 	// back background
 	SDL_RenderGetViewport(renderer, &viewport);
 	return true;
@@ -234,7 +235,7 @@ bool Render::DrawFlippedTexture(SDL_Texture* texture, int x, int y, const SDL_Re
 bool Render::DrawRectangle(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint8 a, bool filled, bool use_camera) const
 {
 	bool ret = true;
-	uint scale = app->win->GetScale();
+	uint scale = win->GetScale();
 
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);
@@ -262,7 +263,7 @@ bool Render::DrawRectangle(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint
 bool Render::DrawLine(int x1, int y1, int x2, int y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a, bool use_camera) const
 {
 	bool ret = true;
-	uint scale = app->win->GetScale();
+	uint scale = win->GetScale();
 
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);
@@ -286,7 +287,7 @@ bool Render::DrawLine(int x1, int y1, int x2, int y2, Uint8 r, Uint8 g, Uint8 b,
 bool Render::DrawCircle(int x, int y, int radius, Uint8 r, Uint8 g, Uint8 b, Uint8 a, bool use_camera) const
 {
 	bool ret = true;
-	uint scale = app->win->GetScale();
+	uint scale = win->GetScale();
 
 	SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 	SDL_SetRenderDrawColor(renderer, r, g, b, a);

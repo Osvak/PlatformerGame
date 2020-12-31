@@ -103,8 +103,6 @@ public:
 	const int frameRate = 60;
 	const int screenTicks = 1000 / frameRate;
 
-	SString usingVSync;
-
 
 	mutable bool saveGameRequested = false;
 	bool loadGameRequested = false;

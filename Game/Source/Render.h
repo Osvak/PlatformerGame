@@ -41,6 +41,7 @@ public:
 	bool SaveState(pugi::xml_node&) const;
 
 	// Utils
+	void SetBackgroundColor(SDL_Color color);
 	void SetViewPort(const SDL_Rect& rect);
 	void ResetViewPort();
 	iPoint ScreenToWorld(int x, int y) const;
@@ -50,10 +51,7 @@ public:
 	bool DrawFlippedTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section = NULL, float speed = 1.0f, double angle = 0, int pivotX = INT_MAX, int pivotY = INT_MAX) const;
 	bool DrawRectangle(const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255, bool filled = true, bool useCamera = true) const;
 	bool DrawLine(int x1, int y1, int x2, int y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255, bool useCamera = true) const;
-	bool DrawCircle(int x1, int y1, int redius, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255, bool useCamera = true) const;
-
-	// Set background color
-	void SetBackgroundColor(SDL_Color color);
+	bool DrawCircle(int x1, int y1, int redius, Uint8 r, Uint8 g, Uint8 b, Uint8 a = 255, bool useCamera = true) const;	
 
 public:
 
@@ -62,8 +60,13 @@ public:
 	SDL_Rect viewport;
 	SDL_Color background;
 
-	Window* win;
+	SString usingVSync;
+
 	uint scale;
+
+private:
+
+	Window* win;
 };
 
 #endif // __RENDER_H__

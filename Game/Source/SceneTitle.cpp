@@ -1,18 +1,26 @@
 #include "SceneTitle.h"
 
 #include "Input.h"
-
+#include "Render.h"
+#include "Textures.h"
+#include "AudioManager.h"
 #include "EntityManager.h"
 
 #include "Log.h"
 
 
 // Constructor
-SceneTitle::SceneTitle()
+SceneTitle::SceneTitle(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	LOG("Loading Title Screen");
 
 	name.Create("sceneTitle");
+
+	this->input = input;
+	this->render = render;
+	this->tex = tex;
+	this->audioManager = audioManager;
+	this->entityManager = entityManager;
 }
 
 // Destructor
@@ -23,7 +31,7 @@ SceneTitle::~SceneTitle()
 
 
 // Called before the first frame / when activated
-bool SceneTitle::Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager)
+bool SceneTitle::Load()
 {
 	//
 	// Load map
@@ -40,9 +48,7 @@ bool SceneTitle::Load(Textures* tex, EntityManager* entityManager, AudioManager*
 	//
 	// Move camera
 	//
-	//app->render->camera.x = app->render->camera.y = 0;
-	// TODO: Fix camera starting position
-
+	render->camera.x = render->camera.y = 0;
 
 	return false;
 }
@@ -50,7 +56,7 @@ bool SceneTitle::Load(Textures* tex, EntityManager* entityManager, AudioManager*
 
 
 // Called each loop iteration
-bool SceneTitle::Update(Input* input, float dt)
+bool SceneTitle::Update(float dt)
 {
 	//
 	// Scene controls
@@ -83,12 +89,12 @@ bool SceneTitle::Update(Input* input, float dt)
 }
 
 
-bool SceneTitle::Draw(Render* render)
+bool SceneTitle::Draw()
 {
 	//
 	// Draw map
 	//
-	map->Draw(render);
+	map->Draw();
 
 	++blinkCont;
 	if (blinkCont >= BLINK_TIME)
@@ -106,20 +112,20 @@ bool SceneTitle::Draw(Render* render)
 
 
 // Called before quitting, frees memory and controls active and inactive modules
-bool SceneTitle::Unload(Textures* tex, AudioManager* audioManager)
+bool SceneTitle::Unload()
 {
 	if (!active)
 	{
-		return true;
+		return false;
 	}
 
 	LOG("Freeing Title Sreen");
 
-	map->CleanUp();
 	tex->UnLoad(pressEnterToStart);
+	entityManager->DestroyEntity(map);
 
 
 	active = false;
 
-	return true;
+	return false;
 }

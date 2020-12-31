@@ -10,13 +10,15 @@
 
 
 // Constructor
-Input::Input() : Module()
+Input::Input(Window* win) : Module()
 {
 	name.Create("input");
 
 	keyboard = new KeyState[MAX_KEYS];
 	memset(keyboard, KEY_IDLE, sizeof(KeyState) * MAX_KEYS);
 	memset(mouseButtons, KEY_IDLE, sizeof(KeyState) * NUM_MOUSE_BUTTONS);
+
+	this->win = win;
 }
 
 // Destructor
@@ -28,7 +30,7 @@ Input::~Input()
 // Called before render is available
 bool Input::Awake(pugi::xml_node& config)
 {
-	LOG("Init SDL input event system");
+	LOG("Input.Awake(): Init SDL input event system");
 	bool ret = true;
 	SDL_Init(0);
 
@@ -44,6 +46,7 @@ bool Input::Awake(pugi::xml_node& config)
 // Called before the first frame
 bool Input::Start()
 {
+	LOG("Input.Start()");
 	SDL_StopTextInput();
 	return true;
 }
@@ -121,7 +124,7 @@ bool Input::PreUpdate()
 			break;
 
 			case SDL_MOUSEMOTION:
-				int scale = app->win->GetScale();
+				int scale = win->GetScale();
 				mouseMotionX = event.motion.xrel / scale;
 				mouseMotionY = event.motion.yrel / scale;
 				mouseX = event.motion.x / scale;

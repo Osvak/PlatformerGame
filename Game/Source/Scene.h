@@ -13,7 +13,7 @@ class EntityManager;
 //class GuiControl;
 
 
-enum class SceneType
+enum SceneType
 {
 	NONE = 0,
 	LOGO,
@@ -31,22 +31,22 @@ public:
 
 	Scene() : active(true), loaded(false), transitionRequired(false) {}
 	
-	virtual bool Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager)
+	virtual bool Load()
 	{
 		return true;
 	}
 
-	virtual bool Update(Input* input, float dt)
+	virtual bool Update(float dt)
 	{
 		return true;
 	}
 
-	virtual bool Draw(Render* render)
+	virtual bool Draw()
 	{
 		return true;
 	}
 
-	virtual bool Unload(Textures* tex, AudioManager* audioManager)
+	virtual bool Unload()
 	{
 		return true;
 	}
@@ -67,14 +67,12 @@ public:
 
 public:
 
+	SceneType nextScene;
 	bool active = false;
 	SString name;
 
 	bool loaded = false;
-
 	bool transitionRequired;
-	SceneType nextScene;
 };
-
 
 #endif // !__SCENE_H__
