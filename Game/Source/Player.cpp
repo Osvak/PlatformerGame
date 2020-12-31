@@ -8,7 +8,6 @@
 #include "AudioManager.h"
 #include "Map.h"
 #include "Collisions.h"
-#include "FadeToBlack.h"
 #include "Level1.h"
 #include "Level2.h"
 #include "Potion.h"
@@ -23,23 +22,12 @@
 
 
 // Constructor
-Player::Player() : Module()
-{
-	name.Create("player");
-}
-
-// Destructor
-Player::~Player()
-{
-
-}
-
-// Called when the module is activated
-bool Player::Awake(pugi::xml_node& config)
+Player::Player() : Entity(EntityType::PLAYER)
 {
 	LOG("Loading Player");
+	
+	name.Create("player");
 
-	bool ret = true;
 
 	//
 	// Set the lifes to 3
@@ -59,34 +47,34 @@ bool Player::Awake(pugi::xml_node& config)
 	fallAnim->speed = 0.2f;
 	deathAnim->loop = false;
 	deathAnim->speed = 0.3f;
-
-
 	for (int i = 0; i < 4; i++)
 		idleAnim->PushBack({ 50 * i,0, 50, 37 });
-
 	for (int i = 0; i < 6; i++)
 		walkAnim->PushBack({ 50 + (50 * i),37, 50, 37 });
-
 	for (int i = 0; i < 7; i++)
 		jumpAnim->PushBack({ 50 * i, 74, 50, 37 });
-		jumpAnim->PushBack({ 0, 111, 50, 37 });
-
-	for (int i = 0; i < 2 ; i++)
+	jumpAnim->PushBack({ 0, 111, 50, 37 });
+	for (int i = 0; i < 2; i++)
 		fallAnim->PushBack({ 50 + (50 * i) , 111, 50, 37 });
-
 	for (int i = 0; i < 4; i++)
 		deathAnim->PushBack({ 150 + (50 * i), 296, 50, 37 });
 	for (int i = 0; i < 6; i++)
 		deathAnim->PushBack({ 50 * i, 333, 50, 37 });
-
-	return ret;
 }
 
-// Called the first frame
-bool Player::Start()
+// Destructor
+Player::~Player()
 {
-	LOG("+++++ Loading player textures");
 
+}
+
+
+// Called when the module is activated
+bool Player::Awake(pugi::xml_node& config)
+{
+	bool ret = true;
+
+	LOG("+++++ Loading player textures");
 
 	//
 	// Load Player textures files
@@ -102,52 +90,30 @@ bool Player::Start()
 	// Load Player FX files
 	//
 	jumpFX = app->audioManager->LoadFX("Assets/Audio/FX/jump.wav");
-	app->musicList.Add(&jumpFX);
+	app->audioManager->musicList.Add(&jumpFX);
 	secondJumpFX = app->audioManager->LoadFX("Assets/Audio/FX/second_jump.wav");
-	app->musicList.Add(&secondJumpFX);
+	app->audioManager->musicList.Add(&secondJumpFX);
 	oofFX = app->audioManager->LoadFX("Assets/Audio/FX/oof.wav");
-	app->musicList.Add(&oofFX);
+	app->audioManager->musicList.Add(&oofFX);
 	checkpointFX = app->audioManager->LoadFX("Assets/Audio/FX/checkpoint.wav");
-	app->musicList.Add(&checkpointFX);
+	app->audioManager->musicList.Add(&checkpointFX);
 	nextLevelFX = app->audioManager->LoadFX("Assets/Audio/FX/next_level.wav");
 
 	//
 	// Set initial position
 	//
-	
-	if (loadPos == true)
-	{
-		LoadPlayerPosition();
-	}
-	else
-	{
-		if (app->currentScene == LEVEL1)
-		{
-			position.x = TILE_SIZE * 9; // Tile size * Tile ammount
-			position.y = TILE_SIZE * 16; // Tile size * Tile ammount
-		}
-		if (app->currentScene == LEVEL2)
-		{
-			position.x = TILE_SIZE * 10; // Tile size * Tile ammount
-			position.y = TILE_SIZE * 31; // Tile size * Tile ammount
-		}
-	}
-	
-
+	// The initial position is now set on each Level
 
 	//
 	// Create Player collider
 	//
-	playerCollider = app->collisions->AddCollider({ (int)position.x , (int)position.y, PLAYER_SIZE, PLAYER_SIZE }, Collider::ColliderType::PLAYER, this);
-	cameraCollider = app->collisions->AddCollider({ (int)position.x, (int)position.y - (TILE_SIZE * 4), TILE_SIZE * 6, TILE_SIZE * 5 }, Collider::ColliderType::CAMERA_WINDOW, this);
-
-
+	//playerCollider = app->collisions->AddCollider({ (int)position.x , (int)position.y, PLAYER_SIZE, PLAYER_SIZE }, Collider::ColliderType::PLAYER, this);
+	//cameraCollider = app->collisions->AddCollider({ (int)position.x, (int)position.y - (TILE_SIZE * 4), TILE_SIZE * 6, TILE_SIZE * 5 }, Collider::ColliderType::CAMERA_WINDOW, this);
 
 	//
 	// Set current animation
 	//
 	currentAnimation = idleAnim;
-
 
 	//
 	// Set Flags and Variables
@@ -164,12 +130,10 @@ bool Player::Start()
 	isDoubleJumping = false;
 	checkpointPos = { TILE_SIZE * 9, TILE_SIZE * 16 };
 	state = IDLE;
+	destroyed = false;
 	
-	if (app->lastScene == TITLE)
-	{
-		destroyed = false;
-	}
-	return true;
+
+	return ret;
 }
 
 
@@ -371,7 +335,7 @@ void Player::UpdateState()
 	{
 		if (app->input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
 		{
-			playerCollider->type = Collider::ColliderType::PLAYER;
+			//playerCollider->type = Collider::ColliderType::PLAYER;
 			
 			ChangeState(state, prevState);
 		}
@@ -402,8 +366,6 @@ void Player::UpdateState()
 // Control what each state does
 void Player::UpdateLogic(float dt)
 {
-	dt *= 2;
-
 	switch (state)
 	{
 	case IDLE:
@@ -621,7 +583,7 @@ void Player::UpdateLogic(float dt)
 				if (lifes > 0)
 				{
 					position = checkpointPos;
-					cameraCollider->SetPos(checkpointPos.x, checkpointPos.y - TILE_SIZE * 4);
+					//cameraCollider->SetPos(checkpointPos.x, checkpointPos.y - TILE_SIZE * 4);
 				}
 
 		}
@@ -664,20 +626,21 @@ void Player::UpdateLogic(float dt)
 	//
 	if (godMode == false)
 	{
-		playerCollider->SetPos(position.x, position.y);
+		//playerCollider->SetPos(position.x, position.y);
 	}
 
 	//
 	// Update Camera Position
 	//
-	if (app->level1->freeCamera == false)
+	/*if (app->level1->freeCamera == false)
 	{
 		if ((cameraCollider->rect.y) <= app->map->cameraMaxBottomPosition)
 		{
 			app->render->camera.y = -(cameraCollider->rect.y - (TILE_SIZE * 5)) * (int)app->win->GetScale();
 		}
 		app->render->camera.x = -(cameraCollider->rect.x - (TILE_SIZE * 6)) * (int)app->win->GetScale();
-	}
+	}*/
+	// TODO: Fix camera position
 }
 
 // Change the State
@@ -743,7 +706,7 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 
 	case GOD_MODE:
 	{
-		playerCollider->type = Collider::ColliderType::GOD_MODE;
+		//playerCollider->type = Collider::ColliderType::GOD_MODE;
 
 		prevState = previousState;
 
@@ -791,8 +754,9 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 	state = newState;
 }
 
+
 // Post Update
-bool Player::PostUpdate()
+bool Player::Draw(Render* render)
 {
 	//
 	// Draw Player
@@ -802,13 +766,13 @@ bool Player::PostUpdate()
 		SDL_Rect rect = currentAnimation->GetCurrentFrame();
 
 
-		// Player draw when walking right
+		// Player draw when looking right
 		if (horizontalDirection == 1)
-			app->render->DrawTexture(playerTexture, position.x - 17, position.y - (rect.h - 17), &rect);
+			render->DrawTexture(playerTexture, position.x - 17, position.y - (rect.h - 17), &rect);
 
-		// Player draw when walking right
+		// Player draw when looking left
 		if (horizontalDirection == -1)
-			app->render->DrawFlippedTexture(playerTexture, position.x - 17, position.y - (rect.h - 17), &rect);
+			render->DrawFlippedTexture(playerTexture, position.x - 17, position.y - (rect.h - 17), &rect);
 	}
 
 
@@ -816,7 +780,7 @@ bool Player::PostUpdate()
 }
 
 // Controls what the player does when it collides with another collider
-void Player::OnCollision(Collider* c1, Collider* c2)
+/*void Player::OnCollision(Collider* c1, Collider* c2)
 {
 	//
 	// Collision control
@@ -876,9 +840,11 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 		++lifes;
 		app->potion->isCollected = true;
 	}
-}
+}*/
 
-bool Player::LoadState(pugi::xml_node& playerNode)
+
+// Load the player's state
+/*bool Player::LoadState(pugi::xml_node& playerNode)
 {
 	// Load current scene
 	sc = playerNode.child("level").attribute("currentlevel").as_int();
@@ -985,21 +951,19 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 	horizontalDirection = playerNode.child("state").attribute("horizontaldirection").as_int();
 
 	return true;
-}
-
+}*/
 void Player::LoadPlayerPosition()
 {
 	position.x = savedPos.x;
 	position.y = savedPos.y;
 
-	cameraCollider->rect.x = cameraCollPos.x;
-	cameraCollider->rect.y = cameraCollPos.y;
+	//cameraCollider->rect.x = cameraCollPos.x;
+	//cameraCollider->rect.y = cameraCollPos.y;
 
 	loadPos = false;
 }
-
-
-bool Player::SaveState(pugi::xml_node& playerNode) const
+// Save the player's state
+/*bool Player::SaveState(pugi::xml_node& playerNode) const
 {
 	pugi::xml_node player = playerNode.append_child("position");
 	player.append_attribute("positionX").set_value(position.x);
@@ -1054,7 +1018,7 @@ bool Player::SaveState(pugi::xml_node& playerNode) const
 
 
 	return true;
-}
+}*/
 
 
 void Player::Jump(float dt)
@@ -1115,8 +1079,6 @@ void Player::Jump(float dt)
 	
 	acceleration.y = accel.y;
 }
-
-
 void Player::ControlWallCollision(Collider* c)
 {
 	if (isJumping == false || isTouchingGround == false)
@@ -1136,8 +1098,6 @@ void Player::ControlWallCollision(Collider* c)
 		}
 	}
 }
-
-
 void Player::ControlPlatformCollision(Collider* c)
 {
 	fallStraight = false;
@@ -1152,8 +1112,6 @@ void Player::ControlPlatformCollision(Collider* c)
 		isTouchingGround = true;
 	}
 }
-
-
 void Player::ControlCameraMovement(Collider* c)
 {
 	if (position.x < c->rect.x)
@@ -1173,30 +1131,28 @@ void Player::ControlCameraMovement(Collider* c)
 		c->rect.y += (position.y + PLAYER_SIZE) - (c->rect.y + c->rect.h);
 	}
 
-	cameraCollider->rect = c->rect;
+	//cameraCollider->rect = c->rect;
+	//TODO: Fix Camera Movement
 
 }
 
 
 // Clean Up
-bool Player::CleanUp()
+bool Player::CleanUp(Textures* tex, AudioManager* audioManager)
 {
 	if (!active)
 	{
 		return true;
 	}
 
-	app->tex->UnLoad(playerTexture);
-	app->tex->UnLoad(lifesTexture);
+	tex->UnLoad(playerTexture);
+	tex->UnLoad(lifesTexture);
 
-	app->audioManager->UnloadFX(jumpFX);
-	app->audioManager->UnloadFX(secondJumpFX);
-	app->audioManager->UnloadFX(oofFX);
-	app->audioManager->UnloadFX(checkpointFX);
-	app->audioManager->UnloadFX(nextLevelFX);
-
-	app->collisions->RemoveCollider(playerCollider);
-	app->collisions->RemoveCollider(cameraCollider);
+	audioManager->UnloadFX(jumpFX);
+	audioManager->UnloadFX(secondJumpFX);
+	audioManager->UnloadFX(oofFX);
+	audioManager->UnloadFX(checkpointFX);
+	audioManager->UnloadFX(nextLevelFX);
 
 	active = false;
 

@@ -1,7 +1,9 @@
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
 
-#include "Module.h"
+#include "Entity.h"
+#include "Input.h"
+#include "Render.h"
 
 #include "Animation.h"
 #include "Render.h"
@@ -9,6 +11,10 @@
 #include "Map.h"
 
 #include "Point.h"
+#include "SString.h"
+
+#include "SDL/include/SDL.h"
+
 
 #define PLAYER_SIZE 16
 #define PLAYER_SPEED 1.5f
@@ -39,24 +45,18 @@ enum PlayerState
 
 
 // Player Class
-class Player : public Module
+class Player : public Entity
 {
 public:
+
 	// Constructor
 	Player();
-
 	// Destructor
-	~Player();
+	virtual ~Player();
 
 
 	// Called when the module is activated, does animation pushbacks
 	bool Awake(pugi::xml_node&);
-
-	// Called the first frame
-	bool Start();
-
-	// Clean up
-	bool CleanUp();
 
 
 	// Called at the middle of the application loop
@@ -71,22 +71,25 @@ public:
 
 	// Transition from one state to a new one. Changes animations, resets variables,...
 	void ChangeState(PlayerState previousState, PlayerState newState);
-
+	
 
 	// Called at the end of the application loop
 	// Performs the render call of the player sprite
-	bool PostUpdate();
+	bool Draw(Render* render);
 
-	bool LoadState(pugi::xml_node&) override;
+	//bool LoadState(pugi::xml_node&) override;
 
 	void LoadPlayerPosition();
 
-	bool SaveState(pugi::xml_node&) const override;
+	//bool SaveState(pugi::xml_node&) const override;
 
 
 	// Collision callback, called when the player intersects with another collider
-	void OnCollision(Collider* c1, Collider* c2) override;
+	//void OnCollision(Collider* c1, Collider* c2) override;
 
+
+	// Clean up
+	bool CleanUp(Textures* tex, AudioManager* audioManager);
 
 private:
 
@@ -113,12 +116,6 @@ public:
 
 	// The pointer to the Current animation
 	Animation* currentAnimation;
-
-	// The Player's collider
-	Collider* playerCollider = nullptr;
-
-	// Collider for the Camera Window
-	Collider* cameraCollider = nullptr;
 	
 
 	// Jump handlers

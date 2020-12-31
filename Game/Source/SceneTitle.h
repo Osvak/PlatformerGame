@@ -3,6 +3,9 @@
 
 #include "Scene.h"
 
+#include "Map.h"
+
+
 //#include "GuiButton.h"
 
 #define BLINK_TIME 35
@@ -21,7 +24,7 @@ public:
 
 
 	// Called before the first frame / when activated
-	bool Load(Textures* tex);
+	bool Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager);
 
 	// Called each loop iteration
 	bool Update(Input* input, float dt);
@@ -29,15 +32,16 @@ public:
 	// Called after Updates
 	bool Draw(Render* render);
 
+
 	// Called before quitting
-	bool Unload();
+	bool Unload(Textures* tex, AudioManager* audioManager);
 
 private:
 
-	SDL_Texture* pressEnterToStart;
+	Map* map = nullptr;
+	SDL_Texture* pressEnterToStart = nullptr;
 
 	int blinkCont = 0;
-
 };
 
 #endif // !__SCENETITLE_H__

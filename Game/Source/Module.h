@@ -9,6 +9,8 @@
 
 class App;
 class Collider;
+class Textures;
+class AudioManager;
 
 class Module
 {
@@ -54,7 +56,7 @@ public:
 	}
 
 	// Called before quitting
-	virtual bool CleanUp()
+	virtual bool CleanUp(Textures* tex, AudioManager* audioManager)
 	{
 		return true;
 	}

@@ -1,6 +1,7 @@
 #include "Map.h"
 
 #include "App.h"
+#include "Window.h"
 #include "Render.h"
 #include "Textures.h"
 #include "Collisions.h"
@@ -15,15 +16,7 @@
 #include <math.h>
 
 
-// Constructor
-Map::Map() : Module(), mapLoaded(false)
-{
-    name.Create("map");
-}
 
-// Destructor
-Map::~Map()
-{}
 
 // Ask for the value of a custom property
 int Properties::GetProperty(const char* value, int defaultValue) const
@@ -43,19 +36,31 @@ int Properties::GetProperty(const char* value, int defaultValue) const
 	return defaultValue;
 }
 
-// Called before render is available
-bool Map::Awake(pugi::xml_node& config)
+
+
+
+// Constructor of the Map
+Map::Map(Textures* texture) : Entity(EntityType::MAP)
 {
-    LOG("Loading Map Parser");
-    bool ret = true;
+	LOG("Loading Map Parser");
 
-    folder.Create(config.child("folder").child_value());
+	mapLoaded = false;
+	name.Create("map");
+	folder.Create("Assets/Maps/");
 
-    return ret;
+	tex = texture;
+	scale = app->win->GetScale();
 }
 
+// Destructor
+Map::~Map()
+{
+}
+
+
+
 // Called before the first frame
-bool Map::CreateColliders()
+/*bool Map::CreateColliders()
 {
 	MapLayer* layer;
 	TileSet* tileset;
@@ -111,16 +116,16 @@ bool Map::CreateColliders()
 		}
 	}
 
-
-	active = true;
-
 	return true;
-}
+}*/
 
 // Draw the map
-void Map::Draw()
+void Map::Draw(Render* render)
 {
 	if (mapLoaded == false) return;
+
+	camOffset.x = render->camera.x;
+	camOffset.y = render->camera.y;
 
 	for (int i = 0; i < data.layers.Count(); i++)
 	{
@@ -128,22 +133,24 @@ void Map::Draw()
 		{
 			if (data.layers[i]->properties.GetProperty("parallax", 1) != 0)
 			{
-				DrawLayer(i, true);
+				DrawLayer(render, i, true);
 			}
 			else
 			{
-				DrawLayer(i, false);
+				DrawLayer(render, i, false);
 			}
 		}
 	}
 }
 
 // Draw each layer of the map
-void Map::DrawLayer(int num, bool parallax)
+void Map::DrawLayer(Render* render, int num, bool parallax)
 {
 	if (num < data.layers.Count())
 	{
 		MapLayer* layer = data.layers[num];
+
+		render->scale = scale;
 
 		for (int y = 0; y < data.height; ++y)
 		{
@@ -160,15 +167,17 @@ void Map::DrawLayer(int num, bool parallax)
 
 					if (parallax == true)
 					{
-						app->render->DrawTexture(tileset->texture, pos.x + tileset->offsetX, pos.y + tileset->offsetY, &rec, 1.3f);
+						render->DrawTexture(tileset->texture, pos.x + tileset->offsetX, pos.y + tileset->offsetY, &rec, 1.3f);
 					}
 					else
 					{
-						app->render->DrawTexture(tileset->texture, pos.x + tileset->offsetX, pos.y + tileset->offsetY, &rec);
+						render->DrawTexture(tileset->texture, pos.x + tileset->offsetX, pos.y + tileset->offsetY, &rec);
 					}
 				}
 			}
 		}
+
+		render->scale = 1; // ???
 	}
 }
 
@@ -231,99 +240,6 @@ TileSet* Map::GetTilesetFromTileId(int id) const
 {
 	ListItem<TileSet*>* item = data.tilesets.start;
 	TileSet* set = item->data;
-
-	/*if (app->currentScene == TITLE)
-	{
-		if (id < 171) // Checks for first tileset (tileset)
-		{
-
-		}
-		else if (id >= 171 && id < 226) // Checks for second tileset (background)
-		{
-			item = item->next;
-		}
-		else if (id >= 226) // Checks for third tileset (collider)
-		{
-			item = item->next;
-			item = item->next;
-		}
-	}
-
-	if (app->currentScene == LEVEL1)
-	{
-		if (id < 5) // Checks for first tileset (collider)
-		{
-
-		}
-		else if (id >= 5 && id < 141) // Checks for second tileset (tileset)
-		{
-			item = item->next;
-		}
-		else if (id >= 141) // Checks for third tileset (background)
-		{
-			item = item->next;
-			item = item->next;
-		}
-	}
-
-	if (app->currentScene == LEVEL2)
-	{
-		if (id < 5) // Checks for first tileset (collider)
-		{
-
-		}
-		else if (id >= 5 && id < 141) // Checks for second tileset (tileset)
-		{
-			item = item->next;
-		}
-		else if (id >= 141 && id < 205) // Checks for third tileset (clouds)
-		{
-			item = item->next;
-			item = item->next;
-		}
-		else if (id >= 205) // Checks for fourth tileset (background)
-		{
-			item = item->next;
-			item = item->next;
-			item = item->next;
-		}
-	}
-
-	if (app->currentScene == WIN)
-	{
-		if (id < 171)
-		{
-
-		}
-		else if (id >= 171 && id < 307)
-		{
-			item = item->next;
-		}
-		else if (id >= 307)
-		{
-			item = item->next;
-			item = item->next;
-		}
-	}
-
-	if (app->currentScene == LOSE)
-	{
-		if (id < 171)
-		{
-
-		}
-		else if (id >= 171 && id < 307)
-		{
-			item = item->next;
-		}
-		else if (id >= 307)
-		{
-			item = item->next;
-			item = item->next;
-		}
-	}
-	
-	set = item->data;*/
 
 	while (item)
 	{
@@ -388,8 +304,6 @@ bool Map::CleanUp()
 	mapFile.reset();
 
 
-	active = false;
-
     return true;
 }
 
@@ -442,10 +356,10 @@ bool Map::Load(const char* filename)
 	}
 
 
-	CreateColliders();
+	//CreateColliders(); // RIP old Colliders
 
 
-	cameraMaxBottomPosition = (app->map->data.height * TILE_SIZE) - (TILE_SIZE * 12);
+	cameraMaxBottomPosition = (data.height * TILE_SIZE) - (TILE_SIZE * 12);
 
 
 	if (ret == true)
@@ -537,8 +451,7 @@ bool Map::LoadTilesetDetails(pugi::xml_node& tileset_node, TileSet* set)
 	bool ret = true;
 	
 	// Load Tileset attributes
-
-	set->name = tileset_node.attribute("name").as_string();
+	set->name.Create(tileset_node.attribute("name").as_string());
 	set->firstgid = tileset_node.attribute("firstgid").as_int();
 	set->margin = tileset_node.attribute("margin").as_int();
 	set->spacing = tileset_node.attribute("spacing").as_int();
@@ -564,7 +477,7 @@ bool Map::LoadTilesetImage(pugi::xml_node& tileset_node, TileSet* set)
 	{
 		// Load Tileset image
 
-		set->texture = app->tex->Load(PATH(folder.GetString(), image.attribute("source").as_string()));
+		set->texture = tex->Load(PATH(folder.GetString(), image.attribute("source").as_string()));
 		set->texHeight = image.attribute("height").as_int();
 		set->texWidth = image.attribute("width").as_int();
 		set->numTilesHeight = set->texHeight / set->tileHeight;
@@ -573,7 +486,6 @@ bool Map::LoadTilesetImage(pugi::xml_node& tileset_node, TileSet* set)
 		set->offsetY = 0;
 
 		LOG("Tileset image loaded correctly");
-
 	}
 
 	return ret;

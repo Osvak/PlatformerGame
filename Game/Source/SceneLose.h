@@ -18,7 +18,7 @@ public:
 
 
 	// Called before the first frame / when activated
-	bool Load(Textures* tex);
+	bool Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager);
 
 	// Called each loop iteration
 	bool Update(Input* input, float dt);
@@ -28,9 +28,12 @@ public:
 
 
 	// Called before quitting
-	bool Unload();
+	bool Unload(Textures* tex, AudioManager* audioManager);
 
 private:
+
+	Map* map;
+
 	unsigned int gameOverFX;
 	bool playFX = true;
 };

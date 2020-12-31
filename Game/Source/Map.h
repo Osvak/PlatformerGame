@@ -1,10 +1,17 @@
 #ifndef __MAP_H__
 #define __MAP_H__
 
-#include "Module.h"
+#include "Entity.h"
+#include "Render.h"
+#include "Textures.h"
 
 #include "Point.h"
 #include "List.h"
+#include "PQueue.h"
+#include "DynArray.h"
+
+#include "SDL/include/SDL.h"
+#include "PugiXml/src/pugixml.hpp"
 
 
 struct SDL_Texture;
@@ -54,11 +61,13 @@ struct Properties
 	{
 		ListItem<Property*>* listD;
 		listD = propertyList.start;
+
 		while (listD != nullptr)
 		{
 			RELEASE(listD->data);
 			listD = listD->next;
 		}
+
 		propertyList.Clear();
 	}
 
@@ -111,29 +120,23 @@ struct MapData
 	List<MapLayer*> layers;
 };
 
-class Map : public Module
+class Map : public Entity
 {
 public:
 
 	// Constructor
-    Map();
-
+    Map(Textures* texture);
     // Destructor
     virtual ~Map();
 
 
-    // Called before render is available
-    bool Awake(pugi::xml_node& conf);
-
-
 	// Creates the colliders off the map layers
-	bool CreateColliders();
+	//bool CreateColliders();
 
     // Draws the map
-    void Draw();
-
+    void Draw(Render* render);
 	// Draw each layer of the map
-	void DrawLayer(int num, bool parallax);
+	void DrawLayer(Render* render, int num, bool parallax);
 
 
     // Called before quitting
@@ -143,11 +146,15 @@ public:
     // Load new map
     bool Load(const char* path);
 
+
 	// Method that translates x,y coordinates from map positions to world positions
 	iPoint MapToWorld(int x, int y) const;
 
 	// Add orthographic world to map coordinates
 	iPoint WorldToMap(int x, int y) const;
+
+
+	SDL_Rect GetTilemapRec(int x, int y) const;
 
 private:
 
@@ -168,13 +175,20 @@ public:
     // Add your struct for map info
 	MapData data;
 
+	bool drawColliders = false;
+
 	int cameraMaxBottomPosition;
 
 private:
 
+	Textures* tex;
+
     pugi::xml_document mapFile;
     SString folder;
     bool mapLoaded;
+
+	uint32 scale;
+	iPoint camOffset;
 };
 
 #endif // __MAP_H__

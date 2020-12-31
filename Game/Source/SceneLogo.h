@@ -19,7 +19,7 @@ public:
 
 
 	// Called before the first frame / when activated
-	bool Load(Textures* tex);
+	bool Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager);
 
 
 	// Called each loop iteration
@@ -29,11 +29,11 @@ public:
 
 
 	// Called before quitting
-	bool Unload();
+	bool Unload(Textures* tex, AudioManager* audioManager);
 
 
 private:
-	SDL_Texture* img;
+	SDL_Texture* img = nullptr;
 	unsigned int logoFX;
 	int imgW = 0, imgH = 0;
 	bool transition = false;

@@ -45,7 +45,7 @@ bool Potion::Start()
 	//
 	// Create Potion collider
 	//
-	potionCollider = app->collisions->AddCollider({ potionPosition.x, potionPosition.y, 8, 10 }, Collider::ColliderType::POTION, this);
+	//potionCollider = app->collisions->AddCollider({ potionPosition.x, potionPosition.y, 8, 10 }, Collider::ColliderType::POTION, this);
 
 	//
 	// Set Flags and Variables
@@ -61,7 +61,7 @@ bool Potion::Update(float dt)
 {
 	if (isCollected)
 	{
-		app->collisions->RemoveCollider(potionCollider);
+		//app->collisions->RemoveCollider(potionCollider);
 	}
 
 	return true;
@@ -83,7 +83,7 @@ bool Potion::CleanUp()
 	
 	app->tex->UnLoad(potionTexture);
 
-	app->collisions->RemoveCollider(potionCollider);
+	//app->collisions->RemoveCollider(potionCollider);
 
 	active = false;
 

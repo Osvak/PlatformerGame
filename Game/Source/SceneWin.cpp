@@ -1,10 +1,8 @@
 #include "SceneWin.h"
 
-#include "App.h"
-#include "AudioManager.h"
-#include "Render.h"
 #include "Input.h"
-#include "Map.h"
+
+#include "EntityManager.h"
 
 #include "Log.h"
 
@@ -32,25 +30,27 @@ SceneWin::~SceneWin()
 
 
 // Called before the first frame / when activated
-bool SceneWin::Load(Textures* tex)
+bool SceneWin::Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager)
 {
 	//
 	// Load map
 	//
-	app->map->Load("scene_win.tmx");
+	map = (Map*)entityManager->CreateEntity(EntityType::MAP);
+	map->Load("scene_win.tmx");
 
 	//
 	// Load music
 	//
-	app->audioManager->StopMusic();
-	victoryFX = app->audioManager->LoadFX("Assets/Audio/FX/victory.wav");
-	app->musicList.Add(&victoryFX);
+	audioManager->StopMusic();
+	victoryFX = audioManager->LoadFX("Assets/Audio/FX/victory.wav");
+	audioManager->musicList.Add(&victoryFX);
 
 	//
 	// Move camera
 	//
-	app->render->camera.x = 0;
-	app->render->camera.y = 0;
+	//app->render->camera.x = app->render->camera.y = 0;
+	// TODO: Fix camera starting position
+
 
 	return false;
 }
@@ -61,7 +61,7 @@ bool SceneWin::Update(Input* input, float dt)
 {
 	if (playFX == true)
 	{
-		app->audioManager->PlayFX(victoryFX);
+		app->audioManager->PlayFX(victoryFX); // TODO: Fix audio in update
 		playFX = false;
 	}
 
@@ -102,14 +102,15 @@ bool SceneWin::Draw(Render* render)
 	//
 	// Draw map
 	//
-	app->map->Draw();
+	map->Draw(render);
 
 	
 	return false;
 }
 
+
 // Called before quitting, frees memory and controls activa and inactive modules
-bool SceneWin::Unload()
+bool SceneWin::Unload(Textures* tex, AudioManager* audioManager)
 {
 	if (!active)
 	{
@@ -118,9 +119,9 @@ bool SceneWin::Unload()
 
 	LOG("Freeing Win Screen");
 
-	app->map->CleanUp();
+	map->CleanUp();
+	audioManager->UnloadFX(victoryFX);
 
-	app->audioManager->UnloadFX(victoryFX);
 
 	active = false;
 

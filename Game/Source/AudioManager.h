@@ -38,6 +38,9 @@ public:
 	// Play a previously loaded WAV
 	bool PlayFX(unsigned int fx, int repeat = 0);
 	
+public:
+
+	List<unsigned int*> musicList;
 
 private:
 

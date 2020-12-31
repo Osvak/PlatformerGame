@@ -23,7 +23,7 @@
 
 
 // Constructor
-SceneManager::SceneManager(Input* input, Render* render, Textures* tex) : Module()
+SceneManager::SceneManager(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager) : Module()
 {
 	name.Create("scenemanager");
 
@@ -34,6 +34,8 @@ SceneManager::SceneManager(Input* input, Render* render, Textures* tex) : Module
 	this->input = input;
 	this->render = render;
 	this->tex = tex;
+	this->audioManager = audioManager;
+	this->entityManager = entityManager;
 }
 
 // Destructor
@@ -54,7 +56,7 @@ bool SceneManager::Awake()
 bool SceneManager::Start()
 {
 	current = new SceneLogo();
-	current->Load(tex);
+	current->Load(tex, entityManager, audioManager);
 
 	next = nullptr;
 
@@ -125,8 +127,8 @@ bool SceneManager::Update(float dt)
 			{
 				transitionAlpha = 1.0f;
 
-				current->Unload();	// Unload current screen
-				next->Load(tex);	// Load next screen
+				current->Unload(tex, audioManager);	// Unload current screen
+				next->Load(tex, entityManager, audioManager);	// Load next screen
 
 				RELEASE(current);	// Free current pointer
 				current = next;		// Assign next pointer
@@ -155,7 +157,7 @@ bool SceneManager::Update(float dt)
 	// Draw full screen rectangle in front of everything
 	if (onTransition)
 	{
-		render->DrawRectangle({ 0, 0, 1280, 720 }, { 0, 0, 0, (unsigned char)(255.0f * transitionAlpha) });
+		render->DrawRectangle({ 0, 0, 1280, 720 }, 0, 0, 0, (unsigned char)(255.0f * transitionAlpha));
 	}
 
 	// L12b: Debug pathfinding
@@ -212,7 +214,7 @@ bool SceneManager::CleanUp()
 {
 	LOG("Freeing scene");
 
-	if (current != nullptr) current->Unload();
+	if (current != nullptr) current->Unload(tex, audioManager);
 
 	return true;
 }

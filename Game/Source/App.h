@@ -18,12 +18,8 @@ class Input;
 class Render;
 class Textures;
 class AudioManager;
-//class EntityManager;
+class EntityManager;
 class SceneManager;
-class Map;
-class Player;
-class Collisions;
-class Potion;
 
 
 // Main Application
@@ -100,19 +96,14 @@ public:
 	Render* render;
 	Textures* tex;
 	AudioManager* audioManager;
-	//EntityManager* entityManager;
+	EntityManager* entityManager;
 	SceneManager* sceneManager;
-	Map* map;
-	Player* player;
-	Collisions* collisions;
-	Potion* potion;
+
 
 	const int frameRate = 60;
 	const int screenTicks = 1000 / frameRate;
 
 	SString usingVSync;
-
-	List<unsigned int*> musicList;
 
 
 	mutable bool saveGameRequested = false;

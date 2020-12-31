@@ -1,18 +1,8 @@
 #include "SceneTitle.h"
 
-#include "App.h"
-#include "AudioManager.h"
-#include "Map.h"
-#include "FadeToBlack.h"
-#include "SceneLogo.h"
-#include "Player.h"
-
-
 #include "Input.h"
-#include "Render.h"
-#include "Textures.h"
 
-//#include "EntityManager.h"
+#include "EntityManager.h"
 
 #include "Log.h"
 
@@ -33,24 +23,25 @@ SceneTitle::~SceneTitle()
 
 
 // Called before the first frame / when activated
-bool SceneTitle::Load(Textures* tex)
+bool SceneTitle::Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager)
 {
 	//
 	// Load map
 	//
-	app->map->Load("scene_title.tmx");
+	map = (Map*)entityManager->CreateEntity(EntityType::MAP);
+	map->Load("scene_title.tmx");
 	pressEnterToStart = tex->Load("Assets/Maps/press_enter_to_start.png");
 
 	//
 	// Load music
 	//
-	app->audioManager->PlayMusic("Assets/Audio/Music/title_screen_music.ogg");
+	audioManager->PlayMusic("Assets/Audio/Music/title_screen_music.ogg");
 
 	//
 	// Move camera
 	//
-	app->render->camera.x = app->render->camera.y = 0;
-
+	//app->render->camera.x = app->render->camera.y = 0;
+	// TODO: Fix camera starting position
 
 
 	return false;
@@ -97,7 +88,7 @@ bool SceneTitle::Draw(Render* render)
 	//
 	// Draw map
 	//
-	app->map->Draw();
+	map->Draw(render);
 
 	++blinkCont;
 	if (blinkCont >= BLINK_TIME)
@@ -113,8 +104,9 @@ bool SceneTitle::Draw(Render* render)
 	return false;
 }
 
+
 // Called before quitting, frees memory and controls active and inactive modules
-bool SceneTitle::Unload()
+bool SceneTitle::Unload(Textures* tex, AudioManager* audioManager)
 {
 	if (!active)
 	{
@@ -123,9 +115,8 @@ bool SceneTitle::Unload()
 
 	LOG("Freeing Title Sreen");
 
-	app->map->CleanUp();
-
-	app->tex->UnLoad(pressEnterToStart);
+	map->CleanUp();
+	tex->UnLoad(pressEnterToStart);
 
 
 	active = false;

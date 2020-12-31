@@ -21,9 +21,6 @@
     <ClCompile Include="Source\Timer.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Source\FadeToBlack.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="Source\SceneLogo.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
@@ -69,6 +66,9 @@
     <ClCompile Include="Source\AudioManager.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EntityManager.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\App.h" />
@@ -112,9 +112,6 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Source\Animation.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\FadeToBlack.h">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="Source\SceneTitle.h">
@@ -166,6 +163,12 @@
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\AudioManager.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Entity.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EntityManager.h">
       <Filter>Modules</Filter>
     </ClInclude>
   </ItemGroup>

@@ -10,13 +10,15 @@
 
 
 // Constructor
-Render::Render() : Module()
+Render::Render(Window* win) : Module()
 {
 	name.Create("renderer");
 	background.r = 0;
 	background.g = 0;
 	background.b = 0;
 	background.a = 0;
+
+	this->win = win;
 }
 
 // Destructor
@@ -53,8 +55,8 @@ bool Render::Awake(pugi::xml_node& config)
 	else
 	{
 
-		camera.w = app->win->screenSurface->w;
-		camera.h = app->win->screenSurface->h;
+		camera.w = win->screenSurface->w;
+		camera.h = win->screenSurface->h;
 		camera.x = 0;
 		camera.y = 0;
 	}
@@ -135,11 +137,21 @@ void Render::ResetViewPort()
 	SDL_RenderSetViewport(renderer, &viewport);
 }
 
+iPoint Render::ScreenToWorld(int x, int y) const
+{
+	iPoint ret;
+
+	ret.x = (x - camera.x / scale);
+	ret.y = (y - camera.y / scale);
+
+	return ret;
+}
+
+
 // Draw to screen
 bool Render::DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float speed, double angle, int pivotX, int pivotY) const
 {
 	bool ret = true;
-	uint scale = app->win->GetScale();
 
 	SDL_Rect rect;
 	rect.x = (int)(camera.x * speed) + x * scale;
@@ -181,7 +193,6 @@ bool Render::DrawTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* sec
 bool Render::DrawFlippedTexture(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float speed, double angle, int pivotX, int pivotY) const
 {
 	bool ret = true;
-	uint scale = app->win->GetScale();
 
 	SDL_Rect rect;
 	rect.x = (int)(camera.x * speed) + x * scale;

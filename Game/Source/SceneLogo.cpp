@@ -1,14 +1,13 @@
 #include "SceneLogo.h"
 
-#include "App.h"
-#include "Window.h"
-#include "AudioManager.h"
-#include "Map.h"
-#include "FadeToBlack.h"
+#include "App.h" // erase
+#include "Window.h" // erase
 
 #include "Input.h"
 #include "Render.h"
 #include "Textures.h"
+
+#include "EntityManager.h"
 
 #include "Log.h"
 
@@ -35,10 +34,8 @@ SceneLogo::~SceneLogo()
 
 
 // Called before the first frame
-bool SceneLogo::Load(Textures* tex)
+bool SceneLogo::Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager)
 {
-	//app->currentScene = LOGO;
-
 	//
 	// Load Map
 	//
@@ -54,13 +51,14 @@ bool SceneLogo::Load(Textures* tex)
 	//
 	// Load music
 	//
-	logoFX = app->audioManager->LoadFX("Assets/Audio/FX/logo.wav");
-	app->musicList.Add(&logoFX);
+	logoFX = audioManager->LoadFX("Assets/Audio/FX/logo.wav");
+	audioManager->musicList.Add(&logoFX);
 
 	//
 	// Move camera
 	//
-	app->render->camera.x = app->render->camera.y = 0;
+	//app->render->camera.x = app->render->camera.y = 0;
+	// TODO: Fix camera starting position
 
 
 	return true;
@@ -79,6 +77,7 @@ bool SceneLogo::Update(Input* input, float dt)
 		if (nextSceneCounter == 15)
 		{
 			app->audioManager->PlayFX(logoFX);
+			// TODO: Fix sound in update
 		}
 	}
 
@@ -97,7 +96,6 @@ bool SceneLogo::Update(Input* input, float dt)
 		input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN ||
 		nextSceneCounter == NEXT_SCENE_TIME)
 	{
-		//app->fadeToBlack->Fade(this, (Module*)app->sceneTitle, 60.0f); // remove
 		TransitionToScene(SceneType::TITLE);
 		transition = true;
 		nextSceneCounter = 0;
@@ -106,7 +104,6 @@ bool SceneLogo::Update(Input* input, float dt)
 
 	if (input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
-		//app->fadeToBlack->Fade(this, (Module*)app->level1, 60.0f); // remove
 		TransitionToScene(SceneType::LEVEL1);
 		transition = true;
 		nextSceneCounter = 0;
@@ -114,7 +111,6 @@ bool SceneLogo::Update(Input* input, float dt)
 	}
 	if (input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
 	{
-		//app->fadeToBlack->Fade(this, (Module*)app->level2, 60.0f); // remove
 		TransitionToScene(SceneType::LEVEL2);
 		transition = true;
 		nextSceneCounter = 0;
@@ -139,7 +135,7 @@ bool SceneLogo::Draw(Render* render)
 }
 
 // Called before quitting, frees memory
-bool SceneLogo::Unload()
+bool SceneLogo::Unload(Textures* tex, AudioManager* audioManager)
 {
 	if (!active)
 	{
@@ -148,11 +144,10 @@ bool SceneLogo::Unload()
 
 	LOG("Freeing Logo Screen");
 
-	app->tex->UnLoad(img);
+	tex->UnLoad(img);
+	audioManager->UnloadFX(logoFX);
 
-	app->audioManager->UnloadFX(logoFX);
 
-	app->map->CleanUp();
 	active = false;
 
 	return true;

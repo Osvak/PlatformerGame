@@ -5,7 +5,7 @@
 
 #include "Map.h"
 #include "Player.h"
-#include "Animation.h"
+
 
 struct SDL_Texture;
 
@@ -21,7 +21,7 @@ public:
 
 
 	// Called before the first frame
-	bool Load(Textures* tex);
+	bool Load(Textures* tex, EntityManager* entityManager, AudioManager* audioManager);
 
 	// Called each loop iteration
 	bool Update(Input* input, float dt);
@@ -31,25 +31,12 @@ public:
 
 
 	// Called before quitting
-	bool Unload();
+	bool Unload(Textures* tex, AudioManager* audioManager);
 
+private:
 
-	// Checkpoint activation
-	bool Cp1Activation();
-
-
-public:
-	// Checkpoint Variables
-	Collider* checkPointCollider = nullptr;
-	SDL_Texture* cpTexture = nullptr;
-
-	Animation* currentAnim;
-
-	Animation* cpIdleAnim = new Animation();
-	Animation* cpActiveAnim = new Animation();
-
-	// Checkpoint flags
-	bool isCpActive = false;
+	Map* map = nullptr;
+	Player* player = nullptr;
 };
 
 #endif // __LEVEL1_H__

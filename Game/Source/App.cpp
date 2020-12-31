@@ -5,13 +5,8 @@
 #include "Render.h"
 #include "Textures.h"
 #include "AudioManager.h"
-//#include "EntityManager.h"
+#include "EntityManager.h"
 #include "SceneManager.h"
-// v
-#include "Map.h"
-#include "Player.h"
-#include "Collisions.h"
-#include "Potion.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -30,16 +25,12 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 
 	win = new Window();
 	input = new Input();
-	render = new Render();
+	render = new Render(win);
 	tex = new Textures();
 	audioManager = new AudioManager();
-	//entityManager = new EntityManager();
-	sceneManager = new SceneManager(input, render, tex);
-	// v
-	map = new Map();
-	player = new Player();
-	collisions = new Collisions();
-	potion = new Potion();
+	entityManager = new EntityManager(tex);
+	sceneManager = new SceneManager(input, render, tex, audioManager, entityManager);
+	
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
@@ -47,21 +38,11 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(input);
 	AddModule(tex);
 	AddModule(audioManager);
-	//AddModule(entityManager);
+	AddModule(entityManager);
 	AddModule(sceneManager);
-	// v
-	AddModule(map);
-	AddModule(player);
-	AddModule(collisions);
-	AddModule(potion);
 
 	// Render last to swap buffer
 	AddModule(render);
-
-
-	// Start inactive
-	player->active = false;
-	map->active = false;
 
 
 	PERF_PEEK(pTimer);
@@ -315,7 +296,7 @@ bool App::CleanUp()
 	{
 		if (item->data->active == true)
 		{
-			ret = item->data->CleanUp();
+			ret = item->data->CleanUp(tex, audioManager);
 		}
 		item = item->prev;
 	}
