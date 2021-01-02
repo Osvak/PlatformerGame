@@ -31,22 +31,22 @@ public:
 
 	Scene() : active(true), loaded(false), transitionRequired(false) {}
 	
-	virtual bool Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+	virtual bool Load()
 	{
 		return true;
 	}
 
-	virtual bool Update(Input* input, AudioManager* audioManager, float dt)
+	virtual bool Update(float dt)
 	{
 		return true;
 	}
 
-	virtual bool Draw(Render* render)
+	virtual bool Draw()
 	{
 		return true;
 	}
 
-	virtual bool Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+	virtual bool Unload()
 	{
 		return true;
 	}

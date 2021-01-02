@@ -10,11 +10,18 @@
 
 
 // Constructor
-SceneLogo::SceneLogo()
+SceneLogo::SceneLogo(Input* input, Render* render, Textures* tex, AudioManager* audioManager)
 {
 	LOG("Loading SceneLogo");
 
 	name.Create("sceneLogo");
+
+
+	this->input = input;
+	this->render = render;
+	this->tex = tex;
+	this->audioManager = audioManager;
+
 
 	//
 	// Reset flags
@@ -31,7 +38,7 @@ SceneLogo::~SceneLogo()
 
 
 // Called before the first frame
-bool SceneLogo::Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+bool SceneLogo::Load()
 {
 	//
 	// Load Map
@@ -63,7 +70,7 @@ bool SceneLogo::Load(Render* render, Textures* tex, AudioManager* audioManager, 
 
 
 // Called each loop iteration
-bool SceneLogo::Update(Input* input, AudioManager* audioManager, float dt)
+bool SceneLogo::Update(float dt)
 {
 	//
 	// Check sound
@@ -71,7 +78,7 @@ bool SceneLogo::Update(Input* input, AudioManager* audioManager, float dt)
 	if (nextSceneCounter < NEXT_SCENE_TIME && transition == false)
 	{
 		++nextSceneCounter;
-		if (nextSceneCounter == 200)
+		if (nextSceneCounter == NEXT_SCENE_TIME / 3)
 		{
 			audioManager->PlayFX(logoFX);
 		}
@@ -117,7 +124,7 @@ bool SceneLogo::Update(Input* input, AudioManager* audioManager, float dt)
 }
 
 
-bool SceneLogo::Draw(Render* render)
+bool SceneLogo::Draw()
 {
 	//
 	// Draw map
@@ -132,7 +139,7 @@ bool SceneLogo::Draw(Render* render)
 }
 
 // Called before quitting, frees memory
-bool SceneLogo::Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+bool SceneLogo::Unload()
 {
 	if (!active)
 	{

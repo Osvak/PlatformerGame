@@ -19,28 +19,34 @@ class Level1 : public Scene
 public:
 
 	// Constructor
-	Level1();
+	Level1(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
 	// Destructor
 	virtual ~Level1();
 
 
 	// Called before the first frame
-	bool Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
+	bool Load();
 
 	// Called each loop iteration
-	bool Update(Input* input, AudioManager* audioManager, float dt);
+	bool Update(float dt);
 
 	// Called before all Updates
-	bool Draw(Render* render);
+	bool Draw();
 
 
 	// Called before quitting
-	bool Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
+	bool Unload();
 
 private:
 
 	Map* map = nullptr;
 	Player* player = nullptr;
+
+	Input* input;
+	Render* render;
+	Textures* tex;
+	AudioManager* audioManager;
+	EntityManager* entityManager;
 };
 
 #endif // __LEVEL1_H__

@@ -11,28 +11,34 @@
 
 
 
+class Input;
+class Render;
+class Textures;
+class AudioManager;
+class EntityManager;
+
 class SceneTitle : public Scene
 {
 public:
 
 	// Constructor
-	SceneTitle();
+	SceneTitle(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
 	// Destructor
 	virtual ~SceneTitle();
 
 
 	// Called before the first frame / when activated
-	bool Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
+	bool Load();
 
 	// Called each loop iteration
-	bool Update(Input* input, AudioManager* audioManager, float dt);
+	bool Update(float dt);
 
 	// Called after Updates
-	bool Draw(Render* render);
+	bool Draw();
 
 
 	// Called before quitting
-	bool Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
+	bool Unload();
 
 private:
 
@@ -40,6 +46,12 @@ private:
 	int blinkCont = 0;
 
 	Map* map = nullptr;
+
+	Input* input;
+	Render* render;
+	Textures* tex;
+	AudioManager* audioManager;
+	EntityManager* entityManager;
 };
 
 #endif // !__SCENETITLE_H__

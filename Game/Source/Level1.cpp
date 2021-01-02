@@ -12,11 +12,18 @@
 
 
 // Constructor
-Level1::Level1()
+Level1::Level1(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	LOG("Loading Level1");
 
 	name.Create("level1");
+
+	
+	this->input = input;
+	this->render = render;
+	this->tex = tex;
+	this->audioManager = audioManager;
+	this->entityManager = entityManager;
 }
 
 // Destructor
@@ -26,7 +33,7 @@ Level1::~Level1()
 
 
 // Called before the first frame
-bool Level1::Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+bool Level1::Load()
 {
 	//
 	// Load map
@@ -48,15 +55,15 @@ bool Level1::Load(Render* render, Textures* tex, AudioManager* audioManager, Ent
 	//
 	// Move Camera to starting position
 	//
-	render->camera.x = -((int)render->scale * TILE_SIZE);
-	render->camera.y = -((int)render->scale * TILE_SIZE * 2);
+	render->camera.x = -((int)render->scale * TILE_SIZE * 3);
+	render->camera.y = -((int)render->scale * TILE_SIZE * 6);
 
 
 	return false;
 }
 
 // Called each loop iteration
-bool Level1::Update(Input* input, AudioManager* audioManager, float dt)
+bool Level1::Update(float dt)
 {
 	//
 	// Player Update
@@ -126,7 +133,7 @@ bool Level1::Update(Input* input, AudioManager* audioManager, float dt)
 }
 
 // Called each loop iteration
-bool Level1::Draw(Render* render)
+bool Level1::Draw()
 {
 	//
 	// Draw Map
@@ -144,7 +151,7 @@ bool Level1::Draw(Render* render)
 
 
 // Called before quitting
-bool Level1::Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+bool Level1::Unload()
 {
 	if (!active)
 	{

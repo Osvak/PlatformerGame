@@ -8,33 +8,45 @@
 
 
 
+class Input;
+class Render;
+class Textures;
+class AudioManager;
+class EntityManager;
+
 class Level2 : public Scene
 {
 public:
 
 	// Constructor
-	Level2();
+	Level2(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
 	// Destructor
 	virtual ~Level2();
 
 
 	// Called before the first frame
-	bool Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
+	bool Load();
 
 	// Called each loop iteration
-	bool Update(Input* input, AudioManager* audioManager, float dt);
+	bool Update(float dt);
 
 	// Called before all Updates
-	bool Draw(Render* render);
+	bool Draw();
 
 
 	// Called before quitting
-	bool Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
+	bool Unload();
 
 private:
 
 	Map* map = nullptr;
 	Player* player = nullptr;
+
+	Input* input;
+	Render* render;
+	Textures* tex;
+	AudioManager* audioManager;
+	EntityManager* entityManager;
 };
 
 #endif // __LEVEL2_H__

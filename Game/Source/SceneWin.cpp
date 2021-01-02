@@ -10,11 +10,21 @@
 
 
 // Constructor
-SceneWin::SceneWin()
+SceneWin::SceneWin(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	LOG("Loading Win Screen");
 
 	name.Create("sceneWin");
+
+
+
+	this->input = input;
+	this->render = render;
+	this->tex = tex;
+	this->audioManager = audioManager;
+	this->entityManager = entityManager;
+
+
 
 	//
 	// Flags reset
@@ -31,7 +41,7 @@ SceneWin::~SceneWin()
 
 
 // Called before the first frame / when activated
-bool SceneWin::Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+bool SceneWin::Load()
 {
 	//
 	// Load map
@@ -57,7 +67,7 @@ bool SceneWin::Load(Render* render, Textures* tex, AudioManager* audioManager, E
 
 
 // Called each loop iteration
-bool SceneWin::Update(Input* input, AudioManager* audioManager, float dt)
+bool SceneWin::Update(float dt)
 {
 	if (playFX == true)
 	{
@@ -97,7 +107,7 @@ bool SceneWin::Update(Input* input, AudioManager* audioManager, float dt)
 }
 
 // Called after Updates
-bool SceneWin::Draw(Render* render)
+bool SceneWin::Draw()
 {
 	//
 	// Draw map
@@ -110,7 +120,7 @@ bool SceneWin::Draw(Render* render)
 
 
 // Called before quitting, frees memory and controls activa and inactive modules
-bool SceneWin::Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+bool SceneWin::Unload()
 {
 	if (!active)
 	{

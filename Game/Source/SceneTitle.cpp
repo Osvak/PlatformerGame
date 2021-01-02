@@ -10,11 +10,19 @@
 
 
 // Constructor
-SceneTitle::SceneTitle()
+SceneTitle::SceneTitle(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	LOG("Loading Title Screen");
 
 	name.Create("sceneTitle");
+
+
+
+	this->input = input;
+	this->render = render;
+	this->tex = tex;
+	this->audioManager = audioManager;
+	this->entityManager = entityManager;
 }
 
 // Destructor
@@ -25,7 +33,7 @@ SceneTitle::~SceneTitle()
 
 
 // Called before the first frame / when activated
-bool SceneTitle::Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+bool SceneTitle::Load()
 {
 	//
 	// Load map
@@ -51,7 +59,7 @@ bool SceneTitle::Load(Render* render, Textures* tex, AudioManager* audioManager,
 
 
 // Called each loop iteration
-bool SceneTitle::Update(Input* input, AudioManager* audioManager, float dt)
+bool SceneTitle::Update(float dt)
 {
 	//
 	// Scene controls
@@ -84,7 +92,7 @@ bool SceneTitle::Update(Input* input, AudioManager* audioManager, float dt)
 }
 
 
-bool SceneTitle::Draw(Render* render)
+bool SceneTitle::Draw()
 {
 	//
 	// Draw map
@@ -107,7 +115,7 @@ bool SceneTitle::Draw(Render* render)
 
 
 // Called before quitting, frees memory and controls active and inactive modules
-bool SceneTitle::Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+bool SceneTitle::Unload()
 {
 	if (!active)
 	{
