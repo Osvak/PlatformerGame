@@ -138,13 +138,15 @@ void Player::UpdateState()
 	{
 	case IDLE:
 	{
-		if (input->GetKey(SDL_SCANCODE_D) == KEY_DOWN)
+		if (input->GetKey(SDL_SCANCODE_D) == KEY_DOWN || 
+			input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
 			ChangeState(state, MOVE_RIGHT);
 			break;
 		}
 
-		if (input->GetKey(SDL_SCANCODE_A) == KEY_DOWN)
+		if (input->GetKey(SDL_SCANCODE_A) == KEY_DOWN ||
+			input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
 			ChangeState(state, MOVE_LEFT);
 			break;
