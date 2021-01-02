@@ -7,6 +7,8 @@
 #include "PerfTimer.h"
 #include "Timer.h"
 
+#include "PugiXml/src/pugixml.hpp"
+
 #define CONFIG_FILENAME		"config.xml"
 #define SAVE_STATE_FILENAME "save_game.xml"
 
@@ -62,12 +64,12 @@ public:
 	void LoadConfigRequested();
 	void SaveConfigRequested() const;
 
-
-private:
-
 	// Load config file
 	// NOTE: It receives config document
 	pugi::xml_node LoadConfig(pugi::xml_document&) const;
+
+
+private:
 
 	// Call modules before each loop iteration
 	void PrepareUpdate();
@@ -99,10 +101,9 @@ public:
 	EntityManager* entityManager;
 	SceneManager* sceneManager;
 
-
-	const int frameRate = 60;
-	const int screenTicks = 1000 / frameRate;
-
+	// Public FPS variables
+	int frameRate = 60;
+	int screenTicks;
 
 	mutable bool saveGameRequested = false;
 	bool loadGameRequested = false;
@@ -131,24 +132,14 @@ private:
 	// FPS variables
 	PerfTimer pTimer;
 	uint64 frameCount = 0;
-
 	Timer startupTime;
-	Timer frameTime;
-	Timer lastSecFrameTime;
 	Timer dtTimer;
-	uint32 lastSecFrameCount = 0;
-	uint32 prevLastSecFrameCount = 0;
 	float dt = 0.0f;
-
 	float secondsSinceStartup;
 	float fpsMSeconds;
 	float fpsCounter;
 	float fps = 0.f;
 	float fpsPreUpdate;
-
-	uint frames;
 };
-
-extern App* app;
 
 #endif	// __APP_H__

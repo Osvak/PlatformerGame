@@ -1,7 +1,7 @@
 <!-- Config file for the game -->
 <!-- L01: DONE 1: Create configuration file-->
 <config>
-  <app>
+  <app framerate_cap="60">
     <title>Lato Viridi</title>
     <organization>UPC (unicoos Team)</organization>
   </app>
@@ -20,6 +20,6 @@
 
   <!-- L03: Added maps folder as config option -->
   <map>
-    <folder>Assets/maps/</folder>
+    <folder>Assets/Maps/</folder>
   </map>
 </config>

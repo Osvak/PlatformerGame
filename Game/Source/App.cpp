@@ -10,9 +10,6 @@
 
 #include "Defs.h"
 #include "Log.h"
-#include "Timer.h"
-
-#include "PugiXml/src/pugixml.hpp"
 
 #include <iostream>
 #include <sstream>
@@ -91,7 +88,8 @@ bool App::Awake()
 		title.Create(configApp.child("title").child_value());
 		organization.Create(configApp.child("organization").child_value());
 		
-		//framerate = configApp.attribute("framerate_cap").as_int(0);
+		frameRate = configApp.attribute("framerate_cap").as_int(0);
+		screenTicks = 1000 / frameRate;
 	}
 
 	if (ret == true)
@@ -124,10 +122,7 @@ bool App::Start()
 
 	while(item != NULL && ret == true)
 	{
-		if (item->data->active == true)
-		{
-			ret = item->data->Start();
-		}
+		ret = item->data->Start();
 		item = item->next;
 	}
 
@@ -294,10 +289,7 @@ bool App::CleanUp()
 
 	while(item != NULL && ret == true)
 	{
-		if (item->data->active == true)
-		{
-			ret = item->data->CleanUp();
-		}
+		ret = item->data->CleanUp();
 		item = item->prev;
 	}
 
