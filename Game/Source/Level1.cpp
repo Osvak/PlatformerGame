@@ -12,18 +12,11 @@
 
 
 // Constructor
-Level1::Level1(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+Level1::Level1()
 {
 	LOG("Loading Level1");
 
 	name.Create("level1");
-
-
-	this->input = input;
-	this->render = render;
-	this->tex = tex;
-	this->audioManager = audioManager;
-	this->entityManager = entityManager;
 }
 
 // Destructor
@@ -33,7 +26,7 @@ Level1::~Level1()
 
 
 // Called before the first frame
-bool Level1::Load()
+bool Level1::Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	//
 	// Load map
@@ -63,7 +56,7 @@ bool Level1::Load()
 }
 
 // Called each loop iteration
-bool Level1::Update(float dt)
+bool Level1::Update(Input* input, AudioManager* audioManager, float dt)
 {
 	//
 	// Player Update
@@ -133,7 +126,7 @@ bool Level1::Update(float dt)
 }
 
 // Called each loop iteration
-bool Level1::Draw()
+bool Level1::Draw(Render* render)
 {
 	//
 	// Draw Map
@@ -151,7 +144,7 @@ bool Level1::Draw()
 
 
 // Called before quitting
-bool Level1::Unload()
+bool Level1::Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	if (!active)
 	{

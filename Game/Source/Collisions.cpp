@@ -1,6 +1,5 @@
 #include "Collisions.h"
 
-#include "App.h"
 #include "Input.h"
 #include "Render.h"
 
@@ -8,8 +7,12 @@
 
 
 // Constructor, fills the collision matrix data
-Collisions::Collisions()
+Collisions::Collisions(Input* input, Render* render)
 {
+	this->input = input;
+	this->render = render;
+
+
 	//
 	// Colliders matrix
 	//
@@ -174,7 +177,7 @@ bool Collisions::PreUpdate()
 // Check if you want to Debug
 bool Collisions::Update(float dt)
 {
-	if (app->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
+	if (input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
 		debug = !debug;
 
 	return true;
@@ -224,34 +227,34 @@ void Collisions::DebugDraw()
 			// Color of each collider
 			//
 		case Collider::ColliderType::NONE:
-			app->render->DrawRectangle(colliders[i]->rect, 255, 255, 255, alpha); // white
+			render->DrawRectangle(colliders[i]->rect, 255, 255, 255, alpha); // white
 			break;
 		case Collider::ColliderType::PLAYER:
-			app->render->DrawRectangle(colliders[i]->rect, 0, 255, 0, alpha); // green
+			render->DrawRectangle(colliders[i]->rect, 0, 255, 0, alpha); // green
 			break;
 		case Collider::ColliderType::WALL:
-			app->render->DrawRectangle(colliders[i]->rect, 105, 85, 157, alpha); // gray magenta
+			render->DrawRectangle(colliders[i]->rect, 105, 85, 157, alpha); // gray magenta
 			break;
 		case Collider::ColliderType::PLATFORM:
-			app->render->DrawRectangle(colliders[i]->rect, 0, 230, 185, alpha); // mint
+			render->DrawRectangle(colliders[i]->rect, 0, 230, 185, alpha); // mint
 			break;
 		case Collider::ColliderType::DIE:
-			app->render->DrawRectangle(colliders[i]->rect, 255, 0, 0, alpha); // red
+			render->DrawRectangle(colliders[i]->rect, 255, 0, 0, alpha); // red
 			break;
 		case Collider::ColliderType::NEXT_LEVEL:
-			app->render->DrawRectangle(colliders[i]->rect, 0, 0, 255, alpha); // blue
+			render->DrawRectangle(colliders[i]->rect, 0, 0, 255, alpha); // blue
 			break;
 
 		case Collider::ColliderType::GOD_MODE:
-			app->render->DrawRectangle(colliders[i]->rect, 255, 255, 255, alpha); // white
+			render->DrawRectangle(colliders[i]->rect, 255, 255, 255, alpha); // white
 			break;
 		case Collider::ColliderType::CHECKPOINT:
-			app->render->DrawRectangle(colliders[i]->rect, 100, 100, 0, alpha); // green camo
+			render->DrawRectangle(colliders[i]->rect, 100, 100, 0, alpha); // green camo
 		case Collider::ColliderType::CAMERA_WINDOW:
-			app->render->DrawRectangle(colliders[i]->rect, 250, 110, 190, alpha); // bubble gum pink
+			render->DrawRectangle(colliders[i]->rect, 250, 110, 190, alpha); // bubble gum pink
 			break;
 		case Collider::ColliderType::POTION:
-			app->render->DrawRectangle(colliders[i]->rect, 0, 255, 255, alpha); //green blue
+			render->DrawRectangle(colliders[i]->rect, 0, 255, 255, alpha); //green blue
 		}
 		//printf("Tile id %d with Collider Type %d in (%d,%d)\n", i, colliders[i]->type, colliders[i]->rect.x, colliders[i]->rect.y); // Debug Collider list
 	}

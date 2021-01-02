@@ -5,34 +5,30 @@
 
 #include "Map.h"
 
-class Input;
-class Render;
-class Textures;
-class AudioManager;
-class EntityManager;
+
 
 class SceneWin : public Scene
 {
 public:
 
 	// Constructor
-	SceneWin(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
+	SceneWin();
 	// Destructor
 	virtual ~SceneWin();
 
 
 	// Called before the first frame / when activated
-	bool Load();
+	bool Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
 
 	// Called each loop iteration
-	bool Update(float dt);
+	bool Update(Input* input, AudioManager* audioManager, float dt);
 
 	// Called after Updates
-	bool Draw();
+	bool Draw(Render* render);
 
 
 	// Called before quitting
-	bool Unload();
+	bool Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
 
 private:
 
@@ -40,12 +36,6 @@ private:
 	bool playFX = true;
 
 	Map* map = nullptr;
-
-	Input* input;
-	Render* render;
-	Textures* tex;
-	AudioManager* audioManager;
-	EntityManager* entityManager;
 };
 
 #endif // !__SCENETITLE_H__

@@ -184,16 +184,18 @@ public:
 
 private:
 
-	Textures* tex;
-	Window* win;
-	Render* render;
-
     pugi::xml_document mapFile;
     SString folder;
     bool mapLoaded;
 
 	uint32 scale;
 	iPoint camOffset;
+
+public:
+
+	Textures* tex;
+	Window* win;
+	Render* render;
 };
 
 #endif // __MAP_H__

@@ -55,7 +55,7 @@ public:
 	float updateMSCycle = 0.0f;
 	bool doLogic = false;
 
-private:
+public:
 	
 	Window* win;
 	Input* input;

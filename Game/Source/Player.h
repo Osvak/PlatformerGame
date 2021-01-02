@@ -191,13 +191,12 @@ private:
 	float jumpImpulseVel = -4.0f;
 	float jumpAccel = 4.0f;
 
-private:
+public:
 
 	Input* input;
 	Render* render;
 	Textures* tex;
 	AudioManager* audioManager;
-
 };
 
 #endif //!__PLAYER_H__

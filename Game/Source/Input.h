@@ -79,6 +79,8 @@ private:
 	int mouseX;
 	int mouseY;
 
+public:
+
 	Window* win;
 };
 

@@ -4,7 +4,7 @@
 #include "Point.h"
 #include "SString.h"
 
-enum EntityType
+enum class EntityType
 {
     PLAYER,
     ENEMY,

@@ -84,7 +84,7 @@ bool AudioManager::CleanUp()
 }
 
 // Play a music file
-bool AudioManager::PlayMusic(const char* path, float fade_time)
+bool AudioManager::PlayMusic(const char* path, float fadeTime)
 {
 	bool ret = true;
 
@@ -93,9 +93,9 @@ bool AudioManager::PlayMusic(const char* path, float fade_time)
 
 	if(music != NULL)
 	{
-		if(fade_time > 0.0f)
+		if(fadeTime > 0.0f)
 		{
-			Mix_FadeOutMusic(int(fade_time * 1000.0f));
+			Mix_FadeOutMusic(int(fadeTime * 1000.0f));
 		}
 		else
 		{
@@ -115,9 +115,9 @@ bool AudioManager::PlayMusic(const char* path, float fade_time)
 	}
 	else
 	{
-		if(fade_time > 0.0f)
+		if(fadeTime > 0.0f)
 		{
-			if(Mix_FadeInMusic(music, -1, (int) (fade_time * 1000.0f)) < 0)
+			if(Mix_FadeInMusic(music, -1, (int) (fadeTime * 1000.0f)) < 0)
 			{
 				LOG("Cannot fade in music %s. Mix_GetError(): %s", path, Mix_GetError());
 				ret = false;

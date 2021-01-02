@@ -6,14 +6,9 @@
 #include "Map.h"
 
 
-#define NEXT_SCENE_TIME 400
+#define NEXT_SCENE_TIME 6000
 
 
-class Input;
-class Render;
-class Textures;
-class AudioManager;
-class EntityManager;
 
 class SDL_Texture;
 
@@ -22,23 +17,23 @@ class SceneLogo : public Scene
 public:
 
 	// Constructor
-	SceneLogo(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
+	SceneLogo();
 	// Destructor
 	virtual ~SceneLogo();
 
 
 	// Called before the first frame / when activated
-	bool Load();
+	bool Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
 
 
 	// Called each loop iteration
-	bool Update(float dt);
+	bool Update(Input* input, AudioManager* audioManager, float dt);
 
-	bool Draw();
+	bool Draw(Render* render);
 
 
 	// Called before quitting
-	bool Unload();
+	bool Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
 
 
 private:
@@ -51,13 +46,7 @@ private:
 	int nextSceneCounter = 0;
 
 	//Map* map;
-	SDL_Texture* img;
-
-	Input* input;
-	Render* render;
-	Textures* tex;
-	AudioManager* audioManager;
-	EntityManager* entityManager;
+	SDL_Texture* img = nullptr;
 };
 
 #endif // !__SCENELOGO_H__

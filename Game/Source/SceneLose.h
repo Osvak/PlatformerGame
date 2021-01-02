@@ -7,47 +7,36 @@
 #include "Player.h"
 
 
-class Input;
-class Render;
-class Textures;
-class AudioManager;
-class EntityManager;
 
 class SceneLose : public Scene
 {
 public:
 
 	// Constructor
-	SceneLose(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
+	SceneLose();
 	// Destructor
 	virtual ~SceneLose();
 
 
 	// Called before the first frame / when activated
-	bool Load();
+	bool Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
 
 	// Called each loop iteration
-	bool Update(float dt);
+	bool Update(Input* input, AudioManager* audioManager, float dt);
 
 	// Called after Updates
-	bool Draw();
+	bool Draw(Render* render);
 
 
 	// Called before quitting
-	bool Unload();
+	bool Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
 
 private:
 
 	unsigned int gameOverFX;
 	bool playFX = true;
 
-	Map* map;
-
-	Input* input;
-	Render* render;
-	Textures* tex;
-	AudioManager* audioManager;
-	EntityManager* entityManager;
+	Map* map = nullptr;
 };
 
 #endif // ! __SCENELOSE_H__

@@ -11,18 +11,11 @@
 #include "SDL/include/SDL_rect.h"
 
 // Constructor
-Level2::Level2(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+Level2::Level2()
 {
 	LOG("Loading Level2");
 
 	name.Create("level2");
-
-
-	this->input = input;
-	this->render = render;
-	this->tex = tex;
-	this->audioManager = audioManager;
-	this->entityManager = entityManager;
 }
 
 // Destructor
@@ -32,7 +25,7 @@ Level2::~Level2()
 
 
 // Called before the first frame
-bool Level2::Load()
+bool Level2::Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	//
 	// Load map
@@ -62,7 +55,7 @@ bool Level2::Load()
 }
 
 // Called each loop iteration
-bool Level2::Update(float dt)
+bool Level2::Update(Input* input, AudioManager* audioManager, float dt)
 {
 	//
 	// Player Update
@@ -133,7 +126,7 @@ bool Level2::Update(float dt)
 }
 
 // Called each loop iteration
-bool Level2::Draw()
+bool Level2::Draw(Render* render)
 {
 	//
 	// Draw Map
@@ -151,7 +144,7 @@ bool Level2::Draw()
 
 
 // Called before quitting
-bool Level2::Unload()
+bool Level2::Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	if (!active)
 	{

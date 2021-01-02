@@ -9,11 +9,15 @@
 #define MAX_COLLIDERS 300
 
 
+
+class Input;
+class Render;
+
 class Collisions : public Module
 {
 public:
 	// Constructor, fills the collision matrix data
-	Collisions();
+	Collisions(Input* input, Render* render);
 
 	// Destructor
 	~Collisions();
@@ -62,6 +66,12 @@ private:
 
 	// Simple debugging flag to draw all colliders
 	bool debug = false;
+
+
+public:
+
+	Input* input;
+	Render* render;
 };
 
 #endif // !__COLLISIONS_H__

@@ -1,10 +1,7 @@
 #include "Potion.h"
 
-#include "App.h"
 #include "Render.h"
 #include "Textures.h"
-#include "Player.h"
-#include "Collisions.h"
 
 #include "Log.h"
 
@@ -12,7 +9,7 @@
 
 
 // Constructor
-Potion::Potion() : Module()
+Potion::Potion(Textures* tex) : Module()
 {
 	name.Create("potion");
 }
@@ -40,7 +37,7 @@ bool Potion::Start()
 	//
 	// Load Lifes texture files 
 	//
-	potionTexture = app->tex->Load("Assets/Textures/Items/potion_sprite.png");
+	potionTexture = tex->Load("Assets/Textures/Items/potion_sprite.png");
 
 	//
 	// Create Potion collider
@@ -81,7 +78,7 @@ bool Potion::CleanUp()
 		return true;
 	}
 	
-	app->tex->UnLoad(potionTexture);
+	tex->UnLoad(potionTexture);
 
 	//app->collisions->RemoveCollider(potionCollider);
 

@@ -37,7 +37,7 @@ int Properties::GetProperty(const char* value, int defaultValue) const
 
 
 // Constructor of the Map
-Map::Map(Textures* texture, Window* win, Render* render) : Entity(EntityType::MAP)
+Map::Map(Textures* tex, Window* win, Render* render) : Entity(EntityType::MAP)
 {
 	LOG("Loading Map Parser");
 

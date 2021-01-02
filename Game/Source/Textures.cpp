@@ -1,3 +1,5 @@
+#include "App.h"
+
 #include "Textures.h"
 #include "Render.h"
 
@@ -105,6 +107,7 @@ bool Textures::UnLoad(SDL_Texture* texture)
 // Translate a surface into a texture
 SDL_Texture* const Textures::LoadSurface(SDL_Surface* surface)
 {
+	Textures* p = this;
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(render->renderer, surface);
 
 	if (texture == NULL)

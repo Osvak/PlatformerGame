@@ -7,6 +7,9 @@
 
 #include "SDL/include/SDL_rect.h"
 
+
+class Textures;
+
 struct SDL_Texture;
 struct SDL_Rect;
 struct Collider;
@@ -15,7 +18,7 @@ class Potion : public Module
 {
 public:
 	// Constructor
-	Potion();
+	Potion(Textures* tex);
 
 	// Destructor
 	~Potion();
@@ -58,6 +61,9 @@ public:
 	// Flag to know if the potion is being grabbed
 	int potionsActive = 1;
 	   
+public:
+
+	Textures* tex;
 };
 
 #endif // !__POTION_H__

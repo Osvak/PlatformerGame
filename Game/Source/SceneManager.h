@@ -53,6 +53,8 @@ private:
 
 	bool freeCamera = false;
 
+public:
+
 	Input* input;
 	Render* render;
 	Textures* tex;

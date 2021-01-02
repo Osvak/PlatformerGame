@@ -64,7 +64,7 @@ public:
 
 	uint scale;
 
-private:
+public:
 
 	Window* win;
 };

@@ -10,17 +10,11 @@
 
 
 // Constructor
-SceneTitle::SceneTitle(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+SceneTitle::SceneTitle()
 {
 	LOG("Loading Title Screen");
 
 	name.Create("sceneTitle");
-
-	this->input = input;
-	this->render = render;
-	this->tex = tex;
-	this->audioManager = audioManager;
-	this->entityManager = entityManager;
 }
 
 // Destructor
@@ -31,11 +25,12 @@ SceneTitle::~SceneTitle()
 
 
 // Called before the first frame / when activated
-bool SceneTitle::Load()
+bool SceneTitle::Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	//
 	// Load map
 	//
+	Textures* p = tex;
 	map = (Map*)entityManager->CreateEntity(EntityType::MAP);
 	map->Load("scene_title.tmx");
 	pressEnterToStart = tex->Load("Assets/Maps/press_enter_to_start.png");
@@ -56,7 +51,7 @@ bool SceneTitle::Load()
 
 
 // Called each loop iteration
-bool SceneTitle::Update(float dt)
+bool SceneTitle::Update(Input* input, AudioManager* audioManager, float dt)
 {
 	//
 	// Scene controls
@@ -89,7 +84,7 @@ bool SceneTitle::Update(float dt)
 }
 
 
-bool SceneTitle::Draw()
+bool SceneTitle::Draw(Render* render)
 {
 	//
 	// Draw map
@@ -112,7 +107,7 @@ bool SceneTitle::Draw()
 
 
 // Called before quitting, frees memory and controls active and inactive modules
-bool SceneTitle::Unload()
+bool SceneTitle::Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	if (!active)
 	{

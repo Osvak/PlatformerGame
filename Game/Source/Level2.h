@@ -7,45 +7,34 @@
 #include "Player.h"
 
 
-class Input;
-class Render;
-class Textures;
-class AudioManager;
-class EntityManager;
 
 class Level2 : public Scene
 {
 public:
 
 	// Constructor
-	Level2(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
+	Level2();
 	// Destructor
 	virtual ~Level2();
 
 
 	// Called before the first frame
-	bool Load();
+	bool Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
 
 	// Called each loop iteration
-	bool Update(float dt);
+	bool Update(Input* input, AudioManager* audioManager, float dt);
 
 	// Called before all Updates
-	bool Draw();
+	bool Draw(Render* render);
 
 
 	// Called before quitting
-	bool Unload();
+	bool Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
 
 private:
 
 	Map* map = nullptr;
 	Player* player = nullptr;
-
-	Input* input;
-	Render* render;
-	Textures* tex;
-	AudioManager* audioManager;
-	EntityManager* entityManager;
 };
 
 #endif // __LEVEL2_H__

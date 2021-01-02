@@ -9,18 +9,11 @@
 #include "Log.h"
 
  // Constructor
-SceneLose::SceneLose(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+SceneLose::SceneLose()
 {
 	LOG("Loading Lose Screen");
 
 	name.Create("sceneLose");
-
-
-	this->input = input;
-	this->render = render;
-	this->tex = tex;
-	this->audioManager = audioManager;
-	this->entityManager = entityManager;
 }
 
  // Destructor
@@ -30,7 +23,7 @@ SceneLose::~SceneLose()
 
 
  // Called before the first frame / when activated
-bool SceneLose::Load()
+bool SceneLose::Load(Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	//
 	// Load map
@@ -54,7 +47,7 @@ bool SceneLose::Load()
 }
 
 // Called each loop iteration
-bool SceneLose::Update(float dt)
+bool SceneLose::Update(Input* input, AudioManager* audioManager, float dt)
 {
 	if (playFX == true)
 	{
@@ -95,7 +88,7 @@ bool SceneLose::Update(float dt)
 }
 
  // Called after Updates
-bool SceneLose::Draw()
+bool SceneLose::Draw(Render* render)
 {
 	//
 	// Draw map
@@ -108,7 +101,7 @@ bool SceneLose::Draw()
 
 
 // Called before quitting, frees memory and controls activa and inactive modules
-bool SceneLose::Unload()
+bool SceneLose::Unload(Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
 	if (!active)
 	{

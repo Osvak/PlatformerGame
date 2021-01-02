@@ -57,11 +57,11 @@ template <class VALUE_TYPE> void SWAP(VALUE_TYPE& a, VALUE_TYPE& b)
 inline const char* const PATH(const char* folder, const char* file)
 {
 	static char path[MID_STR];
-	sprintf_s(path, MID_STR, "%s%s", folder, file);
+	sprintf_s(path, MID_STR, "%s/%s", folder, file);
 	return path;
 }
 
 #define PERF_START(timer) timer.Start()
 #define PERF_PEEK(timer) LOG("%s took %f ms", __FUNCTION__, timer.ReadMs())
 
-#endif
+#endif // __DEFS_H__
