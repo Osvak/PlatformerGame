@@ -102,8 +102,10 @@ public:
 	SceneManager* sceneManager;
 
 	// Public FPS variables
-	int frameRate = 60;
-	int screenTicks;
+	int highFrameRate = 60;
+	int lowFrameRate = 30;
+	int highScreenTicks;
+	int lowScreenTicks;
 
 	mutable bool saveGameRequested = false;
 	bool loadGameRequested = false;

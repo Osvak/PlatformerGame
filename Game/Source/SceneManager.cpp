@@ -107,6 +107,11 @@ bool SceneManager::Update(float dt)
 			freeCamera = !freeCamera;
 		}
 
+		if (input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN)
+		{
+			fpsCapState = !fpsCapState;
+		}
+
 		if (freeCamera == true)
 		{
 			if (input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) render->camera.y -= 1;

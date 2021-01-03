@@ -55,6 +55,8 @@ private:
 
 public:
 
+	bool fpsCapState = true;
+
 	Input* input;
 	Render* render;
 	Textures* tex;

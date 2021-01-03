@@ -1,9 +1,10 @@
 <!-- Config file for the game -->
 <!-- L01: DONE 1: Create configuration file-->
 <config>
-  <app framerate_cap="60">
+  <app>
     <title>Lato Viridi</title>
-    <organization>UPC (unicoos Team)</organization>
+    <organization>unicoos - CITM-UPC</organization>
+    <fps highCap="60" lowCap="30"/>
   </app>
 
   <renderer>

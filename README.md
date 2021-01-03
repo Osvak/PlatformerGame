@@ -47,6 +47,7 @@ This new revolutionary game will break the standards of 2D platformers. A new ta
  - F8 -> Unlock/Lock the camera
  - F9 -> Show collisions
  - F10 -> God Mode
+ - F11 -> Enable/Disable FPS cap to 30
  - Arrow Keys -> Move the camera if the camera is unlocked
 
 ## Developers

@@ -88,8 +88,10 @@ bool App::Awake()
 		title.Create(configApp.child("title").child_value());
 		organization.Create(configApp.child("organization").child_value());
 		
-		frameRate = configApp.attribute("framerate_cap").as_int(0);
-		screenTicks = 1000 / frameRate;
+		highFrameRate = configApp.child("fps").attribute("highCap").as_int();
+		lowFrameRate = configApp.child("fps").attribute("lowCap").as_int();
+		highScreenTicks = 1000 / highFrameRate;
+		lowScreenTicks = 1000 / lowFrameRate;
 	}
 
 	if (ret == true)
@@ -206,9 +208,16 @@ void App::FinishUpdate()
 	win->SetTitle(title.GetString());
 
 
-	if (fpsMSecondsAfter < screenTicks)
+	if (fpsMSecondsAfter < highScreenTicks)
 	{
-		SDL_Delay(screenTicks - fpsMSecondsAfter);
+		if (sceneManager->fpsCapState == true)
+		{
+			SDL_Delay(highScreenTicks - fpsMSecondsAfter);
+		}
+		else
+		{
+			SDL_Delay(lowScreenTicks - fpsMSecondsAfter);
+		}
 	}
 }
 
