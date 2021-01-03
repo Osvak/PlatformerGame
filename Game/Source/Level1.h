@@ -37,6 +37,9 @@ public:
 	// Called before quitting
 	bool Unload();
 
+
+	void CollisionLogic();
+
 private:
 
 	Map* map = nullptr;

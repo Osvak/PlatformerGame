@@ -142,7 +142,7 @@ public:
 
 	// Flag to know if the player is touching the ground
 	bool isTouchingGround = true;
-
+	bool isTouchingWall = false;
 	bool wallCollisionFromLeft = false;
 	bool wallCollisionFromRight = false;
 	bool fallStraight = false;

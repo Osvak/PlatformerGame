@@ -158,6 +158,8 @@ public:
 
 
 	SDL_Rect GetTilemapRec(int x, int y) const;
+	// Pick the right Tileset based on a tile id
+	TileSet* GetTilesetFromTileId(int id) const;
 
 private:
 
@@ -169,9 +171,6 @@ private:
 
 	// Load a group of properties 
 	bool LoadProperties(pugi::xml_node& node, Properties& properties);
-
-	// Pick the right Tileset based on a tile id
-	TileSet* GetTilesetFromTileId(int id) const;
 
 public:
 

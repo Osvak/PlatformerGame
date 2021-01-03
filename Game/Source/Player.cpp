@@ -109,6 +109,7 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	acceleration = { 0.0f, 0.0f };
 	horizontalDirection = 1;
 	isTouchingGround = true;
+	isTouchingWall = false;
 	isJumping = false;
 	isWinning = false;
 	isDying = false;
@@ -424,13 +425,13 @@ void Player::UpdateLogic(float dt)
 			--position.y;
 		}*/
 
-		if (wallCollisionFromRight == false)
+		if (isTouchingWall == false)
 		{
 			velocity.x = -PLAYER_SPEED;
 		}
 		else
 		{
-			++position.x;
+			velocity.x = 0;
 		}
 
 		if (isTouchingGround == true && input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
@@ -649,12 +650,12 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 
 	case MOVE_RIGHT:
 	{
-
 		currentAnimation = walkAnim;
 		
 		verticalDirection = 0;
 		horizontalDirection = 1;
 
+		isTouchingWall = false;
 
 		break;
 	}
@@ -664,6 +665,8 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		currentAnimation = walkAnim;
 		verticalDirection = 0;
 		horizontalDirection = -1;
+
+		isTouchingWall = false;
 
 		break;
 	}
