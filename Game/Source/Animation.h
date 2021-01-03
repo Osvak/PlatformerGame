@@ -16,13 +16,13 @@ public:
 	SDL_Rect frames[MAX_FRAMES];
 
 	// Allows the animation to keep going back and forth
-	bool pingpong = false;
+	bool pingPong = false;
 
 private:
 	float currentFrame = 0.0f;
 	int totalFrames = 0;
 	int loopCount = 0;
-	int pingpongDirection = 1;
+	int pingPongDirection = 1;
 
 public:
 
@@ -43,7 +43,7 @@ public:
 	//Controls whether a loop has finished or not
 	bool HasFinished()
 	{
-		return !loop && !pingpong && loopCount > 0;
+		return !loop && !pingPong && loopCount > 0;
 	}
 
 	//Update the animation to change sprite
@@ -52,11 +52,11 @@ public:
 		currentFrame += speed;
 		if (currentFrame >= totalFrames)
 		{
-			currentFrame = (loop || pingpong) ? 0.0f : totalFrames - 1;
+			currentFrame = (loop || pingPong) ? 0.0f : totalFrames - 1;
 			++loopCount;
 
-			if (pingpong)
-				pingpongDirection = -pingpongDirection;
+			if (pingPong)
+				pingPongDirection = -pingPongDirection;
 		}
 	}
 
@@ -64,7 +64,7 @@ public:
 	SDL_Rect& GetCurrentFrame()
 	{
 		int actualFrame = currentFrame;
-		if (pingpongDirection == -1)
+		if (pingPongDirection == -1)
 			actualFrame = totalFrames - currentFrame;
 
 		return frames[actualFrame];

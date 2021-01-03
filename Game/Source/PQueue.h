@@ -118,10 +118,10 @@ public:
 
 		if (start != nullptr)
 		{
-			PQueueItem<tdata>* new_start = start->next;
+			PQueueItem<tdata>* newStart = start->next;
 			item = start->data;
 			RELEASE(start);
-			start = new_start;
+			start = newStart;
 			result = true;
 		}
 
