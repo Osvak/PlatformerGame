@@ -12,10 +12,9 @@
 // Constructor
 SceneTitle::SceneTitle(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
-	LOG("Loading Title Screen");
+	LOG("Creating Title Screen");
 
 	name.Create("sceneTitle");
-
 
 
 	this->input = input;
@@ -35,6 +34,8 @@ SceneTitle::~SceneTitle()
 // Called before the first frame / when activated
 bool SceneTitle::Load()
 {
+	LOG("Loading Title Screen");
+
 	//
 	// Load map
 	//
@@ -122,7 +123,7 @@ bool SceneTitle::Unload()
 		return false;
 	}
 
-	LOG("Freeing Title Sreen");
+	LOG("Unloading Title Sreen");
 
 	tex->UnLoad(pressEnterToStart);
 	entityManager->DestroyEntity(map);

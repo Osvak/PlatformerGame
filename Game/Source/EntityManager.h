@@ -33,6 +33,10 @@ public:
 	// Called before quitting
 	bool CleanUp();	
 
+	// Save/Load entites
+	bool LoadState(pugi::xml_node&);
+	bool SaveState(pugi::xml_node&) const;
+
 
 	// Additional methods
 	Entity* CreateEntity(EntityType type);
@@ -41,11 +45,10 @@ public:
 	// Update all entities
 	bool UpdateAll(float dt, bool doLogic);
 
-
 private:
 
 	void AddEntity(Entity* entity);
-	void RemoveEntity(Entity* entity);
+	void RemoveEntity(int i);
 
 public:
 

@@ -12,7 +12,7 @@
 // Constructor
 SceneLogo::SceneLogo(Input* input, Render* render, Textures* tex, AudioManager* audioManager)
 {
-	LOG("Loading SceneLogo");
+	LOG("Creating SceneLogo");
 
 	name.Create("sceneLogo");
 
@@ -21,14 +21,6 @@ SceneLogo::SceneLogo(Input* input, Render* render, Textures* tex, AudioManager* 
 	this->render = render;
 	this->tex = tex;
 	this->audioManager = audioManager;
-
-
-	//
-	// Reset flags
-	//
-	nextSceneCounter = 0;
-	transition = false;
-
 }
 
 // Destructor
@@ -40,6 +32,8 @@ SceneLogo::~SceneLogo()
 // Called before the first frame
 bool SceneLogo::Load()
 {
+	LOG("Loading SceneLogo");
+
 	//
 	// Load Map
 	//
@@ -63,6 +57,12 @@ bool SceneLogo::Load()
 	// Move camera
 	//
 	render->camera.x = render->camera.y = 0;
+
+	//
+	// Reset flags
+	//
+	nextSceneCounter = 0;
+	transition = false;
 
 
 	return false;
@@ -146,10 +146,11 @@ bool SceneLogo::Unload()
 		return false;
 	}
 
-	LOG("Freeing Logo Screen");
+	LOG("Unloading Logo Screen");
 
 	//entityManager->DestroyEntity(map);
 	tex->UnLoad(img);
+	audioManager->UnloadFX(logoFX);
 
 	active = false;
 

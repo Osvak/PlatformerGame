@@ -13,7 +13,7 @@
 // Constructor
 Level2::Level2(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
-	LOG("Loading Level2");
+	LOG("Creating Level2");
 
 	name.Create("level2");
 
@@ -34,6 +34,8 @@ Level2::~Level2()
 // Called before the first frame
 bool Level2::Load()
 {
+	LOG("Loading Level2");
+
 	//
 	// Load map
 	//
@@ -158,7 +160,7 @@ bool Level2::Unload()
 		return true;
 	}
 
-	LOG("Freeing Level 2");
+	LOG("Unloading Level 2");
 
 	entityManager->DestroyEntity(map);
 	entityManager->DestroyEntity(player);

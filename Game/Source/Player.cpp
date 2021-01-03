@@ -18,7 +18,7 @@
 // Constructor
 Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioManager) : Entity(EntityType::PLAYER)
 {
-	LOG("Loading Player");
+	LOG("Creating Player Entity");
 	
 	name.Create("player");
 
@@ -62,8 +62,6 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	for (int i = 0; i < 6; i++)
 		deathAnim->PushBack({ 50 * i, 333, 50, 37 });
 
-	LOG("+++++ Loading player textures");
-
 	//
 	// Load Player textures files
 	//
@@ -82,6 +80,7 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	checkpointFX = audioManager->LoadFX("Assets/Audio/FX/checkpoint.wav");
 	audioManager->musicList.Add(&checkpointFX);
 	nextLevelFX = audioManager->LoadFX("Assets/Audio/FX/next_level.wav");
+	audioManager->musicList.Add(&nextLevelFX);
 
 	//
 	// Set initial position
@@ -758,11 +757,11 @@ bool Player::Draw()
 
 		// Player draw when looking right
 		if (horizontalDirection == 1)
-			render->DrawTexture(playerTexture, position.x - 17, position.y - (rect.h - 17), &rect);
+			render->DrawTexture(playerTexture, (int)position.x - 17, (int)position.y - (rect.h - 17), &rect);
 
 		// Player draw when looking left
 		if (horizontalDirection == -1)
-			render->DrawFlippedTexture(playerTexture, position.x - 17, position.y - (rect.h - 17), &rect);
+			render->DrawFlippedTexture(playerTexture, (int)position.x - 17, (int)position.y - (rect.h - 17), &rect);
 	}
 
 
@@ -777,6 +776,8 @@ bool Player::CleanUp()
 	{
 		return true;
 	}
+
+	LOG("Unloading Player");
 
 	tex->UnLoad(playerTexture);
 
@@ -857,57 +858,24 @@ bool Player::CleanUp()
 
 
 // Load the player's state
-/*bool Player::LoadState(pugi::xml_node& playerNode)
+bool Player::LoadState(pugi::xml_node& playerNode)
 {
-	// Load current scene
-	sc = playerNode.child("level").attribute("currentlevel").as_int();
-	switch (player->sc)
-	{
-	case 1:
-		if (currentScene == LEVEL1)
-		{
-			fadeToBlack->Fade((Module*)level1, (Module*)level1, 10.0f);
-		}
-		if (currentScene == LEVEL2)
-		{
-			fadeToBlack->Fade((Module*)level2, (Module*)level1, 40.0f);
-		}
-		currentScene = LEVEL1;
-		break;
-
-	case 2:
-		if (currentScene == LEVEL1)
-		{
-			fadeToBlack->Fade((Module*)level1, (Module*)level2, 40.0f);
-		}
-		if (currentScene == LEVEL2)
-		{
-			fadeToBlack->Fade((Module*)level2, (Module*)level2, 10.0f);
-		}
-		currentScene = LEVEL2;
-		break;
-	}
-
 	// Load position
-	savedPos.x = playerNode.child("position").attribute("positionX").as_float();
-	savedPos.y = playerNode.child("position").attribute("positionY").as_float();
-	cameraCollPos.x = playerNode.child("cameracollider").attribute("cameracolliderX").as_int();
-	cameraCollPos.y = playerNode.child("cameracollider").attribute("cameracolliderY").as_int();
+	savedPos.x = playerNode.child("position").attribute("position_x").as_float();
+	savedPos.y = playerNode.child("position").attribute("position_y").as_float();
 	loadPos = true;
 
-
 	// Load velocity
-	velocity.x = playerNode.child("velocity").attribute("velocityX").as_float();
-	velocity.y = playerNode.child("velocity").attribute("velocityY").as_float();
+	velocity.x = playerNode.child("velocity").attribute("velocity_x").as_float();
+	velocity.y = playerNode.child("velocity").attribute("velocity_y").as_float();
 
 	// Load state
-	st = playerNode.child("state").attribute("playerstate").as_int();
+	st = playerNode.child("state").attribute("player_state").as_int();
 	switch (st)
 	{
 	case PlayerState::IDLE:
-		if (state = GOD_MODE)
+		if (state == GOD_MODE)
 		{
-			playerCollider->type = Collider::ColliderType::PLAYER;
 			godMode = false;
 		}
 		state = IDLE;
@@ -916,9 +884,8 @@ bool Player::CleanUp()
 		break;
 
 	case PlayerState::MOVE_RIGHT:
-		if (state = GOD_MODE)
+		if (state == GOD_MODE)
 		{
-			playerCollider->type = Collider::ColliderType::PLAYER;
 			godMode = false;
 		}
 		state = MOVE_RIGHT;
@@ -927,9 +894,8 @@ bool Player::CleanUp()
 		break;
 
 	case PlayerState::MOVE_LEFT:
-		if (state = GOD_MODE)
+		if (state == GOD_MODE)
 		{
-			playerCollider->type = Collider::ColliderType::PLAYER;
 			godMode = false;
 		}
 		state = MOVE_LEFT;
@@ -938,9 +904,8 @@ bool Player::CleanUp()
 		break;
 
 	case PlayerState::JUMP:
-		if (state = GOD_MODE)
+		if (state == GOD_MODE)
 		{
-			playerCollider->type = Collider::ColliderType::PLAYER;
 			godMode = false;
 		}
 		state = JUMP;
@@ -961,10 +926,10 @@ bool Player::CleanUp()
 		state = GOD_MODE;
 		break;
 	}
-	horizontalDirection = playerNode.child("state").attribute("horizontaldirection").as_int();
+	horizontalDirection = playerNode.child("state").attribute("horizontal_direction").as_int();
 
 	return true;
-}*/
+}
 void Player::LoadPlayerPosition()
 {
 	position.x = savedPos.x;
@@ -976,62 +941,48 @@ void Player::LoadPlayerPosition()
 	loadPos = false;
 }
 // Save the player's state
-/*bool Player::SaveState(pugi::xml_node& playerNode) const
+bool Player::SaveState(pugi::xml_node& playerNode) const
 {
 	pugi::xml_node player = playerNode.append_child("position");
-	player.append_attribute("positionX").set_value(position.x);
-	player.append_attribute("positionY").set_value(position.y);
-
-	player = playerNode.append_child("cameracollider");
-	player.append_attribute("cameracolliderX").set_value(cameraCollider->rect.x);
-	player.append_attribute("cameracolliderY").set_value(cameraCollider->rect.y);
+	player.append_attribute("position_x").set_value(position.x);
+	player.append_attribute("position_y").set_value(position.y);
 
 	player = playerNode.append_child("velocity");
-	player.append_attribute("velocityX").set_value(velocity.x);
-	player.append_attribute("velocityY").set_value(velocity.y);
+	player.append_attribute("velocity_x").set_value(velocity.x);
+	player.append_attribute("velocity_y").set_value(velocity.y);
 
 	player = playerNode.append_child("state");
 	switch (state)
 	{
 	case IDLE:
-		player->st = 0;
+		st = 0;
 		break;
 
 	case MOVE_RIGHT:
-		player->st = 1;
+		st = 1;
 		break;
 
 	case MOVE_LEFT:
-		player->st = 2;
+		st = 2;
 		break;
 
 	case JUMP:
-		player->st = 3;
+		st = 3;
 		break;
 
 	case GOD_MODE:
-		player->st = 4;
+		st = 4;
 		break;
 	}
-	player.append_attribute("playerstate").set_value(st);
-	player.append_attribute("horizontaldirection").set_value(horizontalDirection);
+	player.append_attribute("player_state").set_value(st);
+	player.append_attribute("horizontal_direction").set_value(horizontalDirection);
 
-	player = playerNode.append_child("level");
-	switch (currentScene)
-	{
-	case LEVEL1:
-		player->sc = 1;
-		break;
-
-	case LEVEL2:
-		player->sc = 2;
-		break;
-	}
-	player.append_attribute("currentlevel").set_value(sc);
+	player = playerNode.append_child("lifes");
+	player.append_attribute("lifes").set_value(lifes);
 
 
 	return true;
-}*/
+}
 
 
 void Player::Jump(float dt)
@@ -1121,7 +1072,7 @@ void Player::ControlPlatformCollision(Collider* c)
 	if ((position.y + PLAYER_SIZE) > c->rect.y)
 	{
 		velocity.y = 0.0f;
-		position.y = c->rect.y - PLAYER_SIZE;
+		position.y = (float)c->rect.y - PLAYER_SIZE;
 		isTouchingGround = true;
 	}
 }
@@ -1129,19 +1080,19 @@ void Player::ControlCameraMovement(Collider* c)
 {
 	if (position.x < c->rect.x)
 	{
-		c->rect.x -= c->rect.x - position.x;
+		c->rect.x -= c->rect.x - (int)position.x;
 	}
 	if ((position.x + PLAYER_SIZE) > (c->rect.x + c->rect.w))
 	{
-		c->rect.x += (position.x + PLAYER_SIZE) - (c->rect.x + c->rect.w);
+		c->rect.x += ((int)position.x + PLAYER_SIZE) - (c->rect.x + c->rect.w);
 	}
 	if (position.y < c->rect.y)
 	{
-		c->rect.y -= c->rect.y - position.y;
+		c->rect.y -= c->rect.y - (int)position.y;
 	}
 	if ((position.y + PLAYER_SIZE) > (c->rect.y + c->rect.h))
 	{
-		c->rect.y += (position.y + PLAYER_SIZE) - (c->rect.y + c->rect.h);
+		c->rect.y += ((int)position.y + PLAYER_SIZE) - (c->rect.y + c->rect.h);
 	}
 
 	//cameraCollider->rect = c->rect;

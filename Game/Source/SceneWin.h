@@ -38,7 +38,7 @@ public:
 
 private:
 
-	unsigned int victoryFX;
+	unsigned int victoryFX = 0;
 	bool playFX = true;
 
 	Map* map = nullptr;

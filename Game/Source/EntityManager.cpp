@@ -12,7 +12,7 @@
 
 EntityManager::EntityManager(Window* win, Input* input, Render* render, Textures* tex, AudioManager* audioManager) : Module()
 {
-	name.Create("entitymanager");
+	name.Create("entity_manager");
 
 	this->win = win;
 	this->input = input;
@@ -40,7 +40,10 @@ bool EntityManager::Awake(pugi::xml_node& config)
 bool EntityManager::Update(float dt)
 {
 	accumulatedTime += dt;
-	if (accumulatedTime >= updateMSCycle) doLogic = true;
+	if (accumulatedTime >= updateMSCycle)
+	{
+		doLogic = true;
+	}
 
 	UpdateAll(dt, doLogic);
 
@@ -59,14 +62,34 @@ bool EntityManager::CleanUp()
 {
 	if (!active) return true;
 
-	bool ret = true;
-	ListItem<Entity*>* item;
-	item = entities.start;
-
-	while (item != NULL && ret == true)
+	for (int i = entities.Count() - 1; i >= 0; --i)
 	{
-		ret = item->data->CleanUp();
-		item = item->next;
+		entities.At(i)->data->CleanUp();
+		entities.Del(entities.At(i));
+	}
+
+	entities.Clear();
+
+	return true;
+}
+
+
+// Save/Load entites
+bool EntityManager::LoadState(pugi::xml_node& data)
+{
+	for (unsigned int i = 0; i < entities.Count(); ++i)
+	{
+		entities.At(i)->data->LoadState(data.child(entities.At(i)->data->name.GetString()));
+	}
+
+	return true;
+}
+
+bool EntityManager::SaveState(pugi::xml_node& data) const
+{
+	for (unsigned int i = 0; i < entities.Count(); ++i)
+	{
+		entities.At(i)->data->SaveState(data.append_child(entities.At(i)->data->name.GetString()));
 	}
 
 	return true;
@@ -101,8 +124,16 @@ Entity* EntityManager::CreateEntity(EntityType type)
 void EntityManager::DestroyEntity(Entity* entity)
 {
 	int i = entities.Find(entity);
-	entities.At(i)->data->CleanUp();
-	RemoveEntity(entity);
+	if (i == -1)
+	{
+		return;
+	}
+	else
+	{
+		LOG("Destroying Entity %s", entity->name.GetString());
+		entities.At(i)->data->CleanUp();
+		RemoveEntity(i);
+	}
 }
 
 
@@ -112,18 +143,9 @@ void EntityManager::AddEntity(Entity* entity)
 	entities.Add(entity);
 }
 // Remove an Entity from the Entity List
-void EntityManager::RemoveEntity(Entity* entity)
+void EntityManager::RemoveEntity(int i)
 {
-	ListItem<Entity*>* item;
-
-	for (item = entities.start; item != NULL; item = item->next)
-	{
-		if (entity == item->data)
-		{
-			entities.Del(item);
-			// TODO: Check for memory leaks
-		}
-	}
+	entities.Del(entities.At(i));
 }
 
 
@@ -131,14 +153,9 @@ bool EntityManager::UpdateAll(float dt, bool doLogic)
 {
 	if (doLogic)
 	{
-		bool ret = true;
-		ListItem<Entity*>* item;
-		item = entities.start;
-
-		while (item != NULL && ret == true)
+		for (unsigned int i = 0; i < entities.Count(); ++i)
 		{
-			ret = item->data->Update(dt);
-			item = item->next;
+			entities.At(i)->data->Update(dt);
 		}
 	}
 

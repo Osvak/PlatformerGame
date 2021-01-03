@@ -14,7 +14,7 @@ class SString
 {
 private:
 
-	char* str;
+	char* str = nullptr;
 	unsigned int size;
 
 public:

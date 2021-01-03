@@ -50,7 +50,7 @@ bool Textures::Start()
 // Called before quitting
 bool Textures::CleanUp()
 {
-	LOG("Freeing textures and Image library");
+	LOG("Freeing Textures and Image library");
 	ListItem<SDL_Texture*>* item;
 
 	for (item = textures.start; item != NULL; item = item->next)
@@ -66,6 +66,8 @@ bool Textures::CleanUp()
 // Load new texture from file path
 SDL_Texture* const Textures::Load(const char* path)
 {
+	LOG("Loading Texture %s", path);
+
 	SDL_Texture* texture = NULL;
 	SDL_Surface* surface = IMG_Load(path);
 
@@ -75,7 +77,7 @@ SDL_Texture* const Textures::Load(const char* path)
 	}
 	else
 	{
-		texture = LoadSurface(surface);
+		texture = LoadSurface(surface); // Adds texture to the list
 		if (texture == NULL)
 		{
 			LOG("Could not load texture from surface with path: %s. IMG_LOAD: %S", path, IMG_GetError());
@@ -95,6 +97,7 @@ bool Textures::UnLoad(SDL_Texture* texture)
 	{
 		if (texture == item->data)
 		{
+			LOG("Unloading Texture");
 			SDL_DestroyTexture(item->data);
 			textures.Del(item);
 			return true;

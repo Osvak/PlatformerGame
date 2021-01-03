@@ -162,11 +162,11 @@ bool Collisions::PreUpdate()
 
 			if (matrix[c1->type][c2->type] && c1->CheckCollision(c2->rect))
 			{
-				for (uint i = 0; i < MAX_LISTENERS; ++i)
+				/*for (uint i = 0; i < MAX_LISTENERS; ++i)
 					if (c1->listeners[i] != nullptr) c1->listeners[i]->OnCollision(c1, c2);
 
 				for (uint i = 0; i < MAX_LISTENERS; ++i)
-					if (c2->listeners[i] != nullptr) c2->listeners[i]->OnCollision(c2, c1);
+					if (c2->listeners[i] != nullptr) c2->listeners[i]->OnCollision(c2, c1);*/
 			}
 		}
 	}

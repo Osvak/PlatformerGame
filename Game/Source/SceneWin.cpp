@@ -12,10 +12,9 @@
 // Constructor
 SceneWin::SceneWin(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
-	LOG("Loading Win Screen");
+	LOG("Creating Win Screen");
 
 	name.Create("sceneWin");
-
 
 
 	this->input = input;
@@ -23,14 +22,6 @@ SceneWin::SceneWin(Input* input, Render* render, Textures* tex, AudioManager* au
 	this->tex = tex;
 	this->audioManager = audioManager;
 	this->entityManager = entityManager;
-
-
-
-	//
-	// Flags reset
-	//
-	playFX = true;
-
 }
 
 // Destructor
@@ -43,6 +34,8 @@ SceneWin::~SceneWin()
 // Called before the first frame / when activated
 bool SceneWin::Load()
 {
+	LOG("Loading Win Screen");
+
 	//
 	// Load map
 	//
@@ -61,6 +54,11 @@ bool SceneWin::Load()
 	//
 	render->camera.x = render->camera.y = 0;
 
+	//
+	// Flags reset
+	//
+	playFX = true;
+
 
 	return false;
 }
@@ -71,7 +69,7 @@ bool SceneWin::Update(float dt)
 {
 	if (playFX == true)
 	{
-		audioManager->PlayFX(victoryFX); // TODO: Fix audio in update
+		audioManager->PlayFX(victoryFX);
 		playFX = false;
 	}
 
@@ -127,7 +125,7 @@ bool SceneWin::Unload()
 		return false;
 	}
 
-	LOG("Freeing Win Screen");
+	LOG("Unloading Win Screen");
 
 	entityManager->DestroyEntity(map);
 	audioManager->UnloadFX(victoryFX);

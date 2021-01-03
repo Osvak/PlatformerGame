@@ -159,9 +159,9 @@ pugi::xml_node App::LoadConfig(pugi::xml_document& configFile) const
 {
 	pugi::xml_node ret;
 
-	pugi::xml_parse_result result = configFile.load_file(CONFIG_FILENAME);
+	pugi::xml_parse_result result = configFile.load_file(filenameConfig.GetString());
 
-	if (result == NULL) LOG("Could not load xml file: %s. pugi error: %s", CONFIG_FILENAME, result.description());
+	if (result == NULL) LOG("Could not load xml file: %s. pugi error: %s", filenameConfig.GetString(), result.description());
 	else ret = configFile.child("config");
 
 	return ret;
@@ -179,8 +179,8 @@ void App::FinishUpdate()
 {
 	// Call Load / Save methods
 
-	if (saveGameRequested == true) SaveGame(filenameGame.GetString());
-	if (loadGameRequested == true) LoadGame(filenameGame.GetString());
+	if (sceneManager->saveGameRequested == true) SaveGame(filenameGame.GetString());
+	if (sceneManager->loadGameRequested == true) LoadGame(filenameGame.GetString());
 
 	if (loadConfigRequested == true) LoadGame(filenameConfig.GetString());
 	if (saveConfigRequested == true) SaveGame(filenameConfig.GetString());
@@ -333,18 +333,6 @@ const char* App::GetOrganization() const
 	return organization.GetString();
 }
 
-// Load / Save
-void App::LoadGameRequest()
-{
-	loadGameRequested = true;
-}
-
-// ---------------------------------------
-void App::SaveGameRequest() const
-{
-	saveGameRequested = true;
-}
-
 void App::LoadConfigRequested()
 {
 	loadConfigRequested = true;
@@ -359,11 +347,11 @@ void App::SaveConfigRequested() const
 // ---------------------------------------
 // Create a method to actually load an xml file
 // then call all the modules to load themselves
-bool App::LoadGame(SString filename)
+bool App::LoadGame(SString fileName)
 {
 	bool ret = false;
 
-	pugi::xml_parse_result result = saveStateFile.load_file(filename.GetString());
+	pugi::xml_parse_result result = saveStateFile.load_file(fileName.GetString());
 
 
 	if (result != NULL)
@@ -394,13 +382,13 @@ bool App::LoadGame(SString filename)
 	}
 
 	
-	loadGameRequested = false;
+	sceneManager->loadGameRequested = false;
 
 	return ret;
 }
 
 // Implement the XML save method for current state
-bool App::SaveGame(SString filename) const
+bool App::SaveGame(SString fileName) const
 {
 	bool ret = true;
 
@@ -435,7 +423,7 @@ bool App::SaveGame(SString filename) const
 	}
 
 
-	saveGameRequested = false;
+	sceneManager->saveGameRequested = false;
 
 	return ret;
 }

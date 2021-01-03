@@ -11,7 +11,7 @@
  // Constructor
 SceneLose::SceneLose(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
-	LOG("Loading Lose Screen");
+	LOG("Creating Lose Screen");
 
 	name.Create("sceneLose");
 
@@ -32,6 +32,8 @@ SceneLose::~SceneLose()
  // Called before the first frame / when activated
 bool SceneLose::Load()
 {
+	LOG("Loading Lose Screen");
+
 	//
 	// Load map
 	//
@@ -58,7 +60,7 @@ bool SceneLose::Update(float dt)
 {
 	if (playFX == true)
 	{
-		audioManager->PlayFX(gameOverFX); // TODO: Fix audio in update
+		audioManager->PlayFX(gameOverFX);
 		playFX = false;
 	}
 
@@ -115,7 +117,7 @@ bool SceneLose::Unload()
 		return false;
 	}
 
-	LOG("Freeing Lose Screen");
+	LOG("Unloading Lose Screen");
 
 	entityManager->DestroyEntity(map);
 	audioManager->UnloadFX(gameOverFX);

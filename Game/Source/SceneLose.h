@@ -39,7 +39,7 @@ public:
 
 private:
 
-	unsigned int gameOverFX;
+	unsigned int gameOverFX = 0;
 	bool playFX = true;
 
 	Map* map = nullptr;

@@ -6,8 +6,6 @@
 #include "AudioManager.h"
 #include "EntityManager.h"
 
-#include "Collider.h"
-
 #include "Log.h"
 
 #include "SDL/include/SDL_rect.h"
@@ -16,7 +14,7 @@
 // Constructor
 Level1::Level1(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
 {
-	LOG("Loading Level1");
+	LOG("Creating Level1");
 
 	name.Create("level1");
 
@@ -37,6 +35,8 @@ Level1::~Level1()
 // Called before the first frame
 bool Level1::Load()
 {
+	LOG("Loading Level1");
+
 	//
 	// Load map
 	//
@@ -48,6 +48,7 @@ bool Level1::Load()
 	//
 	player = (Player*)entityManager->CreateEntity(EntityType::PLAYER);
 	player->position = fPoint(TILE_SIZE * 9, TILE_SIZE * 16);
+
 
 	//
 	// Load music
@@ -229,7 +230,7 @@ void Level1::CollisionLogic()
 						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
 						if(CheckCollision(colliderRect, player->GetRect()) == true)
 						{
-							player->isTouchingGround == true;
+							player->isTouchingGround = true;
 						}
 					}
 					if (tileId == 2)
@@ -238,7 +239,7 @@ void Level1::CollisionLogic()
 						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
 						if (CheckCollision(colliderRect, player->GetRect()) == true)
 						{
-							player->isDying == true;
+							player->isDying = true;
 						}
 					}
 					if (tileId == 3)
@@ -247,7 +248,7 @@ void Level1::CollisionLogic()
 						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
 						if (CheckCollision(colliderRect, player->GetRect()) == true)
 						{
-							player->isWinning == true;
+							player->isWinning = true;
 						}
 					}
 					if (tileId == 4)
@@ -263,42 +264,4 @@ void Level1::CollisionLogic()
 			}
 		}
 	}
-
-	/*for (int y = 0; y < map->data.height; y++)
-	{
-		for (int x = 0; x < map->data.width; x++)
-		{
-			if ((map->data.layers[0]->Get(x, y) == 1) &&
-				CheckCollision(map->GetTilemapRec(x, y), player->GetRect())) // Collision with platform
-			{
-				player->position = tempPlayerPosition;
-				player->velocity.y = 0.0f;
-				player->isTouchingGround == true;
-				break;
-			}
-			if ((map->data.layers[0]->Get(x, y) == 2) &&
-				CheckCollision(map->GetTilemapRec(x, y), player->GetRect())) // Collision with death
-			{
-				player->position = tempPlayerPosition;
-				player->velocity = { 0.0f, 0.0f };
-				player->isDying == true;
-				break;
-			}
-			if ((map->data.layers[0]->Get(x, y) == 3) &&
-				CheckCollision(map->GetTilemapRec(x, y), player->GetRect())) // Collision with win
-			{
-				player->position = tempPlayerPosition;
-				player->velocity = { 0.0f, 0.0f };
-				player->isWinning == true;
-				break;
-			}
-			if ((map->data.layers[1]->Get(x, y) == 4) &&
-				CheckCollision(map->GetTilemapRec(x, y), player->GetRect())) // Collision with wall
-			{
-				player->position = tempPlayerPosition;
-				player->velocity.y = 0.0f;
-				break;
-			}
-		}
-	}*/
 }

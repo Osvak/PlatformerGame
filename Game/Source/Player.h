@@ -77,9 +77,9 @@ public:
 	bool CleanUp();
 
 
-	//bool LoadState(pugi::xml_node&) override;
+	bool LoadState(pugi::xml_node&) override;
 	
-	//bool SaveState(pugi::xml_node&) const override;
+	bool SaveState(pugi::xml_node&) const override;
 
 	// Player size getter
 	SDL_Rect GetRect();
@@ -119,8 +119,8 @@ public:
 
 	// Auxiliar variables
 	SDL_Rect rect;
-	int st = 0; // current state for save/load
-	int sc = 0; // current scene for save/load
+	mutable int st = 0; // current state for save/load
+	mutable int sc = 0; // current scene for save/load
 
 
 	// Player position form Save File

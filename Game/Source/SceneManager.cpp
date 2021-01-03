@@ -25,7 +25,7 @@
 // Constructor
 SceneManager::SceneManager(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager) : Module()
 {
-	name.Create("scenemanager");
+	name.Create("scene_manager");
 
 	onTransition = false;
 	fadeOutCompleted = false;
@@ -102,11 +102,18 @@ bool SceneManager::Update(float dt)
 {
 	if (!onTransition)
 	{
+		if (input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
+		{
+			saveGameRequested = true;
+		}
+		if (input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
+		{
+			loadGameRequested = true;
+		}
 		if (input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
 		{
 			freeCamera = !freeCamera;
 		}
-
 		if (input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN)
 		{
 			fpsCapState = !fpsCapState;
@@ -133,6 +140,8 @@ bool SceneManager::Update(float dt)
 			if (transitionAlpha > 1.01f)
 			{
 				transitionAlpha = 1.0f;
+
+				LOG("CHANGING SCENE FROM %s TO %s", current->name.GetString(), next->name.GetString());
 
 				current->Unload();	// Unload current screen
 				next->Load();	// Load next screen
@@ -219,9 +228,39 @@ bool SceneManager::PostUpdate()
 // Called before quitting
 bool SceneManager::CleanUp()
 {
-	LOG("Freeing scene");
+	LOG("Freeing Current Scene");
 
 	if (current != nullptr) current->Unload();
+
+	return true;
+}
+
+
+// Save/Load scene info
+bool SceneManager::LoadState(pugi::xml_node& sceneNode)
+{
+	// TODO: Load SceneManager
+	const char* n = sceneNode.child("scene").attribute("current").as_string();
+	SString savedScene(n);
+	if (savedScene == "level1")
+	{
+		current->nextScene = SceneType::LEVEL1;
+		current->transitionRequired = true;
+	}
+	if (savedScene == "level2")
+	{
+		current->nextScene = SceneType::LEVEL2;
+		current->transitionRequired = true;
+	}
+	
+	return true;
+}
+
+bool SceneManager::SaveState(pugi::xml_node& sceneNode) const
+{
+	// TODO: Save SceneManager
+	pugi::xml_node scene = sceneNode.append_child("scene");
+	scene.append_attribute("current").set_value(current->name.GetString());
 
 	return true;
 }

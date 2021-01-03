@@ -140,6 +140,8 @@ bool AudioManager::PlayMusic(const char* path, float fadeTime)
 
 void AudioManager::StopMusic()
 {
+	LOG("Stopping music");
+
 	Mix_HaltMusic();
 }
 
@@ -162,6 +164,7 @@ unsigned int AudioManager::LoadFX(const char* path)
 	{
 		fx.Add(chunk);
 		ret = fx.Count();
+		LOG("Loaded FX %s with ID%d", path, ret);
 	}
 
 	return ret;
@@ -174,6 +177,8 @@ bool AudioManager::UnloadFX(unsigned int id)
 	{
 		Mix_FreeChunk(fx[id - 1]);
 		fx[id - 1] = nullptr;
+		musicList.Del(musicList.At(id));
+		LOG("Unloaded FX with ID%d", id);
 	}
 
 

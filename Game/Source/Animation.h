@@ -63,9 +63,9 @@ public:
 	//Returns the square of the current frame
 	SDL_Rect& GetCurrentFrame()
 	{
-		int actualFrame = currentFrame;
+		int actualFrame = (int)currentFrame;
 		if (pingPongDirection == -1)
-			actualFrame = totalFrames - currentFrame;
+			actualFrame = totalFrames - (int)currentFrame;
 
 		return frames[actualFrame];
 	}

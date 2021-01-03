@@ -25,26 +25,26 @@ public:
 
 	// Called before render is available
 	bool Awake(pugi::xml_node&);
-
 	// Called before the first frame
 	bool Start();
 
 	// Called before all Updates
 	bool PreUpdate();
-
 	// Called each loop iteration
 	bool Update(float dt);
-
 	// Called before all Updates
 	bool PostUpdate();
 
 	// Called before quitting
 	bool CleanUp();
 
+	bool LoadState(pugi::xml_node&);
+	bool SaveState(pugi::xml_node&) const;
+
 private:
 
-	Scene* current;
-	Scene* next;
+	Scene* current = nullptr;
+	Scene* next = nullptr;
 
 	// Required variables to manage screen transitions (fade-in, fade-out)
 	bool onTransition;
@@ -56,6 +56,9 @@ private:
 public:
 
 	bool fpsCapState = true;
+
+	mutable bool saveGameRequested = false;
+	bool loadGameRequested = false;
 
 	Input* input;
 	Render* render;

@@ -3,6 +3,9 @@
 
 #include "SString.h"
 
+#include "PugiXml/src/pugixml.hpp"
+
+
 
 class Input;
 class Render;
@@ -11,7 +14,6 @@ class AudioManager;
 class EntityManager;
 
 //class GuiControl;
-
 
 enum class SceneType
 {

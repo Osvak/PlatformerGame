@@ -4,6 +4,8 @@
 #include "Point.h"
 #include "SString.h"
 
+#include "PugiXml/src/pugixml.hpp"
+
 enum class EntityType
 {
     PLAYER,
@@ -25,6 +27,16 @@ public:
     }
 
     virtual bool CleanUp()
+    {
+        return true;
+    }
+
+    virtual bool LoadState(pugi::xml_node&)
+    {
+        return true;
+    }
+
+    virtual bool SaveState(pugi::xml_node&) const
     {
         return true;
     }

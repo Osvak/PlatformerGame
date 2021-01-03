@@ -79,8 +79,8 @@ struct Properties
 struct MapLayer
 {
 	SString	name;
-	int width;
-	int height;
+	int width = 0;
+	int height = 0;
 	uint* data;
 
 	Properties properties;

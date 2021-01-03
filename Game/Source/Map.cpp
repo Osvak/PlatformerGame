@@ -39,7 +39,7 @@ int Properties::GetProperty(const char* value, int defaultValue) const
 // Constructor of the Map
 Map::Map(Textures* tex, Window* win, Render* render) : Entity(EntityType::MAP)
 {
-	LOG("Loading Map Parser");
+	LOG("Creating Map Entity");
 
 	mapLoaded = false;
 	name.Create("map");
@@ -49,8 +49,6 @@ Map::Map(Textures* tex, Window* win, Render* render) : Entity(EntityType::MAP)
 	this->win = win;
 	this->render = render;
 	scale = win->GetScale();
-
-	LOG("Map Entity created");
 }
 
 // Destructor
@@ -126,7 +124,7 @@ void Map::Draw()
 	camOffset.x = render->camera.x;
 	camOffset.y = render->camera.y;
 
-	for (int i = 0; i < data.layers.Count(); i++)
+	for (unsigned int i = 0; i < data.layers.Count(); i++)
 	{
 		if (data.layers[i]->properties.GetProperty("visible", 1) != 0)
 		{
@@ -281,7 +279,7 @@ SDL_Rect TileSet::GetTileRect(int id) const
 // Called before quitting
 bool Map::CleanUp()
 {
-    LOG("Unloading map");
+    LOG("Unloading Map");
 
 
     // Remove all tilesets
@@ -318,6 +316,8 @@ bool Map::CleanUp()
 // Load new map
 bool Map::Load(const char* filename)
 {
+	LOG("Loading map with name: %s", filename);
+
 	bool ret = true;
 	SString tmp("%s%s", folder.GetString(), filename);
 
@@ -373,11 +373,11 @@ bool Map::Load(const char* filename)
 	if (ret == true)
 	{
 		// LOG all the data loaded iterate all tilesets and LOG everything
-		LOG("Succesfully parsed map XML file: %s", filename);
+		LOG("Succesfully load map XML file: %s", filename);
 		LOG("width: %d height: %d", data.width, data.height);
 		LOG("tile_width: %d tile_height: %d", data.tileWidth, data.tileHeight);
 
-		LOG("Tileset ----");
+		LOG("--- Tileset Info:");
 		int count = data.tilesets.Count();
 
 		for (int i = 0; i < count; ++i)
@@ -390,7 +390,7 @@ bool Map::Load(const char* filename)
 
 
 		// LOG the info for each loaded layer
-		LOG("Layer ----");
+		LOG("--- Layer Info:");
 		for (int i = 0; i < count; ++i)
 		{
 			LOG("name: %s", data.tilesets.At(i)->data->name.GetString());
@@ -535,7 +535,7 @@ bool Map::LoadLayer(pugi::xml_node& node, MapLayer* layer)
 		pugi::xml_node tile = layerData.child("tile");
 		for (int i = 0; tile; ++i)
 		{
-			layer->data[i] = tile.attribute("gid").as_int(0);
+			layer->data[i] = tile.attribute("gid").as_uint(0);
 			tile = tile.next_sibling("tile");
 		}
 	}

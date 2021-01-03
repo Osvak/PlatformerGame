@@ -14,7 +14,7 @@ class Render;
 class Textures;
 class AudioManager;
 
-class SDL_Texture;
+struct SDL_Texture;
 
 class SceneLogo : public Scene
 {

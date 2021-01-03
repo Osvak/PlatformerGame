@@ -9,9 +9,6 @@
 
 #include "PugiXml/src/pugixml.hpp"
 
-#define CONFIG_FILENAME		"config.xml"
-#define SAVE_STATE_FILENAME "save_game.xml"
-
 
 
 // Modules
@@ -22,7 +19,6 @@ class Textures;
 class AudioManager;
 class EntityManager;
 class SceneManager;
-
 
 // Main Application
 class App
@@ -59,8 +55,6 @@ public:
 	const char* GetOrganization() const;
 
     // Create methods to request Load / Save
-	void LoadGameRequest();
-	void SaveGameRequest() const;
 	void LoadConfigRequested();
 	void SaveConfigRequested() const;
 
@@ -87,8 +81,8 @@ private:
 	bool PostUpdate();
 
 	// Load / Save
-	bool LoadGame(const SString _filename);
-	bool SaveGame(const SString _filename) const;
+	bool LoadGame(const SString _fileName);
+	bool SaveGame(const SString _fileName) const;
 
 public:
 
@@ -106,9 +100,6 @@ public:
 	int lowFrameRate = 30;
 	int highScreenTicks;
 	int lowScreenTicks;
-
-	mutable bool saveGameRequested = false;
-	bool loadGameRequested = false;
 
 	mutable bool saveConfigRequested = false;
 	bool loadConfigRequested = false;
