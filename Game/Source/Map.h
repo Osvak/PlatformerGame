@@ -133,8 +133,8 @@ public:
     virtual ~Map();
 
 
-	// Creates the colliders off the map layers
-	//bool CreateColliders();
+	// Draws the colliders off the map layers
+	bool DrawColliders();
 
     // Draws the map
     void Draw();
@@ -180,7 +180,7 @@ public:
 
 	bool drawColliders = false;
 
-	int cameraMaxBottomPosition;
+	int cameraMaxBottomPosition = 0;
 
 private:
 

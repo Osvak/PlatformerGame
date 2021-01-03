@@ -203,7 +203,8 @@ void App::FinishUpdate()
 	}
 
 
-	SString title("Lato Viridi | FPS: %.2f | Avg.FPS: %.2f | Last-Frame MS: %.2f | Time since startup: %.3f | Frame Count: %I64u | VSync: %s", fps, averageFps, fpsMSecondsAfter, secondsSinceStartup, frameCount, render->usingVSync.GetString());
+	SString title("Lato Viridi | FPS: %.2f | Avg.FPS: %.2f | Last-Frame MS: %.2f | Time since startup: %.3f | Frame Count: %I64u | VSync: %s",
+		fps, averageFps, fpsMSecondsAfter, secondsSinceStartup, frameCount, render->usingVSync.GetString());
 	
 	win->SetTitle(title.GetString());
 

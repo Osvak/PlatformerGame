@@ -81,6 +81,9 @@ public:
 	
 	//bool SaveState(pugi::xml_node&) const override;
 
+	// Player size getter
+	SDL_Rect GetRect();
+
 
 	// Collision callback, called when the player intersects with another collider
 	//void OnCollision(Collider* c1, Collider* c2) override;
@@ -98,6 +101,7 @@ public:
 
 	//// Variables ralated to the player /////
 	// Position of the player in the map
+	int width = PLAYER_SIZE, height = PLAYER_SIZE;
 	fPoint position;
 	fPoint velocity = { 0.0f, 0.0f };
 	fPoint acceleration = { 0.0f, 0.0f };

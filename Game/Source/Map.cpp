@@ -61,7 +61,7 @@ Map::~Map()
 
 
 // Called before the first frame
-/*bool Map::CreateColliders()
+bool Map::DrawColliders()
 {
 	MapLayer* layer;
 	TileSet* tileset;
@@ -69,6 +69,8 @@ Map::~Map()
 
 	SDL_Rect tileRect;
 	SDL_Rect colliderRect;
+
+	Uint8 alpha = 100;
 
 	for (ListItem<MapLayer*>* item = data.layers.start; item; item = item->next)
 	{
@@ -84,33 +86,29 @@ Map::~Map()
 				if (tileId > 0)
 				{
 					tileset = GetTilesetFromTileId(tileId);
-
-					if (currentScene == LEVEL1 || currentScene == LEVEL2)
+					if (tileId == 1)
 					{
-						if (tileId == 1)
-						{
-							tileRect = tileset->GetTileRect(tileId);
-							colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-							collisions->AddCollider(colliderRect, Collider::ColliderType::PLATFORM, this);
-						}
-						if (tileId == 2)
-						{
-							tileRect = tileset->GetTileRect(tileId);
-							colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-							collisions->AddCollider(colliderRect, Collider::ColliderType::DIE, this);
-						}
-						if (tileId == 3)
-						{
-							tileRect = tileset->GetTileRect(tileId);
-							colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-							collisions->AddCollider(colliderRect, Collider::ColliderType::NEXT_LEVEL, this);
-						}
-						if (tileId == 4)
-						{
-							tileRect = tileset->GetTileRect(tileId);
-							colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-							collisions->AddCollider(colliderRect, Collider::ColliderType::WALL, this);
-						}
+						tileRect = tileset->GetTileRect(tileId);
+						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+						render->DrawRectangle(colliderRect, 0, 230, 185, alpha); // turquoise
+					}
+					if (tileId == 2)
+					{
+						tileRect = tileset->GetTileRect(tileId);
+						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+						render->DrawRectangle(colliderRect, 255, 0, 0, alpha); // red
+					}
+					if (tileId == 3)
+					{
+						tileRect = tileset->GetTileRect(tileId);
+						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+						render->DrawRectangle(colliderRect, 0, 0, 255, alpha); // blue
+					}
+					if (tileId == 4)
+					{
+						tileRect = tileset->GetTileRect(tileId);
+						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
+						render->DrawRectangle(colliderRect, 105, 85, 157, alpha); // mauve
 					}
 				}
 			}
@@ -118,7 +116,7 @@ Map::~Map()
 	}
 
 	return true;
-}*/
+}
 
 // Draw the map
 void Map::Draw()
@@ -234,6 +232,15 @@ iPoint Map::WorldToMap(int x, int y) const
 	}
 
 	return ret;
+}
+
+SDL_Rect Map::GetTilemapRec(int x, int y) const
+{
+	iPoint pos = MapToWorld(x, y);
+	SDL_Rect rec = { pos.x * scale + camOffset.x, pos.y * scale + camOffset.y,
+		data.tileWidth * scale, data.tileHeight * scale };
+
+	return rec;
 }
 
 // Pick the right Tileset based on a tile id

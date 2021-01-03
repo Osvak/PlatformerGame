@@ -114,10 +114,10 @@ bool SceneManager::Update(float dt)
 
 		if (freeCamera == true)
 		{
-			if (input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) render->camera.y -= 1;
-			if (input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT) render->camera.y += 1;
-			if (input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) render->camera.x -= 1;
-			if (input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) render->camera.x += 1;
+			if (input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) render->camera.y += 5;
+			if (input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT) render->camera.y -= 5;
+			if (input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) render->camera.x += 5;
+			if (input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) render->camera.x -= 5;
 		}
 
 		current->Update(dt);

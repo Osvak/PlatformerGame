@@ -6,6 +6,8 @@
 #include "AudioManager.h"
 #include "EntityManager.h"
 
+#include "Collider.h"
+
 #include "Log.h"
 
 #include "SDL/include/SDL_rect.h"
@@ -56,12 +58,19 @@ bool Level1::Load()
 	// Move Camera to starting position
 	//
 	render->camera.x = -((int)render->scale * TILE_SIZE * 3);
-	render->camera.y = -((int)render->scale * TILE_SIZE * 6);
+	render->camera.y = -((int)render->scale * TILE_SIZE * 7);
 
 
 	return false;
 }
 
+
+inline bool CheckCollision(SDL_Rect rec1, SDL_Rect rec2)
+{
+	if ((rec1.x < (rec2.x + rec2.w) && (rec1.x + rec1.w) > rec2.x) &&
+		(rec1.y < (rec2.y + rec2.h) && (rec1.y + rec1.h) > rec2.y)) return true;
+	else return false;
+}
 // Called each loop iteration
 bool Level1::Update(float dt)
 {
@@ -70,7 +79,47 @@ bool Level1::Update(float dt)
 	//
 	player->Update(dt);
 
-
+	//
+	// Collision check
+	//
+	fPoint tempPlayerPosition = player->position;
+	for (int y = 0; y < map->data.height; y++)
+	{
+		for (int x = 0; x < map->data.width; x++)
+		{
+			if ((map->data.layers[0]->Get(x, y) == 1) &&
+				CheckCollision(map->GetTilemapRec(x, y), player->GetRect())) // Collision with platform
+			{
+				player->position = tempPlayerPosition;
+				player->velocity.y = 0.0f;
+				player->isTouchingGround == true;
+				break;
+			}
+			if ((map->data.layers[0]->Get(x, y) == 2) &&
+				CheckCollision(map->GetTilemapRec(x, y), player->GetRect())) // Collision with death
+			{
+				player->position = tempPlayerPosition;
+				player->velocity = { 0.0f, 0.0f };
+				player->isDying == true;
+				break;
+			}
+			if ((map->data.layers[0]->Get(x, y) == 3) &&
+				CheckCollision(map->GetTilemapRec(x, y), player->GetRect())) // Collision with win
+			{
+				player->position = tempPlayerPosition;
+				player->velocity = { 0.0f, 0.0f };
+				player->isWinning == true;
+				break;
+			}
+			if ((map->data.layers[1]->Get(x, y) == 4) &&
+				CheckCollision(map->GetTilemapRec(x, y), player->GetRect())) // Collision with wall
+			{
+				player->position = tempPlayerPosition;
+				player->velocity.y = 0.0f;
+				break;
+			}
+		}
+	}
 
 	//
 	// Scene controls
@@ -89,11 +138,14 @@ bool Level1::Update(float dt)
 	{
 		//app->LoadGameRequest();
 	}
-
 	if (input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
 	{
 		//player->position = player->checkpointPos;
 		//player->cameraCollider->SetPos(player->checkpointPos.x, player->checkpointPos.y - TILE_SIZE * 4);
+	}
+	if (input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
+	{
+		map->drawColliders = !map->drawColliders;
 	}
 
 	if (input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
@@ -145,6 +197,15 @@ bool Level1::Draw()
 	//
 	player->Draw();
 	
+
+	//
+	// Draw Colliders
+	//
+	if (map->drawColliders == true)
+	{
+		map->DrawColliders();
+	}
+
 
 	return false;
 }

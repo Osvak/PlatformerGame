@@ -103,6 +103,8 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	// Set Flags and Variables
 	//
 	active = true;
+	height = PLAYER_SIZE;
+	width = PLAYER_SIZE;
 	velocity = { 0.0f, 0.0f };
 	acceleration = { 0.0f, 0.0f };
 	horizontalDirection = 1;
@@ -765,6 +767,28 @@ bool Player::Draw()
 }
 
 
+// Clean Up
+bool Player::CleanUp()
+{
+	if (!active)
+	{
+		return true;
+	}
+
+	tex->UnLoad(playerTexture);
+
+	audioManager->UnloadFX(jumpFX);
+	audioManager->UnloadFX(secondJumpFX);
+	audioManager->UnloadFX(oofFX);
+	audioManager->UnloadFX(checkpointFX);
+	audioManager->UnloadFX(nextLevelFX);
+
+	active = false;
+
+	return true;
+}
+
+
 // Controls what the player does when it collides with another collider
 /*void Player::OnCollision(Collider* c1, Collider* c2)
 {
@@ -1123,23 +1147,7 @@ void Player::ControlCameraMovement(Collider* c)
 }
 
 
-// Clean Up
-bool Player::CleanUp()
+SDL_Rect Player::GetRect()
 {
-	if (!active)
-	{
-		return true;
-	}
-
-	tex->UnLoad(playerTexture);
-
-	audioManager->UnloadFX(jumpFX);
-	audioManager->UnloadFX(secondJumpFX);
-	audioManager->UnloadFX(oofFX);
-	audioManager->UnloadFX(checkpointFX);
-	audioManager->UnloadFX(nextLevelFX);
-
-	active = false;
-
-	return true;
+	return { (int)position.x, (int)position.y, width, height };
 }
