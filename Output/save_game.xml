@@ -3,19 +3,25 @@
 	<window />
 	<input />
 	<textures />
-	<audio />
-	<entity_manager>
+	<audioManager />
+	<entityManager>
 		<map />
 		<player>
-			<position position_x="193.5" position_y="256" />
-			<velocity velocity_x="0" velocity_y="0" />
-			<state player_state="0" horizontal_direction="1" />
+			<position position_x="144" position_y="176.028" />
+			<velocity velocity_x="0" velocity_y="-0.50399971" />
+			<state player_state="3" animation_frame="7" horizontal_direction="1" />
 			<lifes lifes="3" />
 		</player>
-	</entity_manager>
-	<scene_manager>
+		<skeleton>
+			<position position_x="624" position_y="224" />
+			<velocity velocity_x="0" velocity_y="0" />
+			<state skeleton_state="0" horizontal_direction="-1" />
+		</skeleton>
+	</entityManager>
+	<sceneManager>
 		<scene current="level1" />
-	</scene_manager>
+	</sceneManager>
+	<pathFinding />
 	<renderer>
 		<camera x="-144" y="-336" />
 	</renderer>

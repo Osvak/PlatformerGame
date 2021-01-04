@@ -79,6 +79,18 @@ public:
 			return frames[actualFrame];
 		}
 	}
+
+	int GetCurrentFrameID()
+	{
+		int actualFrame = (int)currentFrame;
+
+		return actualFrame;
+	}
+
+	void SetCurrentFrame(int id)
+	{
+		currentFrame = (float)id;
+	}
 };
 
 #endif

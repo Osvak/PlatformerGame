@@ -47,13 +47,14 @@ bool Level1::Load()
 	// Load player
 	//
 	player = (Player*)entityManager->CreateEntity(EntityType::PLAYER);
-	player->position = fPoint(TILE_SIZE * 9, TILE_SIZE * 16);
+	player->position = fPoint((TILE_SIZE * 9), (TILE_SIZE * 17) - player->playerHeight);
 
 	//
 	// Add enemies
 	//
 	enemySkeleton = (EnemySkeleton*)entityManager->CreateEntity(EntityType::ENEMY_SKELETON);
-	enemySkeleton->position = fPoint(TILE_SIZE * 39, TILE_SIZE * 14);
+	enemySkeleton->position = fPoint((TILE_SIZE) * 18, (TILE_SIZE * 16) - enemySkeleton->height);
+	//enemySkeleton->position = fPoint(TILE_SIZE * 39, TILE_SIZE * 14);
 
 	//
 	// Load music
@@ -95,12 +96,6 @@ bool Level1::Update(float dt)
 	//
 	// Scene controls
 	//
-	bool ret = true;
-
-	/*if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-	{
-		ret = false;
-	}*/
 	if (input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
 	{
 		//app->SaveGameRequest();
@@ -179,6 +174,10 @@ bool Level1::Draw()
 	if (map->drawColliders == true)
 	{
 		map->DrawColliders();
+
+		Uint8 alpha = 100;
+		render->DrawRectangle(player->GetRect() , 0, 0, 255, alpha);
+		render->DrawRectangle(enemySkeleton->GetRect(), 255, 0, 0, alpha);
 	}
 
 

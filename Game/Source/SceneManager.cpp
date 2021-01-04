@@ -59,6 +59,7 @@ bool SceneManager::Start()
 
 	current = new SceneLogo(input, render, tex, audioManager);
 	current->Load();
+	current->name = "sceneLogo";
 
 	next = nullptr;
 

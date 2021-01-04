@@ -8,7 +8,8 @@
 #include "SString.h"
 
 
-#define PLAYER_SIZE 16
+#define PLAYER_WIDTH 12
+#define PLAYER_HEIGHT 28
 #define PLAYER_SPEED 40.0f
 #define GOD_MODE_MULT 1.5f
 #define GRAVITY 25.0f
@@ -105,7 +106,7 @@ public:
 
 	//// Variables ralated to the player /////
 	// Position of the player in the map
-	int width = PLAYER_SIZE, height = PLAYER_SIZE;
+	int playerWidth = PLAYER_WIDTH, playerHeight = PLAYER_HEIGHT;
 	fPoint position;
 	fPoint velocity = { 0.0f,0.0f };
 	fPoint acceleration = { 0.0f,0.0f };

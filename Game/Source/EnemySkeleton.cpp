@@ -64,6 +64,12 @@ EnemySkeleton::EnemySkeleton(Render* render, Textures* tex, AudioManager* audioM
 	// Set current state
 	//
 	state = SKELETON_IDLE;
+
+	//
+	// Set Flags and Variables
+	//
+	width = SKELETON_WIDTH;
+	height = SKELETON_HEIGHT;
 }
 // Destructor
 EnemySkeleton::~EnemySkeleton()
@@ -72,8 +78,7 @@ EnemySkeleton::~EnemySkeleton()
 }
 
 
-
-// Skeleton Update
+// Skeleton Update called every loop
 bool EnemySkeleton::Update(float dt)
 {
 	currentAnimation->Update();
@@ -81,6 +86,7 @@ bool EnemySkeleton::Update(float dt)
 	return true;
 }
 
+// Draws the skeleton
 bool EnemySkeleton::Draw()
 {
 	//
@@ -92,12 +98,11 @@ bool EnemySkeleton::Draw()
 
 		if (horizontalDirection == 1)
 		{
-			render->DrawTexture(skeletonTexture, (int)position.x, (int)position.y, &rect);
+			render->DrawTexture(skeletonTexture, (int)position.x - 11, (int)position.y - 15, &rect);
 		}
 		if (horizontalDirection == -1)
 		{
-			render->DrawRectangle({ (int)position.x, (int)position.y, TILE_SIZE, TILE_SIZE }, 255, 0, 0);
-			render->DrawFlippedTexture(skeletonTexture, (int)position.x - 8, (int)position.y - 21, &rect);
+			render->DrawFlippedTexture(skeletonTexture, (int)position.x - 11, (int)position.y - 15, &rect);
 		}
 	}
 
@@ -105,7 +110,7 @@ bool EnemySkeleton::Draw()
 	return true;
 }
 
-
+// Release memory
 bool EnemySkeleton::CleanUp()
 {
 	if (!active)
@@ -122,15 +127,84 @@ bool EnemySkeleton::CleanUp()
 	return true;
 }
 
+
+// Loads the skeleton state
 bool EnemySkeleton::LoadState(pugi::xml_node& skeletonNode)
 {
+	// Load position
+	position.x = skeletonNode.child("position").attribute("position_x").as_float();
+	position.y = skeletonNode.child("position").attribute("position_y").as_float();
+
+	// Load velocity
+	velocity.x = skeletonNode.child("velocity").attribute("velocity_x").as_float();
+	velocity.y = skeletonNode.child("velocity").attribute("velocity_y").as_float();
+
+	// Load state info
+	st = skeletonNode.child("state").attribute("skeleton_state").as_int();
+	switch (st)
+	{
+	case SkeletonState::SKELETON_IDLE:
+		state = SKELETON_IDLE;
+		currentAnimation = idleAnim;
+		break;
+	case SkeletonState::SKELETON_MOVE:
+		state = SKELETON_MOVE;
+		currentAnimation = walkAnim;
+		break;
+	case SkeletonState::SKELETON_ATTACK:
+		state = SKELETON_ATTACK;
+		currentAnimation = attackAnim;
+		break;
+	case SkeletonState::SKELETON_DYING:
+		state = SKELETON_DYING;
+		currentAnimation = deathAnim;
+		break;
+	}
+	currentAnimation->SetCurrentFrame(skeletonNode.child("state").attribute("current_state").as_int());
+	horizontalDirection = skeletonNode.child("state").attribute("horizontal_direction").as_int();
 
 
 	return true;
 }
+// Saves the skeleton state
 bool EnemySkeleton::SaveState(pugi::xml_node& skeletonNode) const
 {
+	// Save position
+	pugi::xml_node skeleton = skeletonNode.append_child("position");
+	skeleton.append_attribute("position_x").set_value(position.x);
+	skeleton.append_attribute("position_y").set_value(position.y);
+
+	// Save velocity
+	skeleton = skeletonNode.append_child("velocity");
+	skeleton.append_attribute("velocity_x").set_value(velocity.x);
+	skeleton.append_attribute("velocity_y").set_value(velocity.y);
+
+	// Save state info
+	skeleton = skeletonNode.append_child("state");
+	switch (state)
+	{
+	case SKELETON_IDLE:
+		st = 0;
+		break;
+	case SKELETON_MOVE:
+		st = 1;
+		break;
+	case SKELETON_ATTACK:
+		st = 2;
+		break;
+	case SKELETON_DYING:
+		st = 3;
+		break;
+	}
+	skeleton.append_attribute("skeleton_state").set_value(st);
+	skeleton.append_attribute("horizontal_direction").set_value(horizontalDirection);
 
 
 	return true;
+}
+
+
+SDL_Rect EnemySkeleton::GetRect()
+{
+	return  { (int)position.x, (int)position.y, width, height };
 }

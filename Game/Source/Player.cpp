@@ -102,11 +102,6 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	audioManager->musicList.Add(&nextLevelFX);
 
 	//
-	// Set initial position
-	//
-	// The initial position is now set on each Level
-
-	//
 	// Create Player collider
 	//
 	//playerCollider = collisions->AddCollider({ (int)position.x , (int)position.y, PLAYER_SIZE, PLAYER_SIZE }, Collider::ColliderType::PLAYER, this);
@@ -121,8 +116,8 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	// Set Flags and Variables
 	//
 	active = true;
-	height = PLAYER_SIZE;
-	width = PLAYER_SIZE;
+	playerHeight = PLAYER_HEIGHT;
+	playerWidth = PLAYER_WIDTH;
 	velocity = { 0.0f, 0.0f };
 	acceleration = { 0.0f, 0.0f };
 	horizontalDirection = 1;
@@ -390,7 +385,7 @@ void Player::UpdateLogic(float dt)
 
 		if (wallCollisionFromLeft == true)
 		{
-			while ((position.x + PLAYER_SIZE) >= rect.x)
+			while ((position.x + playerWidth) >= rect.x)
 			{
 				--position.x;
 			}
@@ -470,7 +465,7 @@ void Player::UpdateLogic(float dt)
 	{
 		if ((wallCollisionFromLeft == true) && (verticalDirection != 0))
 		{
-			while ((position.x + PLAYER_SIZE) > rect.x)
+			while ((position.x + playerWidth) > rect.x)
 			{
 				--position.x;
 			}
@@ -775,11 +770,11 @@ bool Player::Draw()
 
 		// Player draw when looking right
 		if (horizontalDirection == 1)
-			render->DrawTexture(playerTexture, (int)position.x - 17, (int)position.y - (rect.h - 17), &rect);
+			render->DrawTexture(playerTexture, (int)position.x - 19, (int)position.y - 8, &rect);
 
 		// Player draw when looking left
 		if (horizontalDirection == -1)
-			render->DrawFlippedTexture(playerTexture, (int)position.x - 17, (int)position.y - (rect.h - 17), &rect);
+			render->DrawFlippedTexture(playerTexture, (int)position.x - 19, (int)position.y - 8, &rect);
 	}
 
 
@@ -950,6 +945,7 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 		state = GOD_MODE;
 		break;
 	}
+	currentAnimation->SetCurrentFrame(playerNode.child("state").attribute("current_frame").as_int());
 	horizontalDirection = playerNode.child("state").attribute("horizontal_direction").as_int();
 
 	return true;
@@ -999,6 +995,7 @@ bool Player::SaveState(pugi::xml_node& playerNode) const
 		break;
 	}
 	player.append_attribute("player_state").set_value(st);
+	player.append_attribute("current_frame").set_value(currentAnimation->GetCurrentFrameID());
 	player.append_attribute("horizontal_direction").set_value(horizontalDirection);
 
 	player = playerNode.append_child("lifes");
@@ -1078,7 +1075,7 @@ void Player::ControlWallCollision(Collider* c)
 			wallCollisionFromRight = true;
 		}
 
-		if ((position.x + PLAYER_SIZE) > c->rect.x &&
+		if ((position.x + playerWidth) > c->rect.x &&
 			horizontalDirection == 1)
 		{
 			velocity.x = 0.0f;
@@ -1093,10 +1090,10 @@ void Player::ControlPlatformCollision(Collider* c)
 	isDoubleJumping = false;
 	canDoubleJump = false;
 
-	if ((position.y + PLAYER_SIZE) > c->rect.y)
+	if ((position.y + playerHeight) > c->rect.y)
 	{
 		velocity.y = 0.0f;
-		position.y = (float)c->rect.y - PLAYER_SIZE;
+		position.y = (float)c->rect.y - playerHeight;
 		isTouchingGround = true;
 	}
 }
@@ -1106,17 +1103,17 @@ void Player::ControlCameraMovement(Collider* c)
 	{
 		c->rect.x -= c->rect.x - (int)position.x;
 	}
-	if ((position.x + PLAYER_SIZE) > (c->rect.x + c->rect.w))
+	if ((position.x + playerWidth) > (c->rect.x + c->rect.w))
 	{
-		c->rect.x += ((int)position.x + PLAYER_SIZE) - (c->rect.x + c->rect.w);
+		c->rect.x += ((int)position.x + playerWidth) - (c->rect.x + c->rect.w);
 	}
 	if (position.y < c->rect.y)
 	{
 		c->rect.y -= c->rect.y - (int)position.y;
 	}
-	if ((position.y + PLAYER_SIZE) > (c->rect.y + c->rect.h))
+	if ((position.y + playerHeight) > (c->rect.y + c->rect.h))
 	{
-		c->rect.y += ((int)position.y + PLAYER_SIZE) - (c->rect.y + c->rect.h);
+		c->rect.y += ((int)position.y + playerHeight) - (c->rect.y + c->rect.h);
 	}
 
 	//cameraCollider->rect = c->rect;
@@ -1127,5 +1124,5 @@ void Player::ControlCameraMovement(Collider* c)
 
 SDL_Rect Player::GetRect()
 {
-	return { (int)position.x, (int)position.y, width, height };
+	return { (int)position.x, (int)position.y, playerWidth, playerHeight };
 }
