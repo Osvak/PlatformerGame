@@ -7,6 +7,7 @@
 #include "AudioManager.h"
 #include "EntityManager.h"
 #include "SceneManager.h"
+#include "Pathfinding.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -27,6 +28,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	audioManager = new AudioManager();
 	entityManager = new EntityManager(win, input, render, tex, audioManager);
 	sceneManager = new SceneManager(input, render, tex, audioManager, entityManager);
+	pathFinding = PathFinding::GetInstance();
 	
 
 	// Ordered for awake / Start / Update
@@ -37,6 +39,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(audioManager);
 	AddModule(entityManager);
 	AddModule(sceneManager);
+	AddModule(pathFinding);
 
 	// Render last to swap buffer
 	AddModule(render);

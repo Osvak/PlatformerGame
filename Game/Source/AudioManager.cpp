@@ -14,7 +14,7 @@
 AudioManager::AudioManager() : Module()
 {
 	music = NULL;
-	name.Create("audio");
+	name.Create("audioManager");
 }
 
 // Destructor

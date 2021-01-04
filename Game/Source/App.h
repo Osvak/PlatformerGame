@@ -19,6 +19,7 @@ class Textures;
 class AudioManager;
 class EntityManager;
 class SceneManager;
+class PathFinding;
 
 // Main Application
 class App
@@ -94,6 +95,7 @@ public:
 	AudioManager* audioManager;
 	EntityManager* entityManager;
 	SceneManager* sceneManager;
+	PathFinding* pathFinding;
 
 	// Public FPS variables
 	int highFrameRate = 60;

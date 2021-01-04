@@ -12,7 +12,7 @@
 
 EntityManager::EntityManager(Window* win, Input* input, Render* render, Textures* tex, AudioManager* audioManager) : Module()
 {
-	name.Create("entity_manager");
+	name.Create("entityManager");
 
 	this->win = win;
 	this->input = input;

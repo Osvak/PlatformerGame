@@ -25,7 +25,7 @@
 // Constructor
 SceneManager::SceneManager(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager) : Module()
 {
-	name.Create("scene_manager");
+	name.Create("sceneManager");
 
 	onTransition = false;
 	fadeOutCompleted = false;
