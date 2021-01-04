@@ -7,8 +7,6 @@
 #include "Point.h"
 #include "SString.h"
 
-#include "SDL/include/SDL.h"
-
 
 #define PLAYER_SIZE 16
 #define PLAYER_SPEED 40.0f
@@ -57,13 +55,10 @@ public:
 	// Called at the middle of the application loop
 	// Processes new input and handles player movement
 	bool Update(float dt);
-
 	// Checks for inputs (or timers) and changes the player state accordingly
 	void UpdateState();
-
 	// Updates the logic of the player depending on the current state
 	void UpdateLogic(float dt);
-
 	// Transition from one state to a new one. Changes animations, resets variables,...
 	void ChangeState(PlayerState previousState, PlayerState newState);
 	
@@ -78,7 +73,6 @@ public:
 
 
 	bool LoadState(pugi::xml_node&) override;
-	
 	bool SaveState(pugi::xml_node&) const override;
 
 	// Player size getter
@@ -103,8 +97,8 @@ public:
 	// Position of the player in the map
 	int width = PLAYER_SIZE, height = PLAYER_SIZE;
 	fPoint position;
-	fPoint velocity = { 0.0f, 0.0f };
-	fPoint acceleration = { 0.0f, 0.0f };
+	fPoint velocity = { 0.0f,0.0f };
+	fPoint acceleration = { 0.0f,0.0f };
 
 	// The state of the player
 	PlayerState state = IDLE;

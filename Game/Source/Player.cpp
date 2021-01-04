@@ -778,6 +778,12 @@ bool Player::CleanUp()
 
 	LOG("Unloading Player");
 
+	idleAnim = nullptr;
+	walkAnim = nullptr;
+	jumpAnim = nullptr;
+	fallAnim = nullptr;
+	deathAnim = nullptr;
+
 	tex->UnLoad(playerTexture);
 
 	audioManager->UnloadFX(jumpFX);
