@@ -32,7 +32,7 @@ EnemySkeleton::EnemySkeleton(Render* render, Textures* tex, AudioManager* audioM
 	}
 	idleAnim->loop = true;
 	idleAnim->pingPong = true;
-	idleAnim->speed = 0.2f;
+	idleAnim->speed = 0.1f;
 	for (int i = 0; i < 11; ++i)
 	{
 		idleAnim->PushBack({ 24 * i, 37, 24, 37 });

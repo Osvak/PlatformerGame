@@ -28,7 +28,7 @@ Player* Player::GetInstance(Input* input, Render* render, Textures* tex, AudioMa
 	}
 	else
 	{
-		LOG("Return Instance of Player");
+		LOG("Returning Instance of Player");
 	}
 
 	return instance;

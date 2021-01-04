@@ -67,9 +67,18 @@ public:
 		if (pingPongDirection == -1)
 			actualFrame = totalFrames - (int)currentFrame;
 
-		return frames[actualFrame];
+		if (frames[actualFrame].x == 0 &&
+			frames[actualFrame].y == 0 &&
+			frames[actualFrame].w == 0 &&
+			frames[actualFrame].h == 0)
+		{
+			return frames[actualFrame - 1];
+		}
+		else
+		{
+			return frames[actualFrame];
+		}
 	}
-
 };
 
 #endif
