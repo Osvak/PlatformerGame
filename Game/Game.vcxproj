@@ -92,6 +92,7 @@
   <ItemGroup>
     <ClCompile Include="Source\Collider.cpp" />
     <ClCompile Include="Source\Collisions.cpp" />
+    <ClCompile Include="Source\EnemySkeleton.cpp" />
     <ClCompile Include="Source\EntityManager.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\App.cpp" />
@@ -116,6 +117,7 @@
     <ClInclude Include="Source\Animation.h" />
     <ClInclude Include="Source\Collider.h" />
     <ClInclude Include="Source\Collisions.h" />
+    <ClInclude Include="Source\EnemySkeleton.h" />
     <ClInclude Include="Source\Entity.h" />
     <ClInclude Include="Source\EntityManager.h" />
     <ClInclude Include="Source\Map.h" />

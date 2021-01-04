@@ -49,6 +49,11 @@ bool Level1::Load()
 	player = (Player*)entityManager->CreateEntity(EntityType::PLAYER);
 	player->position = fPoint(TILE_SIZE * 9, TILE_SIZE * 16);
 
+	//
+	// Add enemies
+	//
+	enemySkeleton = (EnemySkeleton*)entityManager->CreateEntity(EntityType::ENEMY_SKELETON);
+	enemySkeleton->position = fPoint(TILE_SIZE * 39, TILE_SIZE * 14);
 
 	//
 	// Load music
@@ -73,6 +78,11 @@ bool Level1::Update(float dt)
 	// Player Update
 	//
 	player->Update(dt);
+
+	//
+	// Enemies Update
+	//
+	enemySkeleton->Update(dt);
 
 	//
 	// Collision check
@@ -158,6 +168,10 @@ bool Level1::Draw()
 	//
 	player->Draw();
 	
+	//
+	// Draw Enemies
+	//
+	enemySkeleton->Draw();
 
 	//
 	// Draw Colliders
@@ -183,8 +197,11 @@ bool Level1::Unload()
 	LOG("Freeing Level 1");
 
 	entityManager->DestroyEntity(map);
-	entityManager->DestroyEntity(player);
-
+	entityManager->DestroyEntity(enemySkeleton);
+	if (player->destroyed == true)
+	{
+		entityManager->DestroyEntity(player);
+	}
 
 	active = false;
 

@@ -70,7 +70,10 @@
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="Source\Pathfinding.cpp">
-      <Filter>Scenes</Filter>
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EnemySkeleton.cpp">
+      <Filter>Entities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -175,7 +178,10 @@
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\Pathfinding.h">
-      <Filter>Scenes</Filter>
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EnemySkeleton.h">
+      <Filter>Entities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

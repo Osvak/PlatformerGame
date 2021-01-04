@@ -9,7 +9,7 @@
 enum class EntityType
 {
     PLAYER,
-    ENEMY,
+    ENEMY_SKELETON,
     ITEM,
     MAP,
     UNKNOWN

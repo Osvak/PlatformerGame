@@ -15,6 +15,25 @@
 #include <stdio.h>
 
 
+
+Player* Player::instance = nullptr;
+
+// Instance creator
+Player* Player::GetInstance(Input* input, Render* render, Textures* tex, AudioManager* audioManager)
+{
+	if (instance == nullptr)
+	{
+		LOG("Creating Player Instance");
+		instance = new Player(input, render, tex, audioManager);
+	}
+	else
+	{
+		LOG("Returning Instance of Player");
+	}
+
+	return instance;
+}
+
 // Constructor
 Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioManager) : Entity(EntityType::PLAYER)
 {
@@ -777,6 +796,12 @@ bool Player::CleanUp()
 	}
 
 	LOG("Unloading Player");
+
+	idleAnim = nullptr;
+	walkAnim = nullptr;
+	jumpAnim = nullptr;
+	fallAnim = nullptr;
+	deathAnim = nullptr;
 
 	tex->UnLoad(playerTexture);
 
