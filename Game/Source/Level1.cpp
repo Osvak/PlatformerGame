@@ -240,6 +240,7 @@ void Level1::CollisionLogic()
 						if (CheckCollision(colliderRect, player->GetRect()) == true)
 						{
 							player->isDying = true;
+							--player->lifes;
 						}
 					}
 					if (tileId == 3)

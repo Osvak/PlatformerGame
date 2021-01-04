@@ -11,11 +11,11 @@
 
 
 #define PLAYER_SIZE 16
-#define PLAYER_SPEED 1.5f
+#define PLAYER_SPEED 40.0f
 #define GOD_MODE_MULT 1.5f
-#define GRAVITY 5.0f
-#define MAX_VELOCITY 5.0f
-#define MAX_AIR_TIME 0.3f
+#define GRAVITY 4.0f
+#define MAX_VELOCITY 50.0f
+#define MAX_AIR_TIME 50.0f
 
 
 
@@ -183,6 +183,9 @@ public:
 	unsigned int oofFX;
 	unsigned int checkpointFX;
 	unsigned int nextLevelFX;
+
+	///// Sound Effects Flags /////
+	bool playFX = true;
 	///////////////////////////////
 
 private:

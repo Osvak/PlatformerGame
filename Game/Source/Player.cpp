@@ -39,7 +39,7 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	// Animation pushbacks
 	//
 	idleAnim->loop = true;
-	idleAnim->speed = 0.2f;
+	idleAnim->speed = 0.1f;
 	walkAnim->loop = true;
 	walkAnim->speed = 0.2f;
 	jumpAnim->loop = false;
@@ -47,7 +47,7 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	fallAnim->loop = true;
 	fallAnim->speed = 0.2f;
 	deathAnim->loop = false;
-	deathAnim->speed = 0.3f;
+	deathAnim->speed = 0.1f;
 	for (int i = 0; i < 4; i++)
 		idleAnim->PushBack({ 50 * i,0, 50, 37 });
 	for (int i = 0; i < 6; i++)
@@ -114,6 +114,7 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	isDying = false;
 	canDoubleJump = false;
 	isDoubleJumping = false;
+	playFX = true;
 	//checkpointPos = { TILE_SIZE * 9, TILE_SIZE * 16 };
 	state = IDLE;
 	destroyed = false;
@@ -397,7 +398,7 @@ void Player::UpdateLogic(float dt)
 
 		if (wallCollisionFromLeft == false)
 		{
-			velocity.x = PLAYER_SPEED;
+			velocity.x = PLAYER_SPEED * dt;
 		}
 		else
 		{
@@ -407,10 +408,10 @@ void Player::UpdateLogic(float dt)
 		if (isTouchingGround == true && input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
 		{
 			velocity.x = velocity.x * 2;
-			walkAnim->speed = 0.8f;
+			walkAnim->speed = 7.5f * dt;
 		}
 
-		walkAnim->speed = 0.2f;
+		walkAnim->speed = 4.0f * dt;
 
 		currentAnimation->Update();
 
@@ -426,7 +427,7 @@ void Player::UpdateLogic(float dt)
 
 		if (isTouchingWall == false)
 		{
-			velocity.x = -PLAYER_SPEED;
+			velocity.x = -PLAYER_SPEED * dt;
 		}
 		else
 		{
@@ -436,10 +437,10 @@ void Player::UpdateLogic(float dt)
 		if (isTouchingGround == true && input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
 		{
 			velocity.x = velocity.x * 2;
-			walkAnim->speed = 0.8f;
+			walkAnim->speed = 7.5f * dt;
 		}
 
-		walkAnim->speed = 0.2f;
+		walkAnim->speed = 4.0f * dt;
 
 		currentAnimation->Update();
 
@@ -468,22 +469,22 @@ void Player::UpdateLogic(float dt)
 		if ((input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) && (fallStraight == false))
 		{
 			horizontalDirection = 1;
-			velocity.x = PLAYER_SPEED;
+			velocity.x = PLAYER_SPEED * dt;
 		}
 		if ((input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) && (fallStraight == false))
 		{
 			horizontalDirection = 1;
-			velocity.x = PLAYER_SPEED;
+			velocity.x = PLAYER_SPEED * dt;
 		}
 		if ((input->GetKey(SDL_SCANCODE_A) == KEY_DOWN) && (fallStraight == false))
 		{
 			horizontalDirection = -1;
-			velocity.x = -PLAYER_SPEED;
+			velocity.x = -PLAYER_SPEED * dt;
 		}
 		if ((input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) && (fallStraight == false))
 		{
 			horizontalDirection = -1;
-			velocity.x = -PLAYER_SPEED;
+			velocity.x = -PLAYER_SPEED * dt;
 		}
 		if ((input->GetKey(SDL_SCANCODE_D) != KEY_DOWN) &&
 			(input->GetKey(SDL_SCANCODE_D) != KEY_REPEAT) &&
@@ -515,37 +516,37 @@ void Player::UpdateLogic(float dt)
 		if ((input->GetKey(SDL_SCANCODE_W) == KEY_DOWN) ||
 			(input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT))
 		{
-			velocity.y = -PLAYER_SPEED * GOD_MODE_MULT;
+			velocity.y = -PLAYER_SPEED * GOD_MODE_MULT * dt;
 		}
 		if ((input->GetKey(SDL_SCANCODE_S) == KEY_DOWN) ||
 			(input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT))
 		{
-			velocity.y = PLAYER_SPEED * GOD_MODE_MULT;
+			velocity.y = PLAYER_SPEED * GOD_MODE_MULT * dt;
 		}
 		if ((input->GetKey(SDL_SCANCODE_W) != KEY_DOWN) &&
 			(input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT) &&
 			(input->GetKey(SDL_SCANCODE_S) != KEY_DOWN) &&
 			(input->GetKey(SDL_SCANCODE_S) != KEY_REPEAT))
 		{
-			velocity.y = 0;
+			velocity.y = 0 * dt;
 		}
 
 		if ((input->GetKey(SDL_SCANCODE_A) == KEY_DOWN) ||
 			(input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT))
 		{
-			velocity.x = -PLAYER_SPEED * GOD_MODE_MULT;
+			velocity.x = -PLAYER_SPEED * GOD_MODE_MULT * dt;
 		}
 		if ((input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) ||
 			(input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT))
 		{
-			velocity.x = PLAYER_SPEED * GOD_MODE_MULT;
+			velocity.x = PLAYER_SPEED * GOD_MODE_MULT * dt;
 		}
 		if ((input->GetKey(SDL_SCANCODE_A) != KEY_DOWN) &&
 			(input->GetKey(SDL_SCANCODE_A) != KEY_REPEAT) &&
 			(input->GetKey(SDL_SCANCODE_D) != KEY_DOWN) &&
 			(input->GetKey(SDL_SCANCODE_D) != KEY_REPEAT))
 		{
-			velocity.x = 0;
+			velocity.x = 0 * dt;
 		}
 
 		break;
@@ -561,20 +562,16 @@ void Player::UpdateLogic(float dt)
 	{
 		currentAnimation->Update();
 
-		if (currentAnimation->HasFinished() == true)
+		isJumping = false;
+		isTouchingGround = true;
+		
+		if (lifes > 0)
 		{
-				isDying = false;
-
-				isJumping = false;
-				isTouchingGround = true;
-
-				if (lifes > 0)
-				{
-					//position = checkpointPos;
-					//cameraCollider->SetPos(checkpointPos.x, checkpointPos.y - TILE_SIZE * 4);
-				}
-
+			//position = checkpointPos;
+			//cameraCollider->SetPos(checkpointPos.x, checkpointPos.y - TILE_SIZE * 4);
 		}
+
+		
 
 		break;
 	}
@@ -590,12 +587,12 @@ void Player::UpdateLogic(float dt)
 	velocity.y = velocity.y + (acceleration.y * dt);
 	if (velocity.y >= MAX_VELOCITY)
 	{
-		velocity.y = MAX_VELOCITY;
+		velocity.y = MAX_VELOCITY * dt;
 	}
 	velocity.x = velocity.x + (acceleration.x * dt);
 
-	position.x += velocity.x /** dt*/;
-	position.y += velocity.y /** dt*/;
+	position.x += velocity.x;
+	position.y += velocity.y;
 
 	/*if (loadPos == true)
 	{
@@ -722,15 +719,17 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 	{
 		currentAnimation = deathAnim;
 		currentAnimation->Reset();
-
+		
 		velocity.x = 0.0f;
 		velocity.y = 0.0f;
 		acceleration.x = 0.0f;
 		acceleration.y = 0.0f;
 
-		--lifes;
 
-		audioManager->PlayFX(oofFX);
+		if (playFX == true)
+		{
+			audioManager->PlayFX(oofFX);
+		}
 
 		break;
 	}
@@ -1003,7 +1002,7 @@ void Player::Jump(float dt)
 
 	// Allow player to jump
 	if (isTouchingGround == true) {
-		timeInAir = 0.0f;
+		timeInAir = 0.0f ;
 		accel.y = 0.0;
 		vel.y = 0.0;
 		isTouchingGround = false;
@@ -1026,7 +1025,7 @@ void Player::Jump(float dt)
 	}
 	else
 	{
-		accel.y = GRAVITY;
+		accel.y = GRAVITY * dt;
 
 	}
 
