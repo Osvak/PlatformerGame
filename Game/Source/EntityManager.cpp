@@ -108,7 +108,7 @@ Entity* EntityManager::CreateEntity(EntityType type)
 		ret = new Map(tex, win, render);
 		break;
 	case EntityType::PLAYER:
-		ret = new Player(input, render, tex, audioManager);
+		ret = Player::GetInstance(input, render, tex, audioManager);
 		break;
 	case EntityType::ENEMY_SKELETON:
 		ret = new EnemySkeleton(render, tex, audioManager); 

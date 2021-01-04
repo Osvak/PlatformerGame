@@ -197,9 +197,11 @@ bool Level1::Unload()
 	LOG("Freeing Level 1");
 
 	entityManager->DestroyEntity(map);
-	entityManager->DestroyEntity(player);
 	entityManager->DestroyEntity(enemySkeleton);
-
+	if (player->destroyed == true)
+	{
+		entityManager->DestroyEntity(player);
+	}
 
 	active = false;
 

@@ -15,6 +15,25 @@
 #include <stdio.h>
 
 
+
+Player* Player::instance = nullptr;
+
+// Instance creator
+Player* Player::GetInstance(Input* input, Render* render, Textures* tex, AudioManager* audioManager)
+{
+	if (instance == nullptr)
+	{
+		LOG("Creating Player Instance");
+		instance = new Player(input, render, tex, audioManager);
+	}
+	else
+	{
+		LOG("Return Instance of Player");
+	}
+
+	return instance;
+}
+
 // Constructor
 Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioManager) : Entity(EntityType::PLAYER)
 {

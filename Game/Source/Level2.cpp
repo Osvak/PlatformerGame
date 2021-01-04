@@ -163,8 +163,10 @@ bool Level2::Unload()
 	LOG("Unloading Level 2");
 
 	entityManager->DestroyEntity(map);
-	entityManager->DestroyEntity(player);
-
+	if (player->destroyed == true)
+	{
+		entityManager->DestroyEntity(player);
+	}
 
 	active = false;
 

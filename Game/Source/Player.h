@@ -46,8 +46,8 @@ class Player : public Entity
 {
 public:
 
-	// Constructor
-	Player(Input* input, Render* render, Textures* tex, AudioManager* audioManager);
+	// Get unique isntance of the class
+	static Player* GetInstance(Input* input, Render* render, Textures* tex, AudioManager* audioManager);
 	// Destructor
 	virtual ~Player();
 
@@ -83,6 +83,16 @@ public:
 	//void OnCollision(Collider* c1, Collider* c2) override;
 
 private:
+
+	// Singleton instance
+	static Player* instance;
+	// Private Constructor
+	Player(Input* input, Render* render, Textures* tex, AudioManager* audioManager);
+	// Declare the copy constructor and the assignment operator as 
+	// private (or delete them explicitly) to prevent cloning your object
+	Player(const Player&);
+	Player& operator=(const Player&);
+
 
 	void LoadPlayerPosition();
 
