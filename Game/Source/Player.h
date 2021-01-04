@@ -13,7 +13,7 @@
 #define PLAYER_SIZE 16
 #define PLAYER_SPEED 40.0f
 #define GOD_MODE_MULT 1.5f
-#define GRAVITY 4.0f
+#define GRAVITY 25.0f
 #define MAX_VELOCITY 50.0f
 #define MAX_AIR_TIME 50.0f
 
@@ -194,9 +194,9 @@ private:
 	fPoint accel = { 0.0, 0.0 };
 	fPoint vel = { 0.0, 0.0 };
 	float timeInAir = 0.0f;
-	float jumpImpulseTime = 0.05f;
-	float jumpImpulseVel = -4.0f;
-	float jumpAccel = 4.0f;
+	float jumpImpulseTime = 2.0f;
+	float jumpImpulseVel = -90.0f;
+	float jumpAccel = 100.0f;
 
 public:
 

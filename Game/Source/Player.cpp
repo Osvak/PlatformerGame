@@ -43,7 +43,7 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	walkAnim->loop = true;
 	walkAnim->speed = 0.2f;
 	jumpAnim->loop = false;
-	jumpAnim->speed = 0.25f;
+	jumpAnim->speed = 0.1f;
 	fallAnim->loop = true;
 	fallAnim->speed = 0.2f;
 	deathAnim->loop = false;
@@ -1017,7 +1017,7 @@ void Player::Jump(float dt)
 		{
 			vel.y = jumpImpulseVel * 0.8f;
 		}
-		velocity.y = vel.y;
+		velocity.y = vel.y * dt;
 	}
 	else if (timeInAir < MAX_AIR_TIME)
 	{
@@ -1025,7 +1025,7 @@ void Player::Jump(float dt)
 	}
 	else
 	{
-		accel.y = GRAVITY * dt;
+		accel.y = GRAVITY;
 
 	}
 
@@ -1037,10 +1037,10 @@ void Player::Jump(float dt)
 	}
 	
 	
-	timeInAir = timeInAir + 0.05f;
+	timeInAir = timeInAir + 2.5f* dt ;
 
 	
-	acceleration.y = accel.y;
+	acceleration.y = accel.y * dt;
 }
 void Player::ControlWallCollision(Collider* c)
 {
