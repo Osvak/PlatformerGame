@@ -13,13 +13,14 @@ class Render;
 class Textures;
 class AudioManager;
 class EntityManager;
+class PathFinding;
 
 class SceneManager : public Module
 {
 public:
 
 	// Constructor
-	SceneManager(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
+	SceneManager(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, PathFinding* pathFinding);
 	// Destructor
 	virtual ~SceneManager();
 
@@ -65,6 +66,7 @@ public:
 	Textures* tex;
 	AudioManager* audioManager;
 	EntityManager* entityManager;
+	PathFinding* pathFinding;
 };
 
 #endif // __SCENEMANAGER_H__

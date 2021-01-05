@@ -5,6 +5,7 @@
 #include "Textures.h"
 #include "AudioManager.h"
 #include "EntityManager.h"
+#include "Pathfinding.h"
 
 #include "Log.h"
 
@@ -12,7 +13,7 @@
 
 
 // Constructor
-Level1::Level1(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+Level1::Level1(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, PathFinding* pathFinding)
 {
 	LOG("Creating Level1");
 
@@ -24,6 +25,7 @@ Level1::Level1(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	this->tex = tex;
 	this->audioManager = audioManager;
 	this->entityManager = entityManager;
+	this->pathFinding = pathFinding;
 }
 
 // Destructor
@@ -41,7 +43,18 @@ bool Level1::Load()
 	// Load map
 	//
 	map = (Map*)entityManager->CreateEntity(EntityType::MAP);
-	map->Load("map1.tmx");
+	if (map->Load("map1.tmx") == true)
+	{
+		int w, h;
+		uchar* data = NULL;
+
+		if (map->CreateWalkabilityMap(w, h, &data))
+		{
+			pathFinding->SetMap(w, h, data);
+		}
+
+		RELEASE_ARRAY(data);
+	}
 
 	//
 	// Load player
@@ -83,7 +96,7 @@ bool Level1::Update(float dt)
 	//
 	// Enemies Update
 	//
-	enemySkeleton->Update(dt);
+	enemySkeleton->Update(dt, player->position);
 
 	//
 	// Collision check

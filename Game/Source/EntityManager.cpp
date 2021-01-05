@@ -157,7 +157,7 @@ bool EntityManager::UpdateAll(float dt, bool doLogic)
 	{
 		for (unsigned int i = 0; i < entities.Count(); ++i)
 		{
-			entities.At(i)->data->Update(dt);
+			//entities.At(i)->data->Update(dt);
 		}
 	}
 

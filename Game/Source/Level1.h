@@ -14,13 +14,14 @@ class Render;
 class Textures;
 class AudioManager;
 class EntityManager;
+class PathFinding;
 
 class Level1 : public Scene
 {
 public:
 
 	// Constructor
-	Level1(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
+	Level1(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, PathFinding* pathFinding);
 	// Destructor
 	virtual ~Level1();
 
@@ -52,6 +53,7 @@ private:
 	Textures* tex;
 	AudioManager* audioManager;
 	EntityManager* entityManager;
+	PathFinding* pathFinding;
 };
 
 #endif // __LEVEL1_H__
