@@ -10,7 +10,7 @@
 
 
 
-EntityManager::EntityManager(Window* win, Input* input, Render* render, Textures* tex, AudioManager* audioManager) : Module()
+EntityManager::EntityManager(Window* win, Input* input, Render* render, Textures* tex, AudioManager* audioManager, PathFinding* pathFinding) : Module()
 {
 	name.Create("entityManager");
 
@@ -19,6 +19,7 @@ EntityManager::EntityManager(Window* win, Input* input, Render* render, Textures
 	this->render = render;
 	this->tex = tex;
 	this->audioManager = audioManager;
+	this->pathFinding = pathFinding;
 }
 
 // Destructor
@@ -111,7 +112,7 @@ Entity* EntityManager::CreateEntity(EntityType type)
 		ret = Player::GetInstance(input, render, tex, audioManager);
 		break;
 	case EntityType::ENEMY_SKELETON:
-		ret = new EnemySkeleton(render, tex, audioManager); 
+		ret = new EnemySkeleton(render, tex, audioManager, pathFinding); 
 		break;
 	//case EntityType::ITEM: ret = new Item();  break;
 	default: break;

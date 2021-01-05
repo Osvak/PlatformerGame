@@ -29,13 +29,10 @@ public:
 
 	// Sets up the walkability map
 	void SetMap(uint width, uint height, uchar* data);
-	void ResetPath(iPoint start);
 
-	// Getters
-	DynArray<iPoint>* GetLastPath();
-	PQueue<iPoint>* GetFrontier();
-	List<iPoint>* GetVisited();
-	List<iPoint>* GetBreadcrumbs();
+
+	// Create a path from A to B
+	int CreatePath(const iPoint& origin, const iPoint& destination);
 
 	// Utility: return true if pos is inside the map boundaries
 	bool CheckBoundaries(const iPoint& pos) const;
@@ -43,9 +40,9 @@ public:
 	bool IsWalkable(const iPoint& pos) const;
 	// Utility: return the walkability value of a tile
 	uchar GetTileAt(const iPoint& pos) const;
+	
+	const DynArray<iPoint>* GetLastPath() const;
 
-	bool PropagateAStar(const iPoint& destination);
-	void ComputePathAStar(const iPoint& origin, const iPoint& destination);
 
 private:
 
@@ -58,19 +55,58 @@ private:
 	PathFinding(const PathFinding&);
 	PathFinding& operator=(const PathFinding&);
 
+	
 
 	// Size of the map
 	uint width;
 	uint height;
-	PQueue<iPoint> frontier;
-	List<iPoint> visited;
-	List<iPoint> breadcrumbs;
 
 	// Map walkability values [0..255]
 	uchar* map;
-	bool destinationFound = false;
 
 	DynArray<iPoint> lastPath;
+};
+
+// Forward declaration
+struct PathList;
+
+// ---------------------------------------------------------------------
+// Pathnode: Helper struct to represent a node in the path creation
+// ---------------------------------------------------------------------
+struct PathNode
+{
+	int accumulatedCost;
+	int heuristic;
+	iPoint pos;
+	const PathNode* parent; // needed to reconstruct the path in the end
+
+	// Convenient constructors
+	PathNode();
+	PathNode(int accumulatedCost, int h, const iPoint& pos, const PathNode* parent);
+	PathNode(const PathNode& node);
+
+	// Fills a list (PathList) of all valid adjacent pathnodes
+	uint FindWalkableAdjacents(PathList& list_to_fill) const;
+
+	// Calculates this tile score
+	int Score() const;
+	// Calculate the F for a specific destination tile
+	int CalculateF(const iPoint& destination);
+};
+
+// ---------------------------------------------------------------------
+// Helper struct to include a list of path nodes
+// ---------------------------------------------------------------------
+struct PathList
+{
+	// Looks for a node in this list and returns it's list node or NULL
+	ListItem<PathNode>* Find(const iPoint& point) const;
+
+	// Returns the Pathnode with lowest score in this list or NULL if empty
+	ListItem<PathNode>* GetNodeLowestScore() const;
+
+	// The list itself, note they are not pointers!
+	List<PathNode> list;
 };
 
 #endif // !__PATHFINDING_H__

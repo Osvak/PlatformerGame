@@ -3,13 +3,15 @@
 #include "Render.h"
 #include "Textures.h"
 #include "AudioManager.h"
+#include "Map.h"
+#include "Pathfinding.h"
 
 #include "Log.h"
 #include "Defs.h"
 
 
 
-EnemySkeleton::EnemySkeleton(Render* render, Textures* tex, AudioManager* audioManager) : Entity(EntityType::ENEMY_SKELETON)
+EnemySkeleton::EnemySkeleton(Render* render, Textures* tex, AudioManager* audioManager, PathFinding* pathFinding) : Entity(EntityType::ENEMY_SKELETON)
 {
 	LOG("Creating Skeleton Entity");
 
@@ -19,12 +21,13 @@ EnemySkeleton::EnemySkeleton(Render* render, Textures* tex, AudioManager* audioM
 	this->render = render;
 	this->tex = tex;
 	this->audioManager = audioManager;
+	this->pathFinding = pathFinding;
 
 
 	//
 	// Animation pushbacks
 	//
-	attackAnim->loop = true;
+	attackAnim->loop = false;
 	attackAnim->speed = 0.2f;
 	for (int i = 0; i < 18; ++i)
 	{
@@ -79,12 +82,14 @@ EnemySkeleton::~EnemySkeleton()
 
 
 // Skeleton Update called every loop
-bool EnemySkeleton::Update(float dt, fPoint playerPosition)
+bool EnemySkeleton::Update(float dt, fPoint playerPosition, Map* map)
 {
+	this->map = map;
+
 	if (destroyed == false)
 	{
 		UpdateState(playerPosition);
-		UpdateLogic(dt, playerPosition);
+		UpdateLogic(dt, playerPosition, map);
 	}
 
 	currentAnimation->Update();
@@ -94,7 +99,7 @@ bool EnemySkeleton::Update(float dt, fPoint playerPosition)
 // Control input and states
 void EnemySkeleton::UpdateState(fPoint playerPosition)
 {
-	/*switch (state)
+	switch (state)
 	{
 	case SKELETON_IDLE:
 	{
@@ -126,6 +131,12 @@ void EnemySkeleton::UpdateState(fPoint playerPosition)
 
 	case SKELETON_ATTACK:
 	{
+		if (currentAnimation->HasFinished() == true)
+		{
+			currentAnimation->Reset();
+			ChangeState(state, SKELETON_IDLE);
+		}
+
 		break;
 	}
 
@@ -136,37 +147,72 @@ void EnemySkeleton::UpdateState(fPoint playerPosition)
 
 	default:
 		break;
-	}*/
+	}
 }
 // Controls what each state does
-void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition)
+void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
 {
-	/*switch (state)
+	switch (state)
 	{
 	case SKELETON_IDLE:
 	{
+		velocity = { 0,0 };
 		// Nothing to do here ???
 		break;
 	}
 
 	case SKELETON_MOVE:
 	{
-		if (playerPosition.x < position.x)
-		{
-			horizontalDirection = -1;
-		}
-		else
-		{
-			horizontalDirection = 1;
-		}
+		// Convert world position to map position
+		static iPoint skeletonTile = map->WorldToMap((int)position.x, (int)position.y + (SKELETON_HEIGHT - TILE_SIZE)); // Skeleton's position
+		iPoint playerTile = map->WorldToMap((int)playerPosition.x, (int)playerPosition.y + (28 - TILE_SIZE)); // Player's position
+		
+		// Create new path
+		pathCreated = pathFinding->CreatePath(skeletonTile, playerTile);
+		const DynArray<iPoint>* tempPath = pathFinding->GetLastPath();
+		path = tempPath;
 
-		velocity.x = SKELETON_SPEED * horizontalDirection * dt;
+
+		if (path->At(0) != nullptr)
+		{
+			const iPoint* pos = path->At(pathIndex);
+
+
+			if (pos->x * TILE_SIZE == position.x && pos->y * TILE_SIZE == position.y)
+			{
+				pathIndex++;
+			}
+			else
+			{
+				if (pos->x * TILE_SIZE < position.x)
+				{
+					horizontalDirection = -1;
+				}
+				else if (pos->x * TILE_SIZE > position.x)
+				{
+					horizontalDirection = 1;
+				}
+				else
+				{
+					horizontalDirection = -1;
+				}
+
+				velocity.x = horizontalDirection * SKELETON_SPEED;
+			}
+		}
+		pathTimer++;
+
+
+		position.x += velocity.x * dt;
+
 
 		break;
 	}
 
 	case SKELETON_ATTACK:
 	{
+		
+
 		break;
 	}
 
@@ -177,18 +223,18 @@ void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition)
 
 	default:
 		break;
-	}*/
+	}
 
+	velocity.x = velocity.x * dt;
+	velocity.y = velocity.y * dt;
+	position.x += velocity.x;
+	position.y += velocity.y;
 
-	position.x += velocity.x * dt;
-	position.y += velocity.y * dt;
-
-	
 }
 // Changes the state
 void EnemySkeleton::ChangeState(SkeletonState previousState, SkeletonState newState)
 {
-	switch (state)
+	switch (newState)
 	{
 	case SKELETON_IDLE:
 	{
@@ -220,6 +266,9 @@ void EnemySkeleton::ChangeState(SkeletonState previousState, SkeletonState newSt
 	default:
 		break;
 	}
+
+
+	state = newState;
 }
 
 
@@ -240,6 +289,17 @@ bool EnemySkeleton::Draw()
 		if (horizontalDirection == -1)
 		{
 			render->DrawFlippedTexture(skeletonTexture, (int)position.x - 28, (int)position.y - 15, &rect);
+		}
+
+
+		if (pathCreated != -1)
+		{
+			for (uint i = 0; i < path->Count(); ++i)
+			{
+				iPoint nextPoint = map->MapToWorld(path->At(i)->x, path->At(i)->y);
+				SDL_Rect pathRect = { nextPoint.x, nextPoint.y, TILE_SIZE, TILE_SIZE };
+				render->DrawRectangle(pathRect, 255, 0, 0, 100);
+			}
 		}
 	}
 

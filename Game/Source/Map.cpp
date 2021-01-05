@@ -35,7 +35,6 @@ int Properties::GetProperty(const char* value, int defaultValue) const
 
 
 
-
 // Constructor of the Map
 Map::Map(Textures* tex, Window* win, Render* render) : Entity(EntityType::MAP)
 {
@@ -50,7 +49,6 @@ Map::Map(Textures* tex, Window* win, Render* render) : Entity(EntityType::MAP)
 	this->render = render;
 	scale = win->GetScale();
 }
-
 // Destructor
 Map::~Map()
 {
@@ -115,7 +113,6 @@ bool Map::DrawColliders()
 
 	return true;
 }
-
 // Draw the map
 void Map::Draw()
 {
@@ -139,7 +136,6 @@ void Map::Draw()
 		}
 	}
 }
-
 // Draw each layer of the map
 void Map::DrawLayer(int num, bool parallax)
 {
@@ -203,7 +199,6 @@ iPoint Map::MapToWorld(int x, int y) const
 
 	return ret;
 }
-
 // Add orthographic world to map coordinates
 iPoint Map::WorldToMap(int x, int y) const
 {
@@ -240,7 +235,6 @@ SDL_Rect Map::GetTilemapRec(int x, int y) const
 
 	return rec;
 }
-
 // Pick the right Tileset based on a tile id
 TileSet* Map::GetTilesetFromTileId(int id) const
 {
@@ -260,7 +254,6 @@ TileSet* Map::GetTilesetFromTileId(int id) const
 	
 	return set;
 }
-
 // Get relative Tile rectangle
 SDL_Rect TileSet::GetTileRect(int id) const
 {
@@ -407,7 +400,6 @@ bool Map::Load(const char* filename)
 
     return ret;
 }
-
 // Load map general properties
 bool Map::LoadMap()
 {
@@ -452,7 +444,6 @@ bool Map::LoadMap()
 
 	return ret;
 }
-
 // Load Tileset attributes
 bool Map::LoadTilesetDetails(pugi::xml_node& tileset_node, TileSet* set)
 {
@@ -480,7 +471,6 @@ bool Map::LoadTilesetDetails(pugi::xml_node& tileset_node, TileSet* set)
 
 	return ret;
 }
-
 // Load Tileset image
 bool Map::LoadTilesetImage(pugi::xml_node& tileset_node, TileSet* set)
 {
@@ -509,7 +499,6 @@ bool Map::LoadTilesetImage(pugi::xml_node& tileset_node, TileSet* set)
 
 	return ret;
 }
-
 // Create the definition for a function that loads a single layer
 bool Map::LoadLayer(pugi::xml_node& node, MapLayer* layer)
 {
@@ -545,8 +534,6 @@ bool Map::LoadLayer(pugi::xml_node& node, MapLayer* layer)
 
 	return ret;
 }
-
-
 // Load a group of properties from a node and fill a list with it
 bool Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 {
@@ -601,7 +588,7 @@ bool Map::CreateWalkabilityMap(int& width, int& height, uchar** buffer) const
 
 				if (tileset != NULL)
 				{
-					map[i] = (tileId - tileset->firstgid) > 0 ? 0 : 1;
+					map[i] = (tileId) > 0 ? 0 : 1;
 				}
 			}
 		}

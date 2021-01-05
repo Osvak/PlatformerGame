@@ -26,8 +26,8 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	render = new Render(win);
 	tex = new Textures(render);
 	audioManager = new AudioManager();
-	entityManager = new EntityManager(win, input, render, tex, audioManager);
 	pathFinding = PathFinding::GetInstance();
+	entityManager = new EntityManager(win, input, render, tex, audioManager, pathFinding);
 	sceneManager = new SceneManager(input, render, tex, audioManager, entityManager, pathFinding);
 	
 

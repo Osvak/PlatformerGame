@@ -13,13 +13,14 @@ class Input;
 class Render;
 class Textures;
 class AudioManager;
+class PathFinding;
 
 class EntityManager : public Module
 {
 public:
 
 	// Constructor
-	EntityManager(Window* win, Input* input, Render* render, Textures* tex, AudioManager* audioManager);
+	EntityManager(Window* win, Input* input, Render* render, Textures* tex, AudioManager* audioManager, PathFinding* pathFinding);
 	// Destructor
 	virtual ~EntityManager();
 
@@ -65,6 +66,7 @@ public:
 	Render* render;
 	Textures* tex;
 	AudioManager* audioManager;
+	PathFinding* pathFinding;
 };
 
 #endif // __ENTITYMANAGER_H__

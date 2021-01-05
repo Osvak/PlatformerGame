@@ -18,7 +18,7 @@ PathFinding* PathFinding::GetInstance()
 	}
 	else
 	{
-		LOG("Attempting to create more than one PathFinding instance");
+		LOG("Getting PathFinding Instance");
 	}
 
 	return instance;
@@ -57,34 +57,7 @@ void PathFinding::SetMap(uint width, uint height, uchar* data)
 	map = new uchar[width * height];
 	memcpy(map, data, width * height);
 }
-void PathFinding::ResetPath(iPoint start)
-{
-	frontier.Clear();
-	visited.Clear();
-	breadcrumbs.Clear();
 
-	frontier.Push(start, 0);
-	visited.Add(start);
-	breadcrumbs.Add(start);
-}
-
-// Getters
-DynArray<iPoint>* PathFinding::GetLastPath()
-{
-	return &lastPath;
-}
-PQueue<iPoint>* PathFinding::GetFrontier()
-{
-	return &frontier;
-}
-List<iPoint>* PathFinding::GetVisited()
-{
-	return &visited;
-}
-List<iPoint>* PathFinding::GetBreadcrumbs()
-{
-	return &breadcrumbs;
-}
 
 // Utility: return true if pos is inside the map boundaries
 bool PathFinding::CheckBoundaries(const iPoint& pos) const
@@ -109,110 +82,175 @@ uchar PathFinding::GetTileAt(const iPoint& pos) const
 	return INVALID_WALK_CODE;
 }
 
-// A*
-bool PathFinding::PropagateAStar(const iPoint& destination)
+
+
+// PathList ------------------------------------------------------------------------
+// Looks for a node in this list and returns it's list node or NULL
+// ---------------------------------------------------------------------------------
+ListItem<PathNode>* PathList::Find(const iPoint& point) const
 {
-	bool ret = true;
-	iPoint curr;
-	int newCost[4];
-
-	if (frontier.Pop(curr))
+	ListItem<PathNode>* item = list.start;
+	while (item)
 	{
-		iPoint neighbors[4];
-		neighbors[0].Create(curr.x + 0, curr.y + 1);
-		neighbors[1].Create(curr.x - 1, curr.y + 0);
-		neighbors[2].Create(curr.x + 0, curr.y - 1);
-		neighbors[3].Create(curr.x + 1, curr.y + 0);
-
-
-		int j = 0;
-		bool init = false;
-
-		for (uint i = 0; i < 4; ++i)
-		{
-			if (GetTileAt(neighbors[i]) > 0)
-			{
-				if (visited.Find(neighbors[i]) == -1)
-				{
-					newCost[i] = neighbors[i].DistanceManhattan(visited.start->data) + neighbors[i].DistanceManhattan(destination);
-					if (newCost[i] >= 0 && init == false)
-					{
-						j = i;
-						init = true;
-					}
-				}
-			}
-		}
-
-		for (int i = 0; i < 3; i++)
-		{
-			if (visited.Find(neighbors[i]) == -1)
-			{
-				if (newCost[i] >= 0 && newCost[j] > newCost[i])
-				{
-					j = i;
-				}
-			}
-		}
-		for (int i = 0; i < 4; i++)
-		{
-			if (visited.Find(neighbors[i]) == -1 && GetTileAt(neighbors[i]) > 0)
-			{
-				visited.Add(neighbors[i]);
-				breadcrumbs.Add(curr);
-				if (newCost[j] == newCost[i])
-				{
-					frontier.Push(neighbors[i], newCost[i]);
-				}
-			}
-		}
+		if (item->data.pos == point)
+			return item;
+		item = item->next;
 	}
-	else ret = false;
+	return NULL;
+}
+// PathList ------------------------------------------------------------------------
+// Returns the Pathnode with lowest score in this list or NULL if empty
+// ---------------------------------------------------------------------------------
+ListItem<PathNode>* PathList::GetNodeLowestScore() const
+{
+	ListItem<PathNode>* ret = NULL;
+	int min = 65535;
+
+	ListItem<PathNode>* item = list.end;
+	while (item)
+	{
+		if (item->data.Score() < min)
+		{
+			min = item->data.Score();
+			ret = item;
+		}
+		item = item->prev;
+	}
 	return ret;
 }
-void PathFinding::ComputePathAStar(const iPoint& origin, const iPoint& destination)
-{
-	bool wasFound = true;
-	int count = 0;
 
-	while (destinationFound == false)
+
+
+// PathNode -------------------------------------------------------------------------
+// Convenient constructors
+// ----------------------------------------------------------------------------------
+PathNode::PathNode() : accumulatedCost(-1), heuristic(-1), pos(-1, -1), parent(NULL)
+{}
+PathNode::PathNode(int accumulatedCost, int h, const iPoint& pos, const PathNode* parent) : accumulatedCost(accumulatedCost), heuristic(h), pos(pos), parent(parent)
+{}
+PathNode::PathNode(const PathNode& node) : accumulatedCost(node.accumulatedCost), heuristic(node.heuristic), pos(node.pos), parent(node.parent)
+{}
+// PathNode -------------------------------------------------------------------------
+// Fills a list (PathList) of all valid adjacent pathnodes
+// ----------------------------------------------------------------------------------
+uint PathNode::FindWalkableAdjacents(PathList& listToFill) const
+{
+	iPoint cell;
+	uint before = listToFill.list.Count();
+	PathFinding* instance = PathFinding::GetInstance();
+
+	// north
+	cell.Create(pos.x, pos.y + 1);
+	if (instance->IsWalkable(cell))
 	{
-		if (PropagateAStar(destination))
-		{
-			for (count; count < visited.Count(); count++)
-			{
-				if (visited.At(count)->data.x == destination.x && visited.At(count)->data.y == destination.y)
-				{
-					destinationFound = true;
-					break;
-				}
-			}
-		}
-		else
-		{
-			destinationFound = true;
-			wasFound = false;
-		}
+		listToFill.list.Add(PathNode(-1, -1, cell, this));
+	}
+	// south
+	cell.Create(pos.x, pos.y - 1);
+	if (instance->IsWalkable(cell))
+	{
+		listToFill.list.Add(PathNode(-1, -1, cell, this));
+	}
+	// east
+	cell.Create(pos.x + 1, pos.y);
+	if (instance->IsWalkable(cell))
+	{
+		listToFill.list.Add(PathNode(-1, -1, cell, this));
+	}
+	// west
+	cell.Create(pos.x - 1, pos.y);
+	if (instance->IsWalkable(cell))
+	{
+		listToFill.list.Add(PathNode(-1, -1, cell, this));
 	}
 
-	destinationFound = false;
+	return listToFill.list.Count();
+}
+// PathNode -------------------------------------------------------------------------
+// Calculates this tile score
+// ----------------------------------------------------------------------------------
+int PathNode::Score() const
+{
+	return accumulatedCost + heuristic;
+}
+// PathNode -------------------------------------------------------------------------
+// Calculate the F for a specific destination tile
+// ----------------------------------------------------------------------------------
+int PathNode::CalculateF(const iPoint& destination)
+{
+	accumulatedCost = parent->accumulatedCost + 1;
+	heuristic = pos.DistanceTo(destination);
 
-	if (wasFound == true)
+	return accumulatedCost + heuristic;
+}
+
+
+
+// ----------------------------------------------------------------------------------
+// Actual A* algorithm: return number of steps in the creation of the path or -1 ----
+// ----------------------------------------------------------------------------------
+int PathFinding::CreatePath(const iPoint& origin, const iPoint& destination)
+{
+	//Making sure origin and destination are walkable
+	if (IsWalkable(destination) == false || IsWalkable(origin) == false) return -1;
+	else
 	{
 		lastPath.Clear();
 
-		lastPath.PushBack(destination);
-		lastPath.PushBack(breadcrumbs.At(count)->data);
 
-		for (int i = visited.Count() - 1; i > 0; i--)
+		PathList open;
+		PathList close;
+
+		//Adding the start node
+		open.list.Add(PathNode(0, origin.DistanceManhattan(destination), origin, nullptr));
+
+		while (open.list.Count() != 0)
 		{
-			if (visited.At(i)->data == breadcrumbs.At(count)->data)
+			close.list.Add(open.GetNodeLowestScore()->data);
+			open.list.Del(open.GetNodeLowestScore());
+
+			//If destination has been reached add last node and flip the list with the resulting path
+			if (close.list.end->data.pos == destination)
 			{
-				lastPath.PushBack(breadcrumbs.At(i)->data);
-				count = i;
+				for (ListItem<PathNode>* i = close.list.end; i->data.parent != nullptr; i = close.Find(i->data.parent->pos))
+				{
+					iPoint newPos = i->data.parent->pos;
+					lastPath.PushBack(newPos);
+				}
+				lastPath.PushBack(destination);
+				lastPath.Flip();
+				return 0;
+			}
+			//If not, check neighbours and add the most convenient, taking care of the possibility that one may already be in the list
+			else
+			{
+				PathList neighbours;
+				close.list.end->data.FindWalkableAdjacents(neighbours);
+
+				for (ListItem<PathNode>* j = neighbours.list.start; j != NULL; j = j->next)
+				{
+					if (close.Find(j->data.pos)) continue;
+					else if (open.Find(j->data.pos))
+					{
+						PathNode tmp = open.Find(j->data.pos)->data;
+						j->data.CalculateF(destination);
+
+						if (tmp.accumulatedCost > j->data.accumulatedCost) tmp.parent = j->data.parent;
+					}
+					else
+					{
+						j->data.CalculateF(destination);
+						open.list.Add(j->data);
+					}
+				}
+				neighbours.list.Clear();
 			}
 		}
-
-		lastPath.Flip();
 	}
+	return -1;
+}
+// Returns the last path created
+const  DynArray<iPoint>* PathFinding::GetLastPath() const
+{
+	return &lastPath;
 }

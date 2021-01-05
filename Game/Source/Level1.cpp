@@ -96,7 +96,7 @@ bool Level1::Update(float dt)
 	//
 	// Enemies Update
 	//
-	enemySkeleton->Update(dt, player->position);
+	enemySkeleton->Update(dt, player->position, map);
 
 	//
 	// Collision check

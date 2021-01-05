@@ -6,6 +6,7 @@
 #include "Animation.h"
 #include "Point.h"
 #include "SString.h"
+#include "DynArray.h"
 
 #define SKELETON_WIDTH 10
 #define SKELETON_HEIGHT 22
@@ -14,6 +15,8 @@
 class Render;
 class Textures;
 class AudioManager;
+class Map;
+class PathFinding;
 
 struct SDL_Texture;
 struct SDL_Rect;
@@ -32,17 +35,17 @@ class EnemySkeleton : public Entity
 public:
 
 	// Constructor
-	EnemySkeleton(Render* render, Textures* tex, AudioManager* audioManager);
+	EnemySkeleton(Render* render, Textures* tex, AudioManager* audioManager, PathFinding* pathFinding);
 	// Destructor
 	virtual ~EnemySkeleton();
 
 
 	// Called every loop
-	bool Update(float dt, fPoint playerPosition);
+	bool Update(float dt, fPoint playerPosition, Map* map);
 	// Controls and states
 	void UpdateState(fPoint playerPosition);
 	// Controls what each state does
-	void UpdateLogic(float dt, fPoint playerPosition);
+	void UpdateLogic(float dt, fPoint playerPosition, Map* map);
 	// Changes the state
 	void ChangeState(SkeletonState previousState, SkeletonState newState);
 
@@ -71,7 +74,6 @@ public:
 	int width = SKELETON_WIDTH, height = SKELETON_HEIGHT;
 	fPoint position;
 	fPoint velocity = { 0.0f,0.0f };
-	fPoint acceleration = { 0.0f,0.0f };
 	// Current state of the skeleton state machine
 	SkeletonState state = SKELETON_IDLE;
 	// Skeleton textures
@@ -88,8 +90,13 @@ private:
 
 	// ----- SKELETON VARIABLES ----- //
 	mutable int st = 0;
-	int visionRange = 500;
+	int visionRange = 200;
 	int attackRange = 50;
+	const DynArray<iPoint>* path;
+	int pathTimer = 0;
+	int pathCreated = -1;
+	int pathIndex = 0;
+	int attackWindow = 0;
 	// ------------------------------ //
 
 
@@ -112,6 +119,8 @@ public:
 	Render* render;
 	Textures* tex;
 	AudioManager* audioManager;
+	PathFinding* pathFinding;
+	Map* map;
 };
 
 #endif // !__ENEMYSKELETON_H__
