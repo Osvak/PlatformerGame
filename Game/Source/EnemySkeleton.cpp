@@ -24,30 +24,30 @@ EnemySkeleton::EnemySkeleton(Render* render, Textures* tex, AudioManager* audioM
 	//
 	// Animation pushbacks
 	//
-	attackAnim->loop = false;
+	attackAnim->loop = true;
 	attackAnim->speed = 0.2f;
 	for (int i = 0; i < 18; ++i)
 	{
-		attackAnim->PushBack({ 43 * i, 37, 43, 37 });
+		attackAnim->PushBack({ 43 * i, 0, 43, 37 });
 	}
 	idleAnim->loop = true;
 	idleAnim->pingPong = true;
 	idleAnim->speed = 0.1f;
 	for (int i = 0; i < 11; ++i)
 	{
-		idleAnim->PushBack({ 24 * i, 37, 24, 37 });
+		idleAnim->PushBack({ 43 * i, 37, 43, 37 });
 	}
 	walkAnim->loop = true;
 	walkAnim->speed = 0.2f;
 	for (int i = 0; i < 13; ++i)
 	{
-		walkAnim->PushBack({ 24 * i, 37, 24, 37 });
+		walkAnim->PushBack({ 43 * i, 74, 43, 37 });
 	}
 	deathAnim->loop = true;
 	deathAnim->speed = 0.2f;
 	for (int i = 0; i < 15; ++i)
 	{
-		deathAnim->PushBack({ 32 * i, 37, 32, 37 });
+		deathAnim->PushBack({ 43 * i, 111, 43, 37 });
 	}
 
 	//
@@ -58,7 +58,7 @@ EnemySkeleton::EnemySkeleton(Render* render, Textures* tex, AudioManager* audioM
 	//
 	// Set current animation
 	//
-	currentAnimation = idleAnim;
+	currentAnimation = attackAnim;
 	
 	//
 	// Set current state
@@ -79,12 +79,149 @@ EnemySkeleton::~EnemySkeleton()
 
 
 // Skeleton Update called every loop
-bool EnemySkeleton::Update(float dt)
+bool EnemySkeleton::Update(float dt, fPoint playerPosition)
 {
+	if (destroyed == false)
+	{
+		UpdateState(playerPosition);
+		UpdateLogic(dt, playerPosition);
+	}
+
 	currentAnimation->Update();
 
 	return true;
 }
+// Control input and states
+void EnemySkeleton::UpdateState(fPoint playerPosition)
+{
+	/*switch (state)
+	{
+	case SKELETON_IDLE:
+	{
+		if (Radar(playerPosition, visionRange) == true)
+		{
+			ChangeState(state, SKELETON_MOVE);
+		}
+		if (Radar(playerPosition, attackRange) == true)
+		{
+			ChangeState(state, SKELETON_ATTACK);
+		}
+
+		break;
+	}
+
+	case SKELETON_MOVE:
+	{
+		if (Radar(playerPosition, visionRange) == false)
+		{
+			ChangeState(state, SKELETON_IDLE);
+		}
+		if (Radar(playerPosition, attackRange) == true)
+		{
+			ChangeState(state, SKELETON_ATTACK);
+		}
+
+		break;
+	}
+
+	case SKELETON_ATTACK:
+	{
+		break;
+	}
+
+	case SKELETON_DYING:
+	{
+		break;
+	}
+
+	default:
+		break;
+	}*/
+}
+// Controls what each state does
+void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition)
+{
+	/*switch (state)
+	{
+	case SKELETON_IDLE:
+	{
+		// Nothing to do here ???
+		break;
+	}
+
+	case SKELETON_MOVE:
+	{
+		if (playerPosition.x < position.x)
+		{
+			horizontalDirection = -1;
+		}
+		else
+		{
+			horizontalDirection = 1;
+		}
+
+		velocity.x = SKELETON_SPEED * horizontalDirection * dt;
+
+		break;
+	}
+
+	case SKELETON_ATTACK:
+	{
+		break;
+	}
+
+	case SKELETON_DYING:
+	{
+		break;
+	}
+
+	default:
+		break;
+	}*/
+
+
+	position.x += velocity.x * dt;
+	position.y += velocity.y * dt;
+
+	
+}
+// Changes the state
+void EnemySkeleton::ChangeState(SkeletonState previousState, SkeletonState newState)
+{
+	switch (state)
+	{
+	case SKELETON_IDLE:
+	{
+		currentAnimation = idleAnim;
+
+		break;
+	}
+
+	case SKELETON_MOVE:
+	{
+		currentAnimation = walkAnim;
+
+		break;
+	}
+
+	case SKELETON_ATTACK:
+	{
+		currentAnimation = attackAnim;
+
+		break;
+	}
+	case SKELETON_DYING:
+	{
+		currentAnimation = deathAnim;
+
+		break;
+	}
+
+	default:
+		break;
+	}
+}
+
 
 // Draws the skeleton
 bool EnemySkeleton::Draw()
@@ -98,11 +235,11 @@ bool EnemySkeleton::Draw()
 
 		if (horizontalDirection == 1)
 		{
-			render->DrawTexture(skeletonTexture, (int)position.x - 11, (int)position.y - 15, &rect);
+			render->DrawTexture(skeletonTexture, (int)position.x - 5, (int)position.y - 15, &rect);
 		}
 		if (horizontalDirection == -1)
 		{
-			render->DrawFlippedTexture(skeletonTexture, (int)position.x - 11, (int)position.y - 15, &rect);
+			render->DrawFlippedTexture(skeletonTexture, (int)position.x - 28, (int)position.y - 15, &rect);
 		}
 	}
 
@@ -207,4 +344,18 @@ bool EnemySkeleton::SaveState(pugi::xml_node& skeletonNode) const
 SDL_Rect EnemySkeleton::GetRect()
 {
 	return  { (int)position.x, (int)position.y, width, height };
+}
+
+
+// Check if the player is in range of the Skeleton
+bool EnemySkeleton::Radar(fPoint playerPosition, int range)
+{
+	if (position.DistanceManhattan(playerPosition) < range)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }

@@ -9,7 +9,7 @@
 
 #define SKELETON_WIDTH 10
 #define SKELETON_HEIGHT 22
-
+#define SKELETON_SPEED 30.0f
 
 class Render;
 class Textures;
@@ -38,7 +38,14 @@ public:
 
 
 	// Called every loop
-	bool Update(float dt);
+	bool Update(float dt, fPoint playerPosition);
+	// Controls and states
+	void UpdateState(fPoint playerPosition);
+	// Controls what each state does
+	void UpdateLogic(float dt, fPoint playerPosition);
+	// Changes the state
+	void ChangeState(SkeletonState previousState, SkeletonState newState);
+
 
 	// Draws the skeleton
 	bool Draw();
@@ -55,6 +62,8 @@ public:
 	
 	SDL_Rect GetRect();
 
+
+	bool Radar(fPoint playerPosition, int range);
 
 public:
 
@@ -79,6 +88,8 @@ private:
 
 	// ----- SKELETON VARIABLES ----- //
 	mutable int st = 0;
+	int visionRange = 500;
+	int attackRange = 50;
 	// ------------------------------ //
 
 
