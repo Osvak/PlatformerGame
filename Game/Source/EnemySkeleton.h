@@ -86,7 +86,8 @@ public:
 
 	// ----- SKELETON FLAGS ----- //
 	int horizontalDirection = -1;
-	bool destroyed = false;
+	bool isHit = false;
+	bool isDestroyed = false;
 	// -------------------------- //
 
 private:
@@ -101,6 +102,7 @@ private:
 	int pathCreated = -1;
 	// Attack variables
 	int attackCooldwon = 0;
+	SDL_Rect attackRect = { 0, 0, 0, 0 };
 	// ------------------------------ //
 
 
@@ -120,18 +122,18 @@ private:
 
 
 	// ----- SOUND EFFECTS ----- //
-	unsigned int attackFX;
-	unsigned int deathFX;
+	unsigned int attackFX = 0;
+	unsigned int deathFX = 0;
 	// ------------------------- //
 
 public:
 
-	Render* render;
-	Textures* tex;
-	AudioManager* audioManager;
-	PathFinding* pathFinding;
-	Player* player;
-	Map* map;
+	Render* render = nullptr;
+	Textures* tex = nullptr;
+	AudioManager* audioManager = nullptr;
+	PathFinding* pathFinding = nullptr;
+	Player* player = nullptr;
+	Map* map = nullptr;
 };
 
 #endif // !__ENEMYSKELETON_H__

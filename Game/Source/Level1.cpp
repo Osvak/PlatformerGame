@@ -96,7 +96,15 @@ bool Level1::Update(float dt)
 	//
 	// Enemies Update
 	//
-	enemySkeleton->Update(dt, player, map);
+	if (enemySkeleton != nullptr)
+	{
+		enemySkeleton->Update(dt, player, map);
+		if (enemySkeleton->isDestroyed == true)
+		{
+			entityManager->DestroyEntity(enemySkeleton);
+		}
+	}
+		
 
 	//
 	// Collision check
@@ -179,7 +187,10 @@ bool Level1::Draw()
 	//
 	// Draw Enemies
 	//
-	enemySkeleton->Draw();
+	if (enemySkeleton != nullptr)
+	{
+		enemySkeleton->Draw();
+	}
 
 	//
 	// Draw Colliders
@@ -188,7 +199,10 @@ bool Level1::Draw()
 	{
 		map->DrawColliders();
 		player->DrawColliders();
-		enemySkeleton->DrawColliders();
+		if (enemySkeleton != nullptr)
+		{
+			enemySkeleton->DrawColliders();
+		}
 	}
 
 
@@ -207,7 +221,10 @@ bool Level1::Unload()
 	LOG("Freeing Level 1");
 
 	entityManager->DestroyEntity(map);
-	entityManager->DestroyEntity(enemySkeleton);
+	if (enemySkeleton != nullptr)
+	{
+		entityManager->DestroyEntity(enemySkeleton);
+	}
 	if (player->destroyed == true)
 	{
 		entityManager->DestroyEntity(player);

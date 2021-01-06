@@ -12,6 +12,7 @@
 
 
 
+// Constructor
 EnemySkeleton::EnemySkeleton(Render* render, Textures* tex, AudioManager* audioManager, PathFinding* pathFinding) : Entity(EntityType::ENEMY_SKELETON)
 {
 	LOG("Creating Skeleton Entity");
@@ -47,7 +48,7 @@ EnemySkeleton::EnemySkeleton(Render* render, Textures* tex, AudioManager* audioM
 	{
 		walkAnim->PushBack({ 43 * i, 74, 43, 37 });
 	}
-	deathAnim->loop = true;
+	deathAnim->loop = false;
 	deathAnim->speed = 0.2f;
 	for (int i = 0; i < 15; ++i)
 	{
@@ -82,13 +83,20 @@ EnemySkeleton::~EnemySkeleton()
 }
 
 
+// Checks the intersection between two rectangles
+inline bool CheckCollision(SDL_Rect rec1, SDL_Rect rec2)
+{
+	if ((rec1.x < (rec2.x + rec2.w) && (rec1.x + rec1.w) > rec2.x) &&
+		(rec1.y < (rec2.y + rec2.h) && (rec1.y + rec1.h) > rec2.y)) return true;
+	else return false;
+}
 // Skeleton Update called every loop
 bool EnemySkeleton::Update(float dt, Player* player, Map* map)
 {
 	this->map = map;
 	this->player = player;
 
-	if (destroyed == false)
+	if (isDestroyed == false)
 	{
 		UpdateState();
 		UpdateLogic(dt);
@@ -107,10 +115,21 @@ void EnemySkeleton::UpdateState()
 		{
 			ChangeState(state, SKELETON_MOVE);
 		}
-		if (Radar(player->position, attackRange) == true)
+		if (horizontalDirection == -1)
 		{
-			ChangeState(state, SKELETON_ATTACK);
+			if (Radar(player->position, attackRange + 4) == true)
+			{
+				ChangeState(state, SKELETON_ATTACK);
+			}
 		}
+		else
+		{
+			if (Radar(player->position, attackRange) == true)
+			{
+				ChangeState(state, SKELETON_ATTACK);
+			}
+		}
+
 
 		break;
 	}
@@ -121,10 +140,21 @@ void EnemySkeleton::UpdateState()
 		{
 			ChangeState(state, SKELETON_IDLE);
 		}
-		if (Radar(player->position, attackRange) == true)
+		if (horizontalDirection == -1)
 		{
-			ChangeState(state, SKELETON_ATTACK);
+			if (Radar(player->position, attackRange + 4) == true)
+			{
+				ChangeState(state, SKELETON_ATTACK);
+			}
 		}
+		else
+		{
+			if (Radar(player->position, attackRange) == true)
+			{
+				ChangeState(state, SKELETON_ATTACK);
+			}
+		}
+
 
 		break;
 	}
@@ -141,6 +171,11 @@ void EnemySkeleton::UpdateState()
 
 	case SKELETON_DYING:
 	{
+		if (isHit == true)
+		{
+			ChangeState(state, SKELETON_DYING);
+		}
+
 		break;
 	}
 
@@ -250,13 +285,13 @@ void EnemySkeleton::UpdateLogic(float dt)
 
 	case SKELETON_ATTACK:
 	{
-		if (currentAnimation->HasFinished() == true)
+		if (currentAnimation->HasFinished() == true) // Checks if an attack has finished
 		{
 			attackFinished = true;
 			currentAnimation->Reset();
 		}
 
-		if (attackFinished == true)
+		if (attackFinished == true) // Attack is on cooldown after an attack
 		{
 			++attackCooldwon;
 
@@ -266,6 +301,7 @@ void EnemySkeleton::UpdateLogic(float dt)
 				attackCooldwon = 0;
 			}
 
+			// During this cooldown, the skeleton can change looking direction
 			if (player->position.x > position.x + width)
 			{
 				horizontalDirection = 1;
@@ -275,10 +311,56 @@ void EnemySkeleton::UpdateLogic(float dt)
 				horizontalDirection = -1;
 			}
 		}
-
-		if (attackFinished == false)
+		else // Things the skeleton does DURING an attack
 		{
 			currentAnimation->Update();
+
+			// The Skeleton can HIT during these frames of the animation
+			switch (currentAnimation->GetCurrentFrameID())
+			{
+			case 7:
+			{
+				if (horizontalDirection == -1)
+				{
+					attackRect = { (int)position.x - 27, (int)position. y, 11, 22 };
+				}
+				else
+				{
+					attackRect = { (int)position.x + 25 , (int)position.y, 11, 22 };
+				}
+
+				// Checks the collision between the axe hit and the player for this frame
+				player->isHit = CheckCollision(attackRect, player->GetRect());
+
+
+				break;
+			}
+			case 8:
+			{
+				if (horizontalDirection == -1)
+				{
+					attackRect = { (int)position.x - 27 , (int)position.y + 11, 11, 11 };
+				}
+				else
+				{
+					attackRect = { (int)position.x + 25 , (int)position.y + 11, 11, 11 };
+				}
+
+				// Checks the collision between the axe hit and the player for this frame
+				player->isHit = CheckCollision(attackRect, player->GetRect());
+
+
+				break;
+			}
+
+			default:
+			{
+				attackRect = { 0,0,0,0 };
+
+				break;
+			}
+			}
+
 		}
 
 
@@ -287,7 +369,12 @@ void EnemySkeleton::UpdateLogic(float dt)
 
 	case SKELETON_DYING:
 	{
-		// Insert code here
+		currentAnimation->Update();
+
+		if (currentAnimation->HasFinished() == true)
+		{
+			isDestroyed = true;
+		}
 
 
 		break;
@@ -346,6 +433,7 @@ void EnemySkeleton::ChangeState(SkeletonState previousState, SkeletonState newSt
 	case SKELETON_DYING:
 	{
 		currentAnimation = deathAnim;
+		currentAnimation->Reset();
 
 		break;
 	}
@@ -365,7 +453,7 @@ bool EnemySkeleton::Draw()
 	//
 	// Draw Skeleton
 	//
-	if (!destroyed)
+	if (!isDestroyed)
 	{
 		SDL_Rect rect = currentAnimation->GetCurrentFrame();
 
@@ -385,6 +473,8 @@ bool EnemySkeleton::Draw()
 void EnemySkeleton::DrawColliders()
 {
 	render->DrawRectangle(GetRect(), 255, 0, 0, 120);
+
+	render->DrawRectangle(attackRect, 0, 0, 255, 100);
 
 	if (pathCreated != -1)
 	{
@@ -492,6 +582,7 @@ bool EnemySkeleton::SaveState(pugi::xml_node& skeletonNode) const
 }
 
 
+// Getter of the skeleton's rectangle
 SDL_Rect EnemySkeleton::GetRect()
 {
 	return  { (int)position.x, (int)position.y, width, height };
