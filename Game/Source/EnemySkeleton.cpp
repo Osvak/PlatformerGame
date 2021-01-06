@@ -173,25 +173,23 @@ void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
 
 		if (path->At(0) != nullptr)
 		{
-			const iPoint* pos = path->At(pathIndex);
-			const iPoint* currentPathFrame = path->At(path->Count());
-			iPoint skTilePerfect = map->MapToWorld(skeletonTile.x, skeletonTile.y);
+			iPoint skTilePerfect = map->MapToWorld(skeletonTile.x, skeletonTile.y); // Limits of the current tile
 
-			if (skTilePerfect.x == (int)position.x || skTilePerfect.x + TILE_SIZE == (int)position.x + width)
+			if (skTilePerfect.x == (int)position.x || skTilePerfect.x + TILE_SIZE == (int)position.x + width) // Checks to see if the skeleton has finished moving in this tile
 			{
 				pathIndex--;
 				MapLayer* layer;
 				for (ListItem<MapLayer*>* item = map->data.layers.start; item; item = item->next)
 				{
 					layer = item->data;
-					if (layer->properties.GetProperty("navigation", 0) == 0)
+					if (layer->properties.GetProperty("navigation", 0) == 0) // looks at navigation layer
 					{
 						continue;
 					}
 					int tileId;
-					if (position.x > playerPosition.x)
+					if (position.x > playerPosition.x) // Player is left of the skeleton
 					{
-						tileId = layer->Get(skeletonTile.x - 1, skeletonTile.y + 1);
+						tileId = layer->Get(skeletonTile.x - 1, skeletonTile.y + 1); // Checks if the next walkable tile is actually walkable
 						if (tileId == 5)
 						{
 							canWalk = true;
@@ -201,9 +199,9 @@ void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
 							canWalk = false;
 						}
 					}
-					if (position.x + width < playerPosition.x)
+					if (position.x + width < playerPosition.x) // Player is right of the skeleton
 					{
-						tileId = layer->Get(skeletonTile.x + 1, skeletonTile.y + 1);
+						tileId = layer->Get(skeletonTile.x + 1, skeletonTile.y + 1); // Checks if the next walkable tile is actually walkable
 						if (tileId == 5)
 						{
 							canWalk = true;
@@ -217,6 +215,7 @@ void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
 			}
 			else
 			{
+				// Change facing direction
 				if (playerPosition.x < position.x)
 				{
 					horizontalDirection = -1;
@@ -228,13 +227,16 @@ void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
 			}
 		}
 
+		// Control for when the skeleton can or can't walk
 		if (canWalk == true)
 		{
+			currentAnimation = walkAnim;
 			velocity.x = horizontalDirection * SKELETON_SPEED;
 		}
-
-		position.x += velocity.x * dt;
-
+		else
+		{
+			currentAnimation = idleAnim;
+		}
 
 		break;
 	}
@@ -262,6 +264,7 @@ void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
 		break;
 	}
 
+	// Update position
 	velocity.x = velocity.x * dt;
 	velocity.y = velocity.y * dt;
 	position.x += velocity.x;
