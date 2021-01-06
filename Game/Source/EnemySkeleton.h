@@ -11,10 +11,12 @@
 #define SKELETON_WIDTH 10
 #define SKELETON_HEIGHT 22
 #define SKELETON_SPEED 30.0f
+#define ATTACK_COOLDOWN 40
 
 class Render;
 class Textures;
 class AudioManager;
+class Player;
 class Map;
 class PathFinding;
 
@@ -41,17 +43,18 @@ public:
 
 
 	// Called every loop
-	bool Update(float dt, fPoint playerPosition, Map* map);
+	bool Update(float dt, Player* player, Map* map);
 	// Controls and states
-	void UpdateState(fPoint playerPosition);
+	void UpdateState();
 	// Controls what each state does
-	void UpdateLogic(float dt, fPoint playerPosition, Map* map);
+	void UpdateLogic(float dt);
 	// Changes the state
 	void ChangeState(SkeletonState previousState, SkeletonState newState);
 
 
 	// Draws the skeleton
 	bool Draw();
+	void DrawColliders();
 
 	// Release memory
 	bool CleanUp();
@@ -90,15 +93,21 @@ private:
 
 	// ----- SKELETON VARIABLES ----- //
 	mutable int st = 0;
+	// Range variables
 	int visionRange = 150;
 	int attackRange = 42;
-	bool canWalk = true;
+	// Path variables
 	DynArray<iPoint>* path;
-	int pathTimer = 0;
 	int pathCreated = -1;
-	int pathIndex = 0;
-	int attackWindow = 0;
+	// Attack variables
+	int attackCooldwon = 0;
 	// ------------------------------ //
+
+
+	// ----- SKELETON FLAGS ----- //
+	bool canWalk = true;
+	bool attackFinished = false;
+	// -------------------------- //
 
 
 	// ----- ANIMATION SETS ----- //
@@ -121,6 +130,7 @@ public:
 	Textures* tex;
 	AudioManager* audioManager;
 	PathFinding* pathFinding;
+	Player* player;
 	Map* map;
 };
 

@@ -780,6 +780,10 @@ bool Player::Draw()
 
 	return true;
 }
+void Player::DrawColliders()
+{
+	render->DrawRectangle(GetRect(), 0, 255, 0, 100);
+}
 
 
 // Clean Up

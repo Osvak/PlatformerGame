@@ -96,7 +96,7 @@ bool Level1::Update(float dt)
 	//
 	// Enemies Update
 	//
-	enemySkeleton->Update(dt, player->position, map);
+	enemySkeleton->Update(dt, player, map);
 
 	//
 	// Collision check
@@ -187,10 +187,8 @@ bool Level1::Draw()
 	if (map->drawColliders == true)
 	{
 		map->DrawColliders();
-
-		Uint8 alpha = 100;
-		render->DrawRectangle(player->GetRect() , 0, 0, 255, alpha);
-		render->DrawRectangle(enemySkeleton->GetRect(), 255, 0, 0, alpha);
+		player->DrawColliders();
+		enemySkeleton->DrawColliders();
 	}
 
 

@@ -3,6 +3,7 @@
 #include "Render.h"
 #include "Textures.h"
 #include "AudioManager.h"
+#include "Player.h"
 #include "Map.h"
 #include "Pathfinding.h"
 
@@ -82,32 +83,31 @@ EnemySkeleton::~EnemySkeleton()
 
 
 // Skeleton Update called every loop
-bool EnemySkeleton::Update(float dt, fPoint playerPosition, Map* map)
+bool EnemySkeleton::Update(float dt, Player* player, Map* map)
 {
 	this->map = map;
+	this->player = player;
 
 	if (destroyed == false)
 	{
-		UpdateState(playerPosition);
-		UpdateLogic(dt, playerPosition, map);
+		UpdateState();
+		UpdateLogic(dt);
 	}
-
-	currentAnimation->Update();
 
 	return true;
 }
 // Control input and states
-void EnemySkeleton::UpdateState(fPoint playerPosition)
+void EnemySkeleton::UpdateState()
 {
 	switch (state)
 	{
 	case SKELETON_IDLE:
 	{
-		if (Radar(playerPosition, visionRange) == true)
+		if (Radar(player->position, visionRange) == true)
 		{
 			ChangeState(state, SKELETON_MOVE);
 		}
-		if (Radar(playerPosition, attackRange) == true)
+		if (Radar(player->position, attackRange) == true)
 		{
 			ChangeState(state, SKELETON_ATTACK);
 		}
@@ -117,11 +117,11 @@ void EnemySkeleton::UpdateState(fPoint playerPosition)
 
 	case SKELETON_MOVE:
 	{
-		if (Radar(playerPosition, visionRange) == false)
+		if (Radar(player->position, visionRange) == false)
 		{
 			ChangeState(state, SKELETON_IDLE);
 		}
-		if (Radar(playerPosition, attackRange) == true)
+		if (Radar(player->position, attackRange) == true)
 		{
 			ChangeState(state, SKELETON_ATTACK);
 		}
@@ -131,10 +131,9 @@ void EnemySkeleton::UpdateState(fPoint playerPosition)
 
 	case SKELETON_ATTACK:
 	{
-		if (currentAnimation->HasFinished() == true)
+		if ((Radar(player->position, attackRange) == false) && (attackFinished == true))
 		{
-			currentAnimation->Reset();
-			ChangeState(state, SKELETON_IDLE);
+				ChangeState(state, SKELETON_IDLE);
 		}
 
 		break;
@@ -150,14 +149,19 @@ void EnemySkeleton::UpdateState(fPoint playerPosition)
 	}
 }
 // Controls what each state does
-void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
+void EnemySkeleton::UpdateLogic(float dt)
 {
 	switch (state)
 	{
 	case SKELETON_IDLE:
 	{
+		// Make sure the skeleton doesn't move when it's idle
 		velocity = { 0,0 };
-		// Nothing to do here ???
+
+		// Update idle Animation
+		currentAnimation->Update();
+
+
 		break;
 	}
 
@@ -165,7 +169,7 @@ void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
 	{
 		// Convert world position to map position
 		iPoint skeletonTile = map->WorldToMap((int)position.x, (int)position.y + (SKELETON_HEIGHT - TILE_SIZE)); // Skeleton's position
-		iPoint playerTile = map->WorldToMap((int)playerPosition.x, (int)playerPosition.y + (28 - TILE_SIZE)); // Player's position
+		iPoint playerTile = map->WorldToMap((int)player->position.x, (int)player->position.y + (28 - TILE_SIZE)); // Player's position
 		
 		// Create new path
 		pathCreated = pathFinding->CreatePath(skeletonTile, playerTile);
@@ -177,7 +181,6 @@ void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
 
 			if (skTilePerfect.x == (int)position.x || skTilePerfect.x + TILE_SIZE == (int)position.x + width) // Checks to see if the skeleton has finished moving in this tile
 			{
-				pathIndex--;
 				MapLayer* layer;
 				for (ListItem<MapLayer*>* item = map->data.layers.start; item; item = item->next)
 				{
@@ -187,7 +190,7 @@ void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
 						continue;
 					}
 					int tileId;
-					if (position.x > playerPosition.x) // Player is left of the skeleton
+					if (position.x > player->position.x) // Player is left of the skeleton
 					{
 						tileId = layer->Get(skeletonTile.x - 1, skeletonTile.y + 1); // Checks if the next walkable tile is actually walkable
 						if (tileId == 5)
@@ -199,7 +202,7 @@ void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
 							canWalk = false;
 						}
 					}
-					if (position.x + width < playerPosition.x) // Player is right of the skeleton
+					if (position.x + width < player->position.x) // Player is right of the skeleton
 					{
 						tileId = layer->Get(skeletonTile.x + 1, skeletonTile.y + 1); // Checks if the next walkable tile is actually walkable
 						if (tileId == 5)
@@ -216,11 +219,11 @@ void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
 			else
 			{
 				// Change facing direction
-				if (playerPosition.x < position.x)
+				if (player->position.x < position.x)
 				{
 					horizontalDirection = -1;
 				}
-				if (playerPosition.x > position.x)
+				if (player->position.x > position.x)
 				{
 					horizontalDirection = 1;
 				}
@@ -238,25 +241,55 @@ void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
 			currentAnimation = idleAnim;
 		}
 
+		// Update walk/idle Animation
+		currentAnimation->Update();
+
+
 		break;
 	}
 
 	case SKELETON_ATTACK:
 	{
-		if (playerPosition.x < position.x)
+		if (currentAnimation->HasFinished() == true)
 		{
-			horizontalDirection = -1;
+			attackFinished = true;
+			currentAnimation->Reset();
 		}
-		else
+
+		if (attackFinished == true)
 		{
-			horizontalDirection = 1;
+			++attackCooldwon;
+
+			if (attackCooldwon == ATTACK_COOLDOWN)
+			{
+				attackFinished = false;
+				attackCooldwon = 0;
+			}
+
+			if (player->position.x > position.x + width)
+			{
+				horizontalDirection = 1;
+			}
+			else if (player->position.x + 12 < position.x)
+			{
+				horizontalDirection = -1;
+			}
 		}
+
+		if (attackFinished == false)
+		{
+			currentAnimation->Update();
+		}
+
 
 		break;
 	}
 
 	case SKELETON_DYING:
 	{
+		// Insert code here
+
+
 		break;
 	}
 
@@ -280,6 +313,9 @@ void EnemySkeleton::ChangeState(SkeletonState previousState, SkeletonState newSt
 	{
 		currentAnimation = idleAnim;
 
+		attackFinished = false;
+
+
 		break;
 	}
 
@@ -293,6 +329,17 @@ void EnemySkeleton::ChangeState(SkeletonState previousState, SkeletonState newSt
 	case SKELETON_ATTACK:
 	{
 		currentAnimation = attackAnim;
+		currentAnimation->Reset();
+
+		if (player->position.x > position.x + width)
+		{
+			horizontalDirection = 1;
+		}
+		else if (player->position.x + 12 < position.x)
+		{
+			horizontalDirection = -1;
+		}
+
 
 		break;
 	}
@@ -330,22 +377,26 @@ bool EnemySkeleton::Draw()
 		{
 			render->DrawFlippedTexture(skeletonTexture, (int)position.x - 28, (int)position.y - 15, &rect);
 		}
-
-
-		if (pathCreated != -1)
-		{
-			for (uint i = 0; i < path->Count(); ++i)
-			{
-				iPoint nextPoint = map->MapToWorld(path->At(i)->x, path->At(i)->y);
-				SDL_Rect pathRect = { nextPoint.x, nextPoint.y, TILE_SIZE, TILE_SIZE };
-				render->DrawRectangle(pathRect, 255, 0, 0, 100);
-			}
-		}
 	}
 
 
 	return true;
 }
+void EnemySkeleton::DrawColliders()
+{
+	render->DrawRectangle(GetRect(), 255, 0, 0, 120);
+
+	if (pathCreated != -1)
+	{
+		for (uint i = 0; i < path->Count(); ++i)
+		{
+			iPoint nextPoint = map->MapToWorld(path->At(i)->x, path->At(i)->y);
+			SDL_Rect pathRect = { nextPoint.x, nextPoint.y, TILE_SIZE, TILE_SIZE };
+			render->DrawRectangle(pathRect, 255, 0, 0, 50);
+		}
+	}
+}
+
 
 // Release memory
 bool EnemySkeleton::CleanUp()
