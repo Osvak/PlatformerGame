@@ -41,7 +41,7 @@ public:
 	// Utility: return the walkability value of a tile
 	uchar GetTileAt(const iPoint& pos) const;
 	
-	const DynArray<iPoint>* GetLastPath() const;
+	DynArray<iPoint>* GetLastPath();
 
 
 private:

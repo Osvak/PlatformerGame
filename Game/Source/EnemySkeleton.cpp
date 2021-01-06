@@ -61,7 +61,7 @@ EnemySkeleton::EnemySkeleton(Render* render, Textures* tex, AudioManager* audioM
 	//
 	// Set current animation
 	//
-	currentAnimation = attackAnim;
+	currentAnimation = idleAnim;
 	
 	//
 	// Set current state
@@ -164,44 +164,74 @@ void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
 	case SKELETON_MOVE:
 	{
 		// Convert world position to map position
-		static iPoint skeletonTile = map->WorldToMap((int)position.x, (int)position.y + (SKELETON_HEIGHT - TILE_SIZE)); // Skeleton's position
+		iPoint skeletonTile = map->WorldToMap((int)position.x, (int)position.y + (SKELETON_HEIGHT - TILE_SIZE)); // Skeleton's position
 		iPoint playerTile = map->WorldToMap((int)playerPosition.x, (int)playerPosition.y + (28 - TILE_SIZE)); // Player's position
 		
 		// Create new path
 		pathCreated = pathFinding->CreatePath(skeletonTile, playerTile);
-		const DynArray<iPoint>* tempPath = pathFinding->GetLastPath();
-		path = tempPath;
-
+		path = pathFinding->GetLastPath();
 
 		if (path->At(0) != nullptr)
 		{
 			const iPoint* pos = path->At(pathIndex);
+			const iPoint* currentPathFrame = path->At(path->Count());
+			iPoint skTilePerfect = map->MapToWorld(skeletonTile.x, skeletonTile.y);
 
-
-			if (pos->x * TILE_SIZE == position.x && pos->y * TILE_SIZE == position.y)
+			if (skTilePerfect.x == (int)position.x || skTilePerfect.x + TILE_SIZE == (int)position.x + width)
 			{
-				pathIndex++;
+				pathIndex--;
+				MapLayer* layer;
+				for (ListItem<MapLayer*>* item = map->data.layers.start; item; item = item->next)
+				{
+					layer = item->data;
+					if (layer->properties.GetProperty("navigation", 0) == 0)
+					{
+						continue;
+					}
+					int tileId;
+					if (position.x > playerPosition.x)
+					{
+						tileId = layer->Get(skeletonTile.x - 1, skeletonTile.y + 1);
+						if (tileId == 5)
+						{
+							canWalk = true;
+						}
+						else
+						{
+							canWalk = false;
+						}
+					}
+					if (position.x + width < playerPosition.x)
+					{
+						tileId = layer->Get(skeletonTile.x + 1, skeletonTile.y + 1);
+						if (tileId == 5)
+						{
+							canWalk = true;
+						}
+						else
+						{
+							canWalk = false;
+						}
+					}
+				}
 			}
 			else
 			{
-				if (pos->x * TILE_SIZE < position.x)
+				if (playerPosition.x < position.x)
 				{
 					horizontalDirection = -1;
 				}
-				else if (pos->x * TILE_SIZE > position.x)
+				if (playerPosition.x > position.x)
 				{
 					horizontalDirection = 1;
 				}
-				else
-				{
-					horizontalDirection = -1;
-				}
-
-				velocity.x = horizontalDirection * SKELETON_SPEED;
 			}
 		}
-		pathTimer++;
 
+		if (canWalk == true)
+		{
+			velocity.x = horizontalDirection * SKELETON_SPEED;
+		}
 
 		position.x += velocity.x * dt;
 
@@ -211,7 +241,14 @@ void EnemySkeleton::UpdateLogic(float dt, fPoint playerPosition, Map* map)
 
 	case SKELETON_ATTACK:
 	{
-		
+		if (playerPosition.x < position.x)
+		{
+			horizontalDirection = -1;
+		}
+		else
+		{
+			horizontalDirection = 1;
+		}
 
 		break;
 	}

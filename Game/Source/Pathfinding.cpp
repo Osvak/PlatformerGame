@@ -250,7 +250,7 @@ int PathFinding::CreatePath(const iPoint& origin, const iPoint& destination)
 	return -1;
 }
 // Returns the last path created
-const  DynArray<iPoint>* PathFinding::GetLastPath() const
+DynArray<iPoint>* PathFinding::GetLastPath()
 {
 	return &lastPath;
 }

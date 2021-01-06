@@ -10,7 +10,7 @@
 
 #define PLAYER_WIDTH 12
 #define PLAYER_HEIGHT 28
-#define PLAYER_SPEED 40.0f
+#define PLAYER_SPEED 80.0f
 #define GOD_MODE_MULT 1.5f
 #define GRAVITY 25.0f
 #define MAX_VELOCITY 50.0f

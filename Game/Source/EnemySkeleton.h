@@ -90,9 +90,10 @@ private:
 
 	// ----- SKELETON VARIABLES ----- //
 	mutable int st = 0;
-	int visionRange = 200;
-	int attackRange = 50;
-	const DynArray<iPoint>* path;
+	int visionRange = 150;
+	int attackRange = 42;
+	bool canWalk = true;
+	DynArray<iPoint>* path;
 	int pathTimer = 0;
 	int pathCreated = -1;
 	int pathIndex = 0;
