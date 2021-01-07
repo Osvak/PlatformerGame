@@ -76,42 +76,9 @@ bool Level2::Update(float dt)
 	//
 	// Scene controls
 	//
-	bool ret = true;
-
-	if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+	if (input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
 	{
-		ret = false;
-	}
-
-	if (input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
-	{
-		//app->SaveGameRequest();
-	}
-	if (input->GetKey(SDL_SCANCODE_F6) == KEY_DOWN)
-	{
-		//app->LoadGameRequest();
-	}
-
-	if (input->GetKey(SDL_SCANCODE_F7) == KEY_DOWN)
-	{
-		//player->position = player->checkpointPos;
-		//player->cameraCollider->SetPos(player->checkpointPos.x, player->checkpointPos.y - TILE_SIZE * 4);
-	}
-
-	if (input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
-	{
-		TransitionToScene(SceneType::LEVEL1);
-		return true;
-	}
-	if (input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
-	{
-		TransitionToScene(SceneType::LEVEL2);
-		return true;
-	}
-	if (input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
-	{
-		TransitionToScene(SceneType::LEVEL2);
-		return true;
+		map->drawColliders = !map->drawColliders;
 	}
 
 	//

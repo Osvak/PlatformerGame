@@ -18,7 +18,7 @@ PathFinding* PathFinding::GetInstance()
 	}
 	else
 	{
-		LOG("Getting PathFinding Instance");
+		//LOG("Getting PathFinding Instance");
 	}
 
 	return instance;

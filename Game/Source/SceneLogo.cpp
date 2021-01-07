@@ -87,13 +87,6 @@ bool SceneLogo::Update(float dt)
 	//
 	// Handle key inputs
 	//
-	bool ret = true;
-
-	if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
-	{
-		ret = false;
-	}
-
 	if (input->GetKey(SDL_SCANCODE_KP_ENTER) == KEY_DOWN ||
 		input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN ||
 		input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN ||
@@ -105,20 +98,6 @@ bool SceneLogo::Update(float dt)
 		return true;
 	}
 
-	if (input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
-	{
-		TransitionToScene(SceneType::LEVEL1);
-		transition = true;
-		nextSceneCounter = 0;
-		return true;
-	}
-	if (input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
-	{
-		TransitionToScene(SceneType::LEVEL2);
-		transition = true;
-		nextSceneCounter = 0;
-		return true;
-	}
 
 	return false;
 }

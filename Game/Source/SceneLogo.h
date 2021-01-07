@@ -6,7 +6,7 @@
 #include "Map.h"
 
 
-#define NEXT_SCENE_TIME 600
+#define NEXT_SCENE_TIME 200
 
 
 class Input;

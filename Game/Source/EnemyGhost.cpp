@@ -70,7 +70,7 @@ EnemyGhost::EnemyGhost(Render* render, Textures* tex, AudioManager* audioManager
 	// Set current animation
 	//
 	currentAnimation = idleAnim;
-
+	 
 	//
 	// Set current state
 	//
