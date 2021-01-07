@@ -123,7 +123,10 @@ Entity* EntityManager::CreateEntity(EntityType type)
 	}
 
 	// Created entities are added to the list
-	if (ret != nullptr) AddEntity(ret);
+	if (ret != nullptr && entities.Find(ret) == -1)
+	{
+		AddEntity(ret);
+	}
 
 	return ret;
 }
