@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "Player.h"
 #include "EnemySkeleton.h"
+#include "EnemyGhost.h"
 
 
 
@@ -47,6 +48,7 @@ private:
 	Map* map = nullptr;
 	Player* player = nullptr;
 	EnemySkeleton* enemySkeleton = nullptr;
+	EnemyGhost* enemyGhost = nullptr;
 
 	Input* input;
 	Render* render;

@@ -75,6 +75,9 @@
     <ClCompile Include="Source\EnemySkeleton.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EnemyGhost.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\App.h" />
@@ -181,6 +184,9 @@
       <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\EnemySkeleton.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EnemyGhost.h">
       <Filter>Entities</Filter>
     </ClInclude>
   </ItemGroup>

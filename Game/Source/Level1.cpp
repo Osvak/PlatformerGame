@@ -60,13 +60,16 @@ bool Level1::Load()
 	// Load player
 	//
 	player = (Player*)entityManager->CreateEntity(EntityType::PLAYER);
-	player->position = fPoint((TILE_SIZE * 9), (TILE_SIZE * 17) - player->playerHeight);
+	player->position = fPoint(TILE_SIZE * 9, TILE_SIZE * 17 - player->playerHeight);
 
 	//
 	// Add enemies
 	//
 	enemySkeleton = (EnemySkeleton*)entityManager->CreateEntity(EntityType::ENEMY_SKELETON);
 	enemySkeleton->position = fPoint(TILE_SIZE * 39, TILE_SIZE * 15 - enemySkeleton->height);
+	enemyGhost = (EnemyGhost*)entityManager->CreateEntity(EntityType::ENEMY_GHOST);
+	enemyGhost->position = fPoint(TILE_SIZE * 19, TILE_SIZE * 12 - enemyGhost->height);
+
 
 	//
 	// Load music
@@ -95,18 +98,13 @@ bool Level1::Update(float dt)
 	//
 	// Enemies Update
 	//
-	if (enemySkeleton != nullptr)
-	{
-		enemySkeleton->Update(dt, player, map);
-		if (enemySkeleton->isDestroyed == true)
-		{
-			entityManager->DestroyEntity(enemySkeleton);
-		}
-	}
+	enemySkeleton->Update(dt, player, map);
+	enemyGhost->Update(dt, player, map);
+
 		
 
 	//
-	// Collision check
+	// Collision check between player and map
 	//
 	if (player->godMode == false)
 	{
@@ -186,10 +184,8 @@ bool Level1::Draw()
 	//
 	// Draw Enemies
 	//
-	if (enemySkeleton != nullptr)
-	{
-		enemySkeleton->Draw();
-	}
+	enemySkeleton->Draw();
+	enemyGhost->Draw();
 
 	//
 	// Draw Colliders
@@ -198,10 +194,8 @@ bool Level1::Draw()
 	{
 		map->DrawColliders();
 		player->DrawColliders();
-		if (enemySkeleton != nullptr)
-		{
-			enemySkeleton->DrawColliders();
-		}
+		enemySkeleton->DrawColliders();
+		enemyGhost->DrawColliders();
 	}
 
 
@@ -220,10 +214,8 @@ bool Level1::Unload()
 	LOG("Freeing Level 1");
 
 	entityManager->DestroyEntity(map);
-	if (enemySkeleton != nullptr)
-	{
-		entityManager->DestroyEntity(enemySkeleton);
-	}
+	entityManager->DestroyEntity(enemySkeleton);
+	entityManager->DestroyEntity(enemyGhost);
 	if (player->destroyed == true)
 	{
 		entityManager->DestroyEntity(player);

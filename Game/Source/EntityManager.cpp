@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Map.h"
 #include "EnemySkeleton.h"
+#include "EnemyGhost.h"
 //#include "Item.h"
 
 #include "Defs.h"
@@ -113,6 +114,9 @@ Entity* EntityManager::CreateEntity(EntityType type)
 		break;
 	case EntityType::ENEMY_SKELETON:
 		ret = new EnemySkeleton(render, tex, audioManager, pathFinding); 
+		break;
+	case EntityType::ENEMY_GHOST:
+		ret = new EnemyGhost(render, tex, audioManager, pathFinding);
 		break;
 	//case EntityType::ITEM: ret = new Item();  break;
 	default: break;
