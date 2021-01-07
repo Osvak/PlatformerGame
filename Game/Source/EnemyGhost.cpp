@@ -256,7 +256,6 @@ void EnemyGhost::UpdateLogic(float dt)
 
 		if (path->At(0) != nullptr)
 		{
-			// TODO: needs to check path position instead of player position
 			// Change facing direction
 			if (player->position.x + player->playerWidth < position.x)
 			{
@@ -266,7 +265,7 @@ void EnemyGhost::UpdateLogic(float dt)
 			{
 				horizontalDirection = 1;
 			}
-			if (player->position.y > position.y + height)
+			if (player->position.y > position.y + 12)
 			{
 				verticalDirection = 1;
 			}
@@ -280,6 +279,12 @@ void EnemyGhost::UpdateLogic(float dt)
 			}
 			velocity.x = horizontalDirection * GHOST_SPEED;
 			velocity.y = verticalDirection * GHOST_SPEED;
+		}
+
+		// Check if the ghost hits the player
+		if (CheckCollision(player->GetRect(), GetRect()) == true)
+		{
+			player->isHit = true;
 		}
 
 		// Update attack Animation
