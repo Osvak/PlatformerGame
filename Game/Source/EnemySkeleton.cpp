@@ -130,6 +130,12 @@ void EnemySkeleton::UpdateState()
 			}
 		}
 
+		// Check for skeleton death
+		if (isHit == true)
+		{
+			ChangeState(state, SKELETON_DYING);
+		}
+
 
 		break;
 	}
@@ -155,6 +161,12 @@ void EnemySkeleton::UpdateState()
 			}
 		}
 
+		// Check for skeleton death
+		if (isHit == true)
+		{
+			ChangeState(state, SKELETON_DYING);
+		}
+
 
 		break;
 	}
@@ -166,15 +178,19 @@ void EnemySkeleton::UpdateState()
 				ChangeState(state, SKELETON_IDLE);
 		}
 
+		// Check for skeleton death
+		if (isHit == true)
+		{
+			ChangeState(state, SKELETON_DYING);
+		}
+
+
 		break;
 	}
 
 	case SKELETON_DYING:
 	{
-		if (isHit == true)
-		{
-			ChangeState(state, SKELETON_DYING);
-		}
+		// Nothing to do here
 
 		break;
 	}
@@ -254,11 +270,11 @@ void EnemySkeleton::UpdateLogic(float dt)
 			else
 			{
 				// Change facing direction
-				if (player->position.x < position.x)
+				if (player->position.x + player->playerWidth < position.x)
 				{
 					horizontalDirection = -1;
 				}
-				if (player->position.x > position.x)
+				if (player->position.x > position.x + width)
 				{
 					horizontalDirection = 1;
 				}
@@ -430,6 +446,7 @@ void EnemySkeleton::ChangeState(SkeletonState previousState, SkeletonState newSt
 
 		break;
 	}
+
 	case SKELETON_DYING:
 	{
 		currentAnimation = deathAnim;

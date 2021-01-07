@@ -66,8 +66,7 @@ bool Level1::Load()
 	// Add enemies
 	//
 	enemySkeleton = (EnemySkeleton*)entityManager->CreateEntity(EntityType::ENEMY_SKELETON);
-	enemySkeleton->position = fPoint((TILE_SIZE) * 18, (TILE_SIZE * 16) - enemySkeleton->height);
-	//enemySkeleton->position = fPoint(TILE_SIZE * 39, TILE_SIZE * 14);
+	enemySkeleton->position = fPoint(TILE_SIZE * 39, TILE_SIZE * 15 - enemySkeleton->height);
 
 	//
 	// Load music

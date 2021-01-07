@@ -16,9 +16,9 @@
 class Render;
 class Textures;
 class AudioManager;
+class PathFinding;
 class Player;
 class Map;
-class PathFinding;
 
 struct SDL_Texture;
 struct SDL_Rect;
@@ -79,8 +79,6 @@ public:
 	fPoint velocity = { 0.0f,0.0f };
 	// Current state of the skeleton state machine
 	SkeletonState state = SKELETON_IDLE;
-	// Skeleton textures
-	SDL_Texture* skeletonTexture = nullptr;
 	// ------------------------------ //
 	
 
@@ -103,6 +101,8 @@ private:
 	// Attack variables
 	int attackCooldwon = 0;
 	SDL_Rect attackRect = { 0, 0, 0, 0 };
+	// Skeleton textures
+	SDL_Texture* skeletonTexture = nullptr;
 	// ------------------------------ //
 
 
