@@ -22,6 +22,7 @@ class Input;
 class Render;
 class Textures;
 class AudioManager;
+class Map;
 
 struct SDL_Texture;
 struct SDL_Rect;
@@ -55,7 +56,7 @@ public:
 
 	// Called at the middle of the application loop
 	// Processes new input and handles player movement
-	bool Update(float dt);
+	bool Update(float dt, Map* map);
 	// Checks for inputs (or timers) and changes the player state accordingly
 	void UpdateState();
 	// Updates the logic of the player depending on the current state
@@ -102,6 +103,7 @@ private:
 	void ControlWallCollision(Collider* c1);
 	void ControlPlatformCollision(Collider* c1);
 	void ControlCameraMovement(Collider* c1);
+	void ControlFall(Map* map);
 
 public:
 
@@ -156,6 +158,9 @@ public:
 	bool isHit = false;
 	// A flag to detect when the player has been destroyed
 	bool destroyed = false;
+
+	// Flag to know if the player is falling
+	bool isFalling = false;
 	// ------------------------ //
 
 
@@ -196,6 +201,7 @@ public:
 	Render* render;
 	Textures* tex;
 	AudioManager* audioManager;
+	Map* map;
 };
 
 #endif //!__PLAYER_H__

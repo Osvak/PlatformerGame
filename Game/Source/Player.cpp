@@ -4,6 +4,7 @@
 #include "Render.h"
 #include "Textures.h"
 #include "AudioManager.h"
+#include "Map.h"
 
 #include "Collider.h" // TODO: remove
 
@@ -129,6 +130,7 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	canDoubleJump = false;
 	isDoubleJumping = false;
 	playFX = true;
+	isFalling = false;
 	//checkpointPos = { TILE_SIZE * 9, TILE_SIZE * 16 };
 	state = IDLE;
 	destroyed = false;
@@ -141,8 +143,11 @@ Player::~Player()
 
 
 // Main player Update
-bool Player::Update(float dt)
+bool Player::Update(float dt, Map* map)
 {
+	this->map = map;
+	ControlFall(map);
+	
 	UpdateState();
 	UpdateLogic(dt);
 
@@ -595,9 +600,24 @@ void Player::UpdateLogic(float dt)
 	}
 
 
+
 	//
 	// Position update
 	//
+	if (isFalling == true)
+	{
+		acceleration.y = GRAVITY;
+		if (isJumping == false)
+		{
+			currentAnimation->Reset();
+			currentAnimation = fallAnim;
+			currentAnimation->Update();
+		}
+	}
+	else
+	{
+		acceleration.y = acceleration.y;
+	}
 	velocity.y = velocity.y + (acceleration.y * dt);
 	if (velocity.y >= MAX_VELOCITY)
 	{
@@ -731,6 +751,7 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 
 	case DYING:
 	{
+		currentAnimation->Reset();
 		currentAnimation = deathAnim;
 		currentAnimation->Reset();
 		
@@ -1125,6 +1146,34 @@ void Player::ControlCameraMovement(Collider* c)
 
 }
 
+void Player::ControlFall(Map* map)
+{
+	// Convert world position to map position
+	iPoint playerTile = map->WorldToMap((int)position.x, (int)position.y + (28 - TILE_SIZE)); // Player's position
+
+	iPoint playerTilePerfect = map->MapToWorld(playerTile.x, playerTile.y); // Limits of the current tile
+
+	if (playerTilePerfect.x == (int)position.x || playerTilePerfect.x + TILE_SIZE == (int)position.x + PLAYER_WIDTH) // Checks to see if the player has finished moving in this tile
+	{
+		MapLayer* layer;
+		for (ListItem<MapLayer*>* item = map->data.layers.start; item; item = item->next)
+		{
+			layer = item->data;
+			int tileId;
+			tileId = layer->Get(playerTile.x, playerTile.y + 1); // Checks if the next walkable tile is actually void
+			if (tileId == 5)
+			{
+				isFalling = false;
+				isTouchingGround = true;
+			}
+			else
+			{
+				isFalling = true;
+				isTouchingGround = false;
+			}
+		}
+	}
+}
 
 SDL_Rect Player::GetRect()
 {

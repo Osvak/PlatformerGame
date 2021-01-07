@@ -93,7 +93,7 @@ bool Level1::Update(float dt)
 	//
 	// Player Update
 	//
-	player->Update(dt);
+	player->Update(dt, map);
 
 	//
 	// Enemies Update
