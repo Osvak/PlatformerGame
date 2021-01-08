@@ -12,9 +12,6 @@
     <ClCompile Include="Source\Player.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Collider.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="Source\PerfTimer.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -41,9 +38,6 @@
     </ClCompile>
     <ClCompile Include="Source\Level2.cpp">
       <Filter>Scenes</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Collisions.cpp">
-      <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="Source\Input.cpp">
       <Filter>Modules</Filter>
@@ -108,9 +102,6 @@
     <ClInclude Include="Source\Player.h">
       <Filter>Entities</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Collider.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Source\PQueue.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -143,9 +134,6 @@
     </ClInclude>
     <ClInclude Include="Source\Level2.h">
       <Filter>Scenes</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Collisions.h">
-      <Filter>Modules</Filter>
     </ClInclude>
     <ClInclude Include="Source\Input.h">
       <Filter>Modules</Filter>
