@@ -88,6 +88,7 @@ public:
 
 private:
 
+	// ----- SINGLETON METHODS ----- //
 	// Singleton instance
 	static Player* instance;
 	// Private Constructor
@@ -96,18 +97,13 @@ private:
 	// private (or delete them explicitly) to prevent cloning your object
 	Player(const Player&);
 	Player& operator=(const Player&);
+	// ----------------------------- //
 
-
-	void LoadPlayerPosition();
-
-	void Jump(float dt);
-	void ControlWallCollision(Collider* c1);
-	void ControlPlatformCollision(Collider* c1);
-	void ControlCameraMovement(Collider* c1);
-	void ControlFall(Map* map);
-
+	// Loads the player's variables and flags
+	void LoadPlayer();
 
 	// ---- PLAYER MOVEMENT METHODS ----- //
+	void Jump(float dt);
 	void MovingRightLogic();
 	void MovingLeftLogic();
 	void ControlWallCollisionWhenMovingRight(MapLayer* layer);
@@ -120,42 +116,18 @@ private:
 public:
 
 	// ----- PLAYER VARIABLES ----- //
-	// Position of the player in the map
+	// Player's position
 	int width = PLAYER_WIDTH, height = PLAYER_HEIGHT;
 	fPoint position;
-	fPoint velocity = { 0.0f,0.0f };
-	fPoint acceleration = { 0.0f,0.0f };
-	// The state of the player
-	PlayerState state = APPEAR;
-	PlayerState prevState = IDLE;
-	// The player spritesheet loaded into an SDL_Texture
-	SDL_Texture* playerTexture = nullptr;
-	// The pointer to the Current animation
-	Animation* currentAnimation;
-	// Auxiliar variables
-	SDL_Rect rect;
-	mutable int st = 0; // current state for save/load
-	mutable int sc = 0; // current scene for save/load
 	// Player position form Save File
 	fPoint savedPos = { 0.0f,0.0f };
-	fPoint cameraCollPos = { 0.0f,0.0f };
-	bool loadPos = false;
 	// Lifes variable
 	int lifes = 3;
 	// ---------------------------- //
 
 
 	// ----- PLAYER FLAGS ----- //
-	// The horizontal direction where the player is facing -> -1 for LEFT // 1 for RIGHT // 0 for IDLE
-	int horizontalDirection = 1;
-	// The horizontal direction where the player is facing -> -1 for UP // 1 for DOWN // 0 for IDLE
-	int verticalDirection = 0;
-	
-	// Flag to know if the player is jumping
-	bool isJumping = false;
-	
-	bool isDoubleJumping = false;
-	// Flog to know if the God Mode is activated
+	// Flag to know if the God Mode is activated
 	bool godMode = false;
 	// Flag to know if the player is skipping level
 	bool isWinning = false;
@@ -165,6 +137,44 @@ public:
 	bool isHit = false;
 	// A flag to detect when the player has been destroyed
 	bool destroyed = false;
+	// ------------------------ //
+
+private:
+
+	// ----- PLAYER VARIABLES ----- //
+	// Player movement
+	fPoint velocity = { 0.0f,0.0f };
+	fPoint acceleration = { 0.0f,0.0f };
+	// The state of the player
+	PlayerState state = APPEAR;
+	// The player spritesheet loaded into an SDL_Texture
+	SDL_Texture* playerTexture = nullptr;
+	// The pointer to the Current animation
+	Animation* currentAnimation;
+	// Jump handlers
+	fPoint accel = { 0.0f, 0.0f };
+	fPoint vel = { 0.0f, 0.0f };
+	float timeInAir = 0.0f;
+	float jumpImpulseTime = 0.4f;
+	float jumpImpulseVel = -150.0f;
+	float jumpAccel = 40.0f;
+	bool isJumping = false;
+	bool isDoubleJumping = false;
+	// Auxiliar variables
+	SDL_Rect rect;
+	mutable int st = 0; // current state for save/load
+	mutable int sc = 0; // current scene for save/load
+	// ---------------------------- //
+
+
+	// ----- PLAYER FLAGS ----- //
+	// The horizontal direction where the player is facing -> -1 for LEFT // 1 for RIGHT // 0 for IDLE
+	int horizontalDirection = 1;
+	// Movement control flags
+	bool canMoveHorizontally = true;
+	bool isFalling = false;
+	bool canJump = true;
+	bool canDoubleJump = false;
 	// ------------------------ //
 
 
@@ -189,27 +199,6 @@ public:
 	// Sound effects flags
 	bool playFX = true;
 	// ------------------------- //
-
-private:
-
-	// ----- PLAYER VARIABLES ----- //
-	// Jump handlers
-	fPoint accel = { 0.0f, 0.0f };
-	fPoint vel = { 0.0f, 0.0f };
-	float timeInAir = 0.0f;
-	float jumpImpulseTime = 0.4f;
-	float jumpImpulseVel = -150.0f;
-	float jumpAccel = 40.0f;
-	// ---------------------------- //
-
-
-	// ----- PLAYER FLAGS ----- //
-	// Movement control flags
-	bool canMoveHorizontally = true;
-	bool isFalling = false;
-	bool canJump = true;
-	bool canDoubleJump = false;
-	// ------------------------ //
 
 public:
 

@@ -60,6 +60,7 @@ bool Level1::Load()
 	//
 	player = (Player*)entityManager->CreateEntity(EntityType::PLAYER);
 	player->position = fPoint(TILE_SIZE * 9, TILE_SIZE * 17 - player->height);
+	player->savedPos = player->position;
 	//player->position = fPoint(TILE_SIZE * 38, TILE_SIZE * 15 - player->height); // debugging position
 
 	//
@@ -127,13 +128,9 @@ bool Level1::Update(float dt)
 	{
 		TransitionToScene(SceneType::LEVEL2);
 	}
-
-	if (player->isDying == true)
+	if (player->destroyed == true)
 	{
-		if (player->lifes <= 0)
-		{
-			TransitionToScene(SceneType::LOSE);
-		}
+		TransitionToScene(SceneType::LOSE);
 	}
 
 

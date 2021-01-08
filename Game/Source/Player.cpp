@@ -6,8 +6,6 @@
 #include "AudioManager.h"
 #include "Map.h"
 
-#include "Collider.h" // TODO: remove
-
 #include "Log.h"
 #include "Defs.h"
 
@@ -105,36 +103,12 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	nextLevelFX = audioManager->LoadFX("Assets/Audio/FX/next_level.wav");
 	audioManager->musicList.Add(&nextLevelFX);
 
-	//
-	// Create Player collider
-	//
-	//playerCollider = collisions->AddCollider({ (int)position.x , (int)position.y, PLAYER_SIZE, PLAYER_SIZE }, Collider::ColliderType::PLAYER, this);
-	//cameraCollider = collisions->AddCollider({ (int)position.x, (int)position.y - (TILE_SIZE * 4), TILE_SIZE * 6, TILE_SIZE * 5 }, Collider::ColliderType::CAMERA_WINDOW, this);
 
 	//
-	// Set current animation
+	// Load Player variables
 	//
-	currentAnimation = standUpAnim;
+	LoadPlayer();
 
-	//
-	// Set Flags and Variables
-	//
-	active = true;
-	height = PLAYER_HEIGHT;
-	width = PLAYER_WIDTH;
-	velocity = { 0.0f, 0.0f };
-	acceleration = { 0.0f, 0.0f };
-	horizontalDirection = 1;
-	isJumping = false;
-	isWinning = false;
-	isDying = false;
-	canDoubleJump = false;
-	isDoubleJumping = false;
-	playFX = true;
-	isFalling = false;
-	//checkpointPos = { TILE_SIZE * 9, TILE_SIZE * 16 };
-	state = APPEAR;
-	destroyed = false;
 }
 // Destructor
 Player::~Player()
@@ -153,7 +127,6 @@ inline bool CheckCollision(SDL_Rect rec1, SDL_Rect rec2)
 // Main player Update
 bool Player::Update(float dt, Map* map)
 {
-	
 	if (destroyed == false)
 	{
 		this->map = map;
@@ -200,6 +173,12 @@ void Player::UpdateState()
 			break;
 		}
 
+		if (isDying == true || isHit == true)
+		{
+			ChangeState(state, DYING);
+			break;
+		}
+
 
 		break;
 	}
@@ -223,8 +202,10 @@ void Player::UpdateState()
 
 		if (isDying == true || isHit == true)
 		{
-			//ChangeState(state, DYING);
+			ChangeState(state, DYING);
+			break;
 		}
+
 
 		break;
 	}
@@ -243,6 +224,12 @@ void Player::UpdateState()
 			}
 
 			ChangeState(state, IDLE);
+			break;
+		}
+
+		if (isDying == true || isHit == true)
+		{
+			ChangeState(state, DYING);
 			break;
 		}
 
@@ -266,7 +253,10 @@ void Player::UpdateState()
 
 	case DYING:
 	{
-		
+		if (isDying == false)
+		{
+			ChangeState(state, IDLE);
+		}
 
 
 		break;
@@ -438,7 +428,24 @@ void Player::UpdateLogic(float dt)
 
 	case DYING:
 	{
+		currentAnimation->Update();
 
+		if (currentAnimation->HasFinished() == true)
+		{
+			--lifes;
+
+			isDying = false;
+
+			if (lifes > 0)
+			{
+				LoadPlayer();
+			}
+			else
+			{
+				destroyed = true;
+			}
+
+		}
 		
 
 		break;
@@ -454,10 +461,8 @@ void Player::UpdateLogic(float dt)
 	//
 	// Position update
 	//
-
 	velocity.x = velocity.x + (acceleration.x * dt);
 	velocity.y = velocity.y + (acceleration.y * dt);
-
 	position.x += velocity.x;
 	position.y += velocity.y;
 
@@ -467,7 +472,7 @@ void Player::UpdateLogic(float dt)
 	// TODO: Fix camera position
 
 }
-// Change the State
+// Control what happens when the State is changed
 void Player::ChangeState(PlayerState previousState, PlayerState newState)
 {
 	switch (newState)
@@ -525,9 +530,17 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 
 	case DYING:
 	{
-		
+		currentAnimation = deathAnim;
+		currentAnimation->Reset();
+		acceleration = { 0.0f, 0.0f };
+		velocity = { 0.0f, 0.0f };
 
-
+		if (playFX == true)
+		{
+			audioManager->PlayFX(oofFX);
+			playFX = false;
+		}
+	
 		break;
 	}
 
@@ -603,13 +616,45 @@ bool Player::CleanUp()
 }
 
 
+// Load the player's variables and flags
+void Player::LoadPlayer()
+{
+	position.x = savedPos.x;
+	position.y = savedPos.y;
+
+	//
+	// Set current animation
+	//
+	currentAnimation = standUpAnim;
+
+	//
+	// Set Flags and Variables
+	//
+	active = true;
+	height = PLAYER_HEIGHT;
+	width = PLAYER_WIDTH;
+	velocity = { 0.0f, 0.0f };
+	acceleration = { 0.0f, 0.0f };
+	horizontalDirection = 1;
+	canMoveHorizontally = true;
+	isFalling = false;
+	canJump = true;
+	canDoubleJump = false;
+	isJumping = false;
+	isDoubleJumping = false;
+	isWinning = false;
+	isDying = false;
+	isHit = false;
+	playFX = true;
+	destroyed = false;
+	state = APPEAR;
+}
 // Load the player's state
 bool Player::LoadState(pugi::xml_node& playerNode)
 {
 	// Load position
 	savedPos.x = playerNode.child("position").attribute("position_x").as_float();
 	savedPos.y = playerNode.child("position").attribute("position_y").as_float();
-	loadPos = true;
 
 	// Load velocity
 	velocity.x = playerNode.child("velocity").attribute("velocity_x").as_float();
@@ -666,16 +711,6 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 
 	return true;
 }
-void Player::LoadPlayerPosition()
-{
-	position.x = savedPos.x;
-	position.y = savedPos.y;
-
-	//cameraCollider->rect.x = cameraCollPos.x;
-	//cameraCollider->rect.y = cameraCollPos.y;
-
-	loadPos = false;
-}
 // Save the player's state
 bool Player::SaveState(pugi::xml_node& playerNode) const
 {
@@ -718,6 +753,14 @@ bool Player::SaveState(pugi::xml_node& playerNode) const
 }
 
 
+// Player's Rectangle Getter
+SDL_Rect Player::GetRect()
+{
+	return { (int)position.x, (int)position.y, width, height };
+}
+
+
+
 void Player::Jump(float dt)
 {
 	if (canJump == true)
@@ -755,7 +798,7 @@ void Player::Jump(float dt)
 		velocity.y = 0.0f;
 		acceleration.y = 0.0f;
 	}
-	
+
 
 	if (velocity.y > 0)
 	{
@@ -767,73 +810,6 @@ void Player::Jump(float dt)
 
 	timeInAir = timeInAir + dt;
 }
-void Player::ControlWallCollision(Collider* c)
-{
-	/*if (isJumping == false || isTouchingGround == false)
-	{
-		if (position.x < (c->rect.x + c->rect.w) &&
-			horizontalDirection == -1)
-		{
-			velocity.x = 0.0f;
-			wallCollisionFromRight = true;
-		}
-
-		if ((position.x + width) > c->rect.x &&
-			horizontalDirection == 1)
-		{
-			velocity.x = 0.0f;
-			wallCollisionFromLeft = true;
-		}
-	}*/
-}
-void Player::ControlPlatformCollision(Collider* c)
-{
-	//fallStraight = false;
-	isJumping = false;
-	isDoubleJumping = false;
-	canDoubleJump = false;
-
-	if ((position.y + height) > c->rect.y)
-	{
-		velocity.y = 0.0f;
-		position.y = (float)c->rect.y - height;
-		//isTouchingGround = true;
-	}
-}
-void Player::ControlCameraMovement(Collider* c)
-{
-	if (position.x < c->rect.x)
-	{
-		c->rect.x -= c->rect.x - (int)position.x;
-	}
-	if ((position.x + width) > (c->rect.x + c->rect.w))
-	{
-		c->rect.x += ((int)position.x + width) - (c->rect.x + c->rect.w);
-	}
-	if (position.y < c->rect.y)
-	{
-		c->rect.y -= c->rect.y - (int)position.y;
-	}
-	if ((position.y + height) > (c->rect.y + c->rect.h))
-	{
-		c->rect.y += ((int)position.y + height) - (c->rect.y + c->rect.h);
-	}
-
-	//cameraCollider->rect = c->rect;
-	//TODO: Fix Camera Movement
-
-}
-
-
-// Player's Rectangle Getter
-SDL_Rect Player::GetRect()
-{
-	return { (int)position.x, (int)position.y, width, height };
-}
-
-
-
-
 
 void Player::MovingRightLogic()
 {
