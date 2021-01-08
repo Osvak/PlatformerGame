@@ -353,6 +353,12 @@ void Player::UpdateLogic(float dt)
 
 	case JUMP:
 	{
+		// Allow double jump
+		if (canDoubleJump == true && input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+		{
+			isDoubleJumping = true;
+		}
+
 		// Control the jump
 		Jump(dt);
 
@@ -395,6 +401,14 @@ void Player::UpdateLogic(float dt)
 			{
 				velocity.x = 0.0f;
 			}
+		}
+
+		if (input->GetKey(SDL_SCANCODE_D) != KEY_DOWN &&
+			input->GetKey(SDL_SCANCODE_D) != KEY_REPEAT &&
+			input->GetKey(SDL_SCANCODE_A) != KEY_DOWN &&
+			input->GetKey(SDL_SCANCODE_A) != KEY_REPEAT)
+		{
+			velocity.x = 0.0f;
 		}
 		
 		// Update the jump animation
@@ -713,7 +727,14 @@ void Player::Jump(float dt)
 		canJump = false;
 		canDoubleJump = true;
 		timeInAir = 0.0f;
-		velocity.y = -2000.0f;
+	}
+
+	if (isDoubleJumping == true && canDoubleJump == true)
+	{
+		currentAnimation = jumpAnim;
+		currentAnimation->Reset();
+		canDoubleJump = false;
+		timeInAir = 0.0f;
 	}
 
 	if (isJumping == true)
@@ -740,6 +761,7 @@ void Player::Jump(float dt)
 	if (velocity.y > 0)
 	{
 		// Change to Falling Animation
+		currentAnimation->Reset();
 		currentAnimation = fallAnim;
 		isFalling = true;
 	}
@@ -937,6 +959,8 @@ void Player::ControlFloorCollisionWhenFalling()
 				position.y = perfectNextTile.y - height;
 				canJump = true;
 				isJumping = false;
+				canDoubleJump = false;
+				isDoubleJumping = false;
 				isFalling = false;
 			}
 			else

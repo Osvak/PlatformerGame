@@ -231,15 +231,7 @@ void Level1::CollisionLogic()
 				if (tileId > 0)
 				{
 					tileset = map->GetTilesetFromTileId(tileId);
-					if (tileId == 1)
-					{
-						tileRect = tileset->GetTileRect(tileId);
-						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-						if(CheckCollision(colliderRect, player->GetRect()) == true)
-						{
-							//player->isTouchingGround = true;
-						}
-					}
+
 					if (tileId == 2)
 					{
 						tileRect = tileset->GetTileRect(tileId);
@@ -257,15 +249,6 @@ void Level1::CollisionLogic()
 						if (CheckCollision(colliderRect, player->GetRect()) == true)
 						{
 							player->isWinning = true;
-						}
-					}
-					if (tileId == 4)
-					{
-						tileRect = tileset->GetTileRect(tileId);
-						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
-						if (CheckCollision(colliderRect, player->GetRect()) == true)
-						{
-							//player->canMoveHorizontally = false;
 						}
 					}
 				}
