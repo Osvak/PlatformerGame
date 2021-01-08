@@ -257,7 +257,7 @@ void EnemyGhost::UpdateLogic(float dt)
 		if (path->At(0) != nullptr)
 		{
 			// Change facing direction
-			if (player->position.x + player->playerWidth < position.x)
+			if (player->position.x + player->width < position.x)
 			{
 				horizontalDirection = -1;
 			}
@@ -269,7 +269,7 @@ void EnemyGhost::UpdateLogic(float dt)
 			{
 				verticalDirection = 1;
 			}
-			else if (player->position.y + player->playerHeight < position.y)
+			else if (player->position.y + player->height < position.y)
 			{
 				verticalDirection = -1;
 			}
@@ -373,7 +373,7 @@ void EnemyGhost::ChangeState(GhostState previousState, GhostState newState)
 		{
 			horizontalDirection = 1;
 		}
-		else if (player->position.x + player->playerWidth < position.x)
+		else if (player->position.x + player->width < position.x)
 		{
 			horizontalDirection = -1;
 		}

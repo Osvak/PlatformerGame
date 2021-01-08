@@ -207,7 +207,7 @@ void EnemySkeleton::UpdateLogic(float dt)
 	case SKELETON_IDLE:
 	{
 		// Make sure the skeleton doesn't move when it's idle
-		velocity = { 0,0 };
+		velocity = { 0.0f,0.0f };
 
 		// Update idle Animation
 		currentAnimation->Update();
@@ -270,7 +270,7 @@ void EnemySkeleton::UpdateLogic(float dt)
 			else
 			{
 				// Change facing direction
-				if (player->position.x + player->playerWidth < position.x)
+				if (player->position.x + player->width < position.x)
 				{
 					horizontalDirection = -1;
 				}

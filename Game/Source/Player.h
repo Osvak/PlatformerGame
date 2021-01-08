@@ -12,9 +12,9 @@
 #define PLAYER_HEIGHT 28
 #define PLAYER_SPEED 80.0f
 #define GOD_MODE_MULT 1.5f
-#define GRAVITY 25.0f
+#define GRAVITY 10.0f
 #define MAX_VELOCITY 50.0f
-#define MAX_AIR_TIME 50.0f
+#define MAX_AIR_TIME 2.0f
 
 
 
@@ -23,6 +23,7 @@ class Render;
 class Textures;
 class AudioManager;
 class Map;
+class MapLayer;
 
 struct SDL_Texture;
 struct SDL_Rect;
@@ -32,12 +33,12 @@ struct Collider;
 enum PlayerState
 {
 	IDLE = 0,
-	MOVE_RIGHT,
-	MOVE_LEFT,
+	MOVE,
 	JUMP,
 	GOD_MODE,
 	WINNING,
 	DYING,
+	APPEAR,
 	
 	MAX
 };
@@ -105,16 +106,27 @@ private:
 	void ControlCameraMovement(Collider* c1);
 	void ControlFall(Map* map);
 
+
+	// ---- PLAYER MOVEMENT METHODS ----- //
+	void MovingRightLogic();
+	void MovingLeftLogic();
+	void ControlWallCollisionWhenMovingRight(MapLayer* layer);
+	void ControlWallCollisionWhenMovingLeft(MapLayer* layer);
+	void ControlFloorCollisionWhenMovingRight(MapLayer* layer);
+	void ControlFloorCollisionWhenMovingLeft(MapLayer* layer);
+	void ControlFloorCollisionWhenFalling();
+	// ---------------------------------- //
+
 public:
 
 	// ----- PLAYER VARIABLES ----- //
 	// Position of the player in the map
-	int playerWidth = PLAYER_WIDTH, playerHeight = PLAYER_HEIGHT;
+	int width = PLAYER_WIDTH, height = PLAYER_HEIGHT;
 	fPoint position;
 	fPoint velocity = { 0.0f,0.0f };
 	fPoint acceleration = { 0.0f,0.0f };
 	// The state of the player
-	PlayerState state = IDLE;
+	PlayerState state = APPEAR;
 	PlayerState prevState = IDLE;
 	// The player spritesheet loaded into an SDL_Texture
 	SDL_Texture* playerTexture = nullptr;
@@ -138,15 +150,10 @@ public:
 	int horizontalDirection = 1;
 	// The horizontal direction where the player is facing -> -1 for UP // 1 for DOWN // 0 for IDLE
 	int verticalDirection = 0;
-	// Flag to know if the player is touching the ground
-	bool isTouchingGround = true;
-	bool isTouchingWall = false;
-	bool wallCollisionFromLeft = false;
-	bool wallCollisionFromRight = false;
-	bool fallStraight = false;
+	
 	// Flag to know if the player is jumping
 	bool isJumping = false;
-	bool canDoubleJump = false;
+	
 	bool isDoubleJumping = false;
 	// Flog to know if the God Mode is activated
 	bool godMode = false;
@@ -158,16 +165,14 @@ public:
 	bool isHit = false;
 	// A flag to detect when the player has been destroyed
 	bool destroyed = false;
-
-	// Flag to know if the player is falling
-	bool isFalling = false;
 	// ------------------------ //
 
 
 	//----- ANIMATION SETS ----- //
+	Animation* standUpAnim = new Animation();
 	Animation* idleAnim = new Animation();
 	Animation* walkAnim = new Animation();
-	//Animation* shootAnim = new Animation();
+	Animation* shootAnim = new Animation();
 	//Animation* damageAnim = new Animation();
 	Animation* jumpAnim = new Animation();
 	Animation* fallAnim = new Animation();
@@ -187,13 +192,24 @@ public:
 
 private:
 
+	// ----- PLAYER VARIABLES ----- //
 	// Jump handlers
-	fPoint accel = { 0.0, 0.0 };
-	fPoint vel = { 0.0, 0.0 };
+	fPoint accel = { 0.0f, 0.0f };
+	fPoint vel = { 0.0f, 0.0f };
 	float timeInAir = 0.0f;
-	float jumpImpulseTime = 2.0f;
-	float jumpImpulseVel = -90.0f;
-	float jumpAccel = 100.0f;
+	float jumpImpulseTime = 0.4f;
+	float jumpImpulseVel = -150.0f;
+	float jumpAccel = 40.0f;
+	// ---------------------------- //
+
+
+	// ----- PLAYER FLAGS ----- //
+	// Movement control flags
+	bool canMoveHorizontally = true;
+	bool isFalling = false;
+	bool canJump = true;
+	bool canDoubleJump = false;
+	// ------------------------ //
 
 public:
 

@@ -18,7 +18,6 @@
 
 
 Player* Player::instance = nullptr;
-
 // Instance creator
 Player* Player::GetInstance(Input* input, Render* render, Textures* tex, AudioManager* audioManager)
 {
@@ -34,7 +33,6 @@ Player* Player::GetInstance(Input* input, Render* render, Textures* tex, AudioMa
 
 	return instance;
 }
-
 // Constructor
 Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioManager) : Entity(EntityType::PLAYER)
 {
@@ -58,34 +56,39 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	//
 	// Animation pushbacks
 	//
+	standUpAnim->loop = false;
+	standUpAnim->speed = 0.1f;
+	for (int i = 0; i < 7; i++)
+		standUpAnim->PushBack({ 50 * i, 222, 50, 37 });
 	idleAnim->loop = true;
 	idleAnim->speed = 0.1f;
+	for (int i = 0; i < 4; i++)
+		idleAnim->PushBack({ 50 * i, 0, 50, 37 });
 	walkAnim->loop = true;
 	walkAnim->speed = 0.2f;
+	for (int i = 0; i < 6; i++)
+		walkAnim->PushBack({50 * i, 37, 50, 37 });
 	jumpAnim->loop = false;
-	jumpAnim->speed = 0.1f;
+	jumpAnim->speed = 0.2f;
+	for (int i = 0; i < 8; i++)
+		jumpAnim->PushBack({ 50 * i, 74, 50, 37 });
 	fallAnim->loop = true;
 	fallAnim->speed = 0.2f;
+	for (int i = 0; i < 2; i++)
+		fallAnim->PushBack({ 50 * i, 111, 50, 37 });
 	deathAnim->loop = false;
 	deathAnim->speed = 0.1f;
-	for (int i = 0; i < 4; i++)
-		idleAnim->PushBack({ 50 * i,0, 50, 37 });
-	for (int i = 0; i < 6; i++)
-		walkAnim->PushBack({ 50 + (50 * i),37, 50, 37 });
-	for (int i = 0; i < 7; i++)
-		jumpAnim->PushBack({ 50 * i, 74, 50, 37 });
-	jumpAnim->PushBack({ 0, 111, 50, 37 });
-	for (int i = 0; i < 2; i++)
-		fallAnim->PushBack({ 50 + (50 * i) , 111, 50, 37 });
-	for (int i = 0; i < 4; i++)
-		deathAnim->PushBack({ 150 + (50 * i), 296, 50, 37 });
-	for (int i = 0; i < 6; i++)
-		deathAnim->PushBack({ 50 * i, 333, 50, 37 });
+	for (int i = 0; i < 10; i++)
+		deathAnim->PushBack({ 50 * i, 148, 50, 37 });
+	shootAnim->loop = true;
+	shootAnim->speed = 0.2f;
+	for (int i = 0; i < 10; i++)
+		shootAnim->PushBack({ 50 * i, 185, 50, 37 });
 
 	//
 	// Load Player textures files
 	//
-	playerTexture = tex->Load("Assets/Textures/Player/player_sheet.png");
+	playerTexture = tex->Load("Assets/Textures/Player/player_spritesheet.png");
 
 
 	//
@@ -111,19 +114,17 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	//
 	// Set current animation
 	//
-	currentAnimation = idleAnim;
+	currentAnimation = standUpAnim;
 
 	//
 	// Set Flags and Variables
 	//
 	active = true;
-	playerHeight = PLAYER_HEIGHT;
-	playerWidth = PLAYER_WIDTH;
+	height = PLAYER_HEIGHT;
+	width = PLAYER_WIDTH;
 	velocity = { 0.0f, 0.0f };
 	acceleration = { 0.0f, 0.0f };
 	horizontalDirection = 1;
-	isTouchingGround = true;
-	isTouchingWall = false;
 	isJumping = false;
 	isWinning = false;
 	isDying = false;
@@ -132,7 +133,7 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	playFX = true;
 	isFalling = false;
 	//checkpointPos = { TILE_SIZE * 9, TILE_SIZE * 16 };
-	state = IDLE;
+	state = APPEAR;
 	destroyed = false;
 }
 // Destructor
@@ -142,14 +143,25 @@ Player::~Player()
 }
 
 
+// Checks the intersection between two rectangles
+inline bool CheckCollision(SDL_Rect rec1, SDL_Rect rec2)
+{
+	if ((rec1.x < (rec2.x + rec2.w) && (rec1.x + rec1.w) > rec2.x) &&
+		(rec1.y < (rec2.y + rec2.h) && (rec1.y + rec1.h) > rec2.y)) return true;
+	else return false;
+}
 // Main player Update
 bool Player::Update(float dt, Map* map)
 {
-	this->map = map;
-	ControlFall(map);
 	
-	UpdateState();
-	UpdateLogic(dt);
+	if (destroyed == false)
+	{
+		this->map = map;
+
+		UpdateState();
+		UpdateLogic(dt);
+	}
+
 
 	return true;
 }
@@ -158,19 +170,27 @@ void Player::UpdateState()
 {
 	switch (state)
 	{
+	case APPEAR:
+	{
+		if (currentAnimation->HasFinished() == true)
+		{
+			currentAnimation->Reset();
+			ChangeState(state, IDLE);
+			break;
+		}
+
+
+		break;
+	}
+
 	case IDLE:
 	{
 		if (input->GetKey(SDL_SCANCODE_D) == KEY_DOWN || 
-			input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-		{
-			ChangeState(state, MOVE_RIGHT);
-			break;
-		}
-
-		if (input->GetKey(SDL_SCANCODE_A) == KEY_DOWN ||
+			input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT ||
+			input->GetKey(SDL_SCANCODE_A) == KEY_DOWN ||
 			input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
-			ChangeState(state, MOVE_LEFT);
+			ChangeState(state, MOVE);
 			break;
 		}
 
@@ -179,175 +199,58 @@ void Player::UpdateState()
 			ChangeState(state, JUMP);
 			break;
 		}
-		
-		if (input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
-		{
-			ChangeState(state, GOD_MODE);
-			break;
-		}
 
-		if (isWinning == true)
-		{
-			ChangeState(state, WINNING);
-			break;
-		}
-
-		if (isDying == true)
-		{
-			ChangeState(state, DYING);
-			break;
-		}
 
 		break;
 	}
 
-	case MOVE_RIGHT:
+	case MOVE:
 	{
+		if (input->GetKey(SDL_SCANCODE_D) != KEY_DOWN &&
+			input->GetKey(SDL_SCANCODE_D) != KEY_REPEAT &&
+			input->GetKey(SDL_SCANCODE_A) != KEY_DOWN &&
+			input->GetKey(SDL_SCANCODE_A) != KEY_REPEAT)
+		{
+			ChangeState(state, IDLE);
+			break;
+		}
+
 		if (input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
 			ChangeState(state, JUMP);
 			break;
 		}
 
-		if (input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-		{
-			ChangeState(state, MOVE_LEFT);
-			break;
-		}
-
-		if (input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-		{
-			ChangeState(state, MOVE_RIGHT);
-			break;
-		}
-
-		if (input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
-		{
-			ChangeState(state, GOD_MODE);
-			break;
-		}
-
-		if (isWinning == true)
-		{
-			ChangeState(state, WINNING);
-			break;
-		}
-
-		if (isDying == true)
-		{
-			ChangeState(state, DYING);
-			break;
-		}
-
-		ChangeState(state, IDLE);
-
-		break;
-	}
-
-	case MOVE_LEFT:
-	{
-		if (input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
-		{
-			ChangeState(state, JUMP);
-			break;
-		}
-
-		if (input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-		{
-			ChangeState(state, MOVE_RIGHT);
-			break;
-		}
-
-		if (input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-		{
-			ChangeState(state, MOVE_LEFT);
-			break;
-		}
-		
-		if (input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
-		{
-			ChangeState(state, GOD_MODE);
-			break;
-		}
-
-		if (isWinning == true)
-		{
-			ChangeState(state, WINNING);
-			break;
-		}
-
-
-		if (isDying == true)
-		{
-			ChangeState(state, DYING);
-			break;
-		}
-
-		ChangeState(state, IDLE);
 
 		break;
 	}
 
 	case JUMP:
 	{
-		if (isTouchingGround == true)
+		if (isJumping == false)
 		{
-			if (input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+			if (input->GetKey(SDL_SCANCODE_D) == KEY_DOWN ||
+				input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT ||
+				input->GetKey(SDL_SCANCODE_A) == KEY_DOWN ||
+				input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 			{
-				ChangeState(state, MOVE_RIGHT);
-				break;
-			}
-
-			if (input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-			{
-				ChangeState(state, MOVE_LEFT);
-				break;
-			}
-
-			if (isWinning == true)
-			{
-				ChangeState(state, WINNING);
-				break;
-			}
-
-			if (isDying == true)
-			{
-				ChangeState(state, DYING);
+				ChangeState(state, MOVE);
 				break;
 			}
 
 			ChangeState(state, IDLE);
-		}
-
-		if (input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
-		{
-			ChangeState(state, GOD_MODE);
 			break;
 		}
 
-		if (isWinning == true)
-		{
-			ChangeState(state, WINNING);
-			break;
-		}
-
-		if (isDying == true)
-		{
-			ChangeState(state, DYING);
-			break;
-		}
 
 		break;
 	}
 
 	case GOD_MODE:
 	{
-		if (input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
-		{
-			//playerCollider->type = Collider::ColliderType::PLAYER;
-			
-			ChangeState(state, prevState);
-		}
+		
+
+
 		break;
 	}
 
@@ -359,10 +262,9 @@ void Player::UpdateState()
 
 	case DYING:
 	{
-		if (isDying == false)
-		{
-			ChangeState(state, IDLE);
-		}
+		
+
+
 		break;
 	}
 
@@ -376,197 +278,136 @@ void Player::UpdateLogic(float dt)
 {
 	switch (state)
 	{
+	case APPEAR:
+	{
+		currentAnimation->Update();
+
+
+		break;
+	}
+
 	case IDLE:
 	{
-		velocity.x = 0.0f;
-		velocity.y = 0.0f;
-		acceleration.x = 0.0f;
-		acceleration.y = 0.0f;
-
-		/*while (((position.y + PLAYER_SIZE) > rect.y) && (isTouchingGround == true))
+		if (isFalling == true)
 		{
-			--position.y;
-		}*/
-
-		if (wallCollisionFromLeft == true)
-		{
-			while ((position.x + playerWidth) >= rect.x)
-			{
-				--position.x;
-			}
+			currentAnimation = fallAnim;
+			acceleration.y = GRAVITY;
 		}
-		if (wallCollisionFromRight == true)
+		else
 		{
-			while (position.x <= (rect.x + rect.w))
-			{
-				++position.x;
-			}
+			velocity = { 0.0f, 0.0f };
 		}
 
+
+		// Update idle animation
 		currentAnimation->Update();
+
 
 		break;
 	}
 
-	case MOVE_RIGHT:
+	case MOVE:
 	{
-		/*while (((position.y + PLAYER_SIZE) > rect.y) && (isTouchingGround == true))
+		// Move right control
+		if (input->GetKey(SDL_SCANCODE_D) == KEY_DOWN ||
+			input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		{
-			--position.y;
-		}*/
+			horizontalDirection = 1; // Looks right
 
-		if (wallCollisionFromLeft == false)
+			MovingRightLogic();
+		}
+		// Move left control
+		if (input->GetKey(SDL_SCANCODE_A) == KEY_DOWN ||
+			input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		{
-			velocity.x = PLAYER_SPEED * dt;
+			horizontalDirection = -1; // Looks left
+
+			MovingLeftLogic();
+		}
+
+		// Give velocity to the player
+		if (canMoveHorizontally == true)
+		{
+			velocity.x = PLAYER_SPEED * horizontalDirection * dt;
 		}
 		else
 		{
-			--position.x;
+			velocity.x = 0.0f;
 		}
-
-		if (isTouchingGround == true && input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
+		if (isFalling == true)
 		{
-			velocity.x = velocity.x * 2;
-			walkAnim->speed = 7.5f * dt;
-		}
-
-		walkAnim->speed = 4.0f * dt;
-
-		currentAnimation->Update();
-
-		break;
-	}
-
-	case MOVE_LEFT:
-	{
-		/*while (((position.y + PLAYER_SIZE) > rect.y) && (isTouchingGround == true))
-		{
-			--position.y;
-		}*/
-
-		if (isTouchingWall == false)
-		{
-			velocity.x = -PLAYER_SPEED * dt;
+			currentAnimation = fallAnim;
+			acceleration.y = GRAVITY;
 		}
 		else
 		{
-			velocity.x = 0;
+			velocity.y = 0.0f;
 		}
 
-		if (isTouchingGround == true && input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT)
-		{
-			velocity.x = velocity.x * 2;
-			walkAnim->speed = 7.5f * dt;
-		}
-
-		walkAnim->speed = 4.0f * dt;
-
+		// Update walking animation
 		currentAnimation->Update();
+
 
 		break;
 	}
 
 	case JUMP:
 	{
-		if ((wallCollisionFromLeft == true) && (verticalDirection != 0))
+		// Control the jump
+		Jump(dt);
+
+		// Check for floor
+		if (isFalling == true)
 		{
-			while ((position.x + playerWidth) > rect.x)
+			ControlFloorCollisionWhenFalling();
+		}
+
+		// Move right control
+		if (input->GetKey(SDL_SCANCODE_D) == KEY_DOWN ||
+			input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+		{
+			horizontalDirection = 1; // Looks right
+
+			MovingRightLogic();
+
+			if (canMoveHorizontally == true)
 			{
-				--position.x;
+				velocity.x = PLAYER_SPEED * horizontalDirection * dt;
 			}
-			fallStraight = true;
-		}
-		if ((wallCollisionFromRight == true) && (verticalDirection != 0))
-		{
-			while (position.x < (rect.x + rect.w))
+			else
 			{
-				++position.x;
+				velocity.x = 0.0f;
 			}
-			fallStraight = true;
 		}
+		// Move left control
+		if (input->GetKey(SDL_SCANCODE_A) == KEY_DOWN ||
+			input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+		{
+			horizontalDirection = -1; // Looks left
 
-		if ((input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) && (fallStraight == false))
-		{
-			horizontalDirection = 1;
-			velocity.x = PLAYER_SPEED * dt;
-		}
-		if ((input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT) && (fallStraight == false))
-		{
-			horizontalDirection = 1;
-			velocity.x = PLAYER_SPEED * dt;
-		}
-		if ((input->GetKey(SDL_SCANCODE_A) == KEY_DOWN) && (fallStraight == false))
-		{
-			horizontalDirection = -1;
-			velocity.x = -PLAYER_SPEED * dt;
-		}
-		if ((input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT) && (fallStraight == false))
-		{
-			horizontalDirection = -1;
-			velocity.x = -PLAYER_SPEED * dt;
-		}
-		if ((input->GetKey(SDL_SCANCODE_D) != KEY_DOWN) &&
-			(input->GetKey(SDL_SCANCODE_D) != KEY_REPEAT) &&
-			(input->GetKey(SDL_SCANCODE_A) != KEY_DOWN) &&
-			(input->GetKey(SDL_SCANCODE_A) != KEY_REPEAT))
-		{
-			velocity.x = 0.0f;
-		}
+			MovingLeftLogic();
 
-
-		if ((canDoubleJump == true) && (input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN))
-		{
-			isDoubleJumping = true;
-
-			audioManager->PlayFX(secondJumpFX);
+			if (canMoveHorizontally == true)
+			{
+				velocity.x = PLAYER_SPEED * horizontalDirection * dt;
+			}
+			else
+			{
+				velocity.x = 0.0f;
+			}
 		}
-
-		if (isDying == false)
-		{
-			Jump(dt);
-		}
+		
+		// Update the jump animation
 		currentAnimation->Update();
+
 
 		break;
 	}
 
 	case GOD_MODE:
 	{
-		if ((input->GetKey(SDL_SCANCODE_W) == KEY_DOWN) ||
-			(input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT))
-		{
-			velocity.y = -PLAYER_SPEED * GOD_MODE_MULT * dt;
-		}
-		if ((input->GetKey(SDL_SCANCODE_S) == KEY_DOWN) ||
-			(input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT))
-		{
-			velocity.y = PLAYER_SPEED * GOD_MODE_MULT * dt;
-		}
-		if ((input->GetKey(SDL_SCANCODE_W) != KEY_DOWN) &&
-			(input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT) &&
-			(input->GetKey(SDL_SCANCODE_S) != KEY_DOWN) &&
-			(input->GetKey(SDL_SCANCODE_S) != KEY_REPEAT))
-		{
-			velocity.y = 0 * dt;
-		}
+		
 
-		if ((input->GetKey(SDL_SCANCODE_A) == KEY_DOWN) ||
-			(input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT))
-		{
-			velocity.x = -PLAYER_SPEED * GOD_MODE_MULT * dt;
-		}
-		if ((input->GetKey(SDL_SCANCODE_D) == KEY_DOWN) ||
-			(input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT))
-		{
-			velocity.x = PLAYER_SPEED * GOD_MODE_MULT * dt;
-		}
-		if ((input->GetKey(SDL_SCANCODE_A) != KEY_DOWN) &&
-			(input->GetKey(SDL_SCANCODE_A) != KEY_REPEAT) &&
-			(input->GetKey(SDL_SCANCODE_D) != KEY_DOWN) &&
-			(input->GetKey(SDL_SCANCODE_D) != KEY_REPEAT))
-		{
-			velocity.x = 0 * dt;
-		}
 
 		break;
 	}
@@ -579,21 +420,12 @@ void Player::UpdateLogic(float dt)
 
 	case DYING:
 	{
-		currentAnimation->Update();
-
-		isJumping = false;
-		isTouchingGround = true;
-		
-		if (lifes > 0)
-		{
-			//position = checkpointPos;
-			//cameraCollider->SetPos(checkpointPos.x, checkpointPos.y - TILE_SIZE * 4);
-		}
 
 		
 
 		break;
 	}
+
 
 	default:
 		break;
@@ -604,61 +436,22 @@ void Player::UpdateLogic(float dt)
 	//
 	// Position update
 	//
-	if (isFalling == true)
-	{
-		acceleration.y = GRAVITY;
-		if (isJumping == false)
-		{
-			currentAnimation->Reset();
-			currentAnimation = fallAnim;
-			currentAnimation->Update();
-		}
-	}
-	else
-	{
-		acceleration.y = acceleration.y;
-	}
-	velocity.y = velocity.y + (acceleration.y * dt);
-	if (velocity.y >= MAX_VELOCITY)
-	{
-		velocity.y = MAX_VELOCITY * dt;
-	}
+
 	velocity.x = velocity.x + (acceleration.x * dt);
+	velocity.y = velocity.y + (acceleration.y * dt);
 
 	position.x += velocity.x;
 	position.y += velocity.y;
-
-	/*if (loadPos == true)
-	{
-		LoadPlayerPosition();
-	}*/
 
 
 	//
 	// Flags reset
 	//
-	wallCollisionFromLeft = false;
-	wallCollisionFromRight = false;
-
-	//
-	// Update Collider Position
-	//
-	if (godMode == false)
-	{
-		//playerCollider->SetPos(position.x, position.y);
-	}
+	// TODO: Player possible flags reset
 
 	//
 	// Update Camera Position
 	//
-	/*if (level1->freeCamera == false)
-	{
-		if ((cameraCollider->rect.y) <= map->cameraMaxBottomPosition)
-		{
-			render->camera.y = -(cameraCollider->rect.y - (TILE_SIZE * 5)) * (int)win->GetScale();
-		}
-		render->camera.x = -(cameraCollider->rect.x - (TILE_SIZE * 6)) * (int)win->GetScale();
-	}*/
 	// TODO: Fix camera position
 }
 // Change the State
@@ -666,108 +459,65 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 {
 	switch (newState)
 	{
+	case APPEAR:
+	{
+		currentAnimation = standUpAnim;
+
+
+		break;
+	}
+
 	case IDLE:
 	{
-		wallCollisionFromLeft = false;
-		wallCollisionFromRight = false;
-		verticalDirection = 0;
-		currentAnimation = idleAnim;
-
-		velocity = { 0.0f, 0.0f };
+ 		currentAnimation = idleAnim;
 		acceleration = { 0.0f, 0.0f };
-		break;
-	}
 
-	case MOVE_RIGHT:
-	{
-		currentAnimation = walkAnim;
-		
-		verticalDirection = 0;
-		horizontalDirection = 1;
-
-		isTouchingWall = false;
 
 		break;
 	}
 
-	case MOVE_LEFT:
+	case MOVE:
 	{
 		currentAnimation = walkAnim;
-		verticalDirection = 0;
-		horizontalDirection = -1;
+		acceleration = { 0.0f,0.0f };
 
-		isTouchingWall = false;
 
 		break;
 	}
 
 	case JUMP:
 	{
-		timeInAir = 0.0f;
-
 		currentAnimation = jumpAnim;
 		currentAnimation->Reset();
-		verticalDirection = -1;
-		isJumping = true;
 
-		if (previousState == MOVE_RIGHT)
-		{
-			horizontalDirection = 1;
-		}
-		else if (previousState == MOVE_LEFT)
-		{
-			horizontalDirection = -1;
-		}
-
-		audioManager->PlayFX(jumpFX);
 
 		break;
 	}
 
 	case GOD_MODE:
 	{
-		//playerCollider->type = Collider::ColliderType::GOD_MODE;
+		
 
-		prevState = previousState;
-
-		velocity.x = 0.0f;
-		velocity.y = 0.0f;
-		acceleration.x = 0.0f;
-		acceleration.y = 0.0f;
 
 		break;
 	}
 
 	case WINNING:
 	{
-		currentAnimation = idleAnim;
-		velocity.x = 0.0f;
-		velocity.y = 0.0f;
-		acceleration.x = 0.0f;
-		acceleration.y = 0.0f;
+		
+
 
 		break;
 	}
 
 	case DYING:
 	{
-		currentAnimation->Reset();
-		currentAnimation = deathAnim;
-		currentAnimation->Reset();
 		
-		velocity.x = 0.0f;
-		velocity.y = 0.0f;
-		acceleration.x = 0.0f;
-		acceleration.y = 0.0f;
 
-
-		if (playFX == true)
-		{
-			audioManager->PlayFX(oofFX);
-		}
 
 		break;
 	}
+
 
 	default:
 		break;
@@ -784,18 +534,18 @@ bool Player::Draw()
 	//
 	// Draw Player
 	//
-	if (!destroyed)
+	if (destroyed == false)
 	{
 		SDL_Rect rect = currentAnimation->GetCurrentFrame();
 
 
 		// Player draw when looking right
 		if (horizontalDirection == 1)
-			render->DrawTexture(playerTexture, (int)position.x - 19, (int)position.y - 8, &rect);
+			render->DrawTexture(playerTexture, (int)position.x - 19, (int)position.y - 9, &rect);
 
 		// Player draw when looking left
 		if (horizontalDirection == -1)
-			render->DrawFlippedTexture(playerTexture, (int)position.x - 19, (int)position.y - 8, &rect);
+			render->DrawFlippedTexture(playerTexture, (int)position.x - 19, (int)position.y - 9, &rect);
 	}
 
 
@@ -803,7 +553,10 @@ bool Player::Draw()
 }
 void Player::DrawColliders()
 {
-	render->DrawRectangle(GetRect(), 0, 255, 0, 100);
+	if (destroyed == false)
+	{
+		render->DrawRectangle(GetRect(), 0, 255, 0, 100);
+	}
 }
 
 
@@ -837,70 +590,6 @@ bool Player::CleanUp()
 }
 
 
-// Controls what the player does when it collides with another collider
-/*void Player::OnCollision(Collider* c1, Collider* c2)
-{
-	//
-	// Collision control
-	//
-
-	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::WALL)
-	{
-		ControlWallCollision(c2);
-		rect = c2->rect;
-	}
-	else
-	{
-		wallCollisionFromLeft = false;
-		wallCollisionFromRight = false;
-	}
-
-	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::PLATFORM && c2->type != Collider::ColliderType::CAMERA_WINDOW)
-	{
-		ControlPlatformCollision(c2);
-		rect = c2->rect;
-	}
-
-	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::NEXT_LEVEL)
-	{
-		audioManager->PlayFX(nextLevelFX, 0);
-		isWinning = true;
-	}
-
-	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::DIE)
-	{
-		isDying = true;
-	}
-
-	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::CHECKPOINT)
-	{
-		audioManager->PlayFX(checkpointFX, 0);
-		if (currentScene == LEVEL1)
-		{
-			level1->Cp1Activation();
-		}
-		if (currentScene == LEVEL2)
-		{
-			level2->Cp2Activation();
-		}
-	}
-
-	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::CAMERA_WINDOW)
-	{
-		ControlCameraMovement(c2);
-	}
-	if (c1->type == Collider::ColliderType::GOD_MODE && c2->type == Collider::ColliderType::CAMERA_WINDOW)
-	{
-		ControlCameraMovement(c2);
-	}
-
-	if (c1->type == Collider::ColliderType::PLAYER && c2->type == Collider::ColliderType::POTION) {
-		++lifes;
-		potion->isCollected = true;
-	}
-}*/
-
-
 // Load the player's state
 bool Player::LoadState(pugi::xml_node& playerNode)
 {
@@ -927,22 +616,12 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 		currentAnimation = idleAnim;
 		break;
 
-	case PlayerState::MOVE_RIGHT:
+	case PlayerState::MOVE:
 		if (state == GOD_MODE)
 		{
 			godMode = false;
 		}
-		state = MOVE_RIGHT;
-		currentAnimation->Reset();
-		currentAnimation = walkAnim;
-		break;
-
-	case PlayerState::MOVE_LEFT:
-		if (state == GOD_MODE)
-		{
-			godMode = false;
-		}
-		state = MOVE_LEFT;
+		state = MOVE;
 		currentAnimation->Reset();
 		currentAnimation = walkAnim;
 		break;
@@ -953,7 +632,6 @@ bool Player::LoadState(pugi::xml_node& playerNode)
 			godMode = false;
 		}
 		state = JUMP;
-		isTouchingGround = false;
 		currentAnimation->Reset();
 		if (velocity.y <= 0.0f)
 		{
@@ -1003,20 +681,16 @@ bool Player::SaveState(pugi::xml_node& playerNode) const
 		st = 0;
 		break;
 
-	case MOVE_RIGHT:
+	case MOVE:
 		st = 1;
 		break;
 
-	case MOVE_LEFT:
+	case JUMP:
 		st = 2;
 		break;
 
-	case JUMP:
-		st = 3;
-		break;
-
 	case GOD_MODE:
-		st = 4;
+		st = 3;
 		break;
 	}
 	player.append_attribute("player_state").set_value(st);
@@ -1033,65 +707,48 @@ bool Player::SaveState(pugi::xml_node& playerNode) const
 
 void Player::Jump(float dt)
 {
-	// Allow player to double jump
-	if (isDoubleJumping == true && canDoubleJump == true)
+	if (canJump == true)
 	{
-		currentAnimation->Reset();
-		currentAnimation = jumpAnim;
-		currentAnimation->Reset();
-		timeInAir = 0.0f;
-		accel.y = 0.0;
-		vel.y = 0.0;
-		verticalDirection = -1;
-		isTouchingGround = false;
-		canDoubleJump = false;
-	}
-
-	// Allow player to jump
-	if (isTouchingGround == true) {
-		timeInAir = 0.0f ;
-		accel.y = 0.0;
-		vel.y = 0.0;
-		isTouchingGround = false;
+		isJumping = true;
+		canJump = false;
 		canDoubleJump = true;
+		timeInAir = 0.0f;
+		velocity.y = -2000.0f;
 	}
 
-
-	if (timeInAir < jumpImpulseTime)
+	if (isJumping == true)
 	{
-		vel.y = jumpImpulseVel;
-		if (isDoubleJumping == true)
+		if (timeInAir < jumpImpulseTime)
 		{
-			vel.y = jumpImpulseVel * 0.8f;
+			vel.y = jumpImpulseVel;
+			if (isDoubleJumping == true)
+			{
+				vel.y = jumpImpulseVel * 0.8f;
+			}
+			velocity.y = vel.y * dt;
 		}
-		velocity.y = vel.y * dt;
-	}
-	else if (timeInAir < MAX_AIR_TIME)
-	{
-		accel.y = jumpAccel;
+
+		acceleration.y = GRAVITY;
 	}
 	else
 	{
-		accel.y = GRAVITY;
-
+		velocity.y = 0.0f;
+		acceleration.y = 0.0f;
 	}
+	
 
 	if (velocity.y > 0)
 	{
-		//Falling anim
+		// Change to Falling Animation
 		currentAnimation = fallAnim;
-		verticalDirection = 1;
+		isFalling = true;
 	}
-	
-	
-	timeInAir = timeInAir + 2.5f* dt ;
 
-	
-	acceleration.y = accel.y * dt;
+	timeInAir = timeInAir + dt;
 }
 void Player::ControlWallCollision(Collider* c)
 {
-	if (isJumping == false || isTouchingGround == false)
+	/*if (isJumping == false || isTouchingGround == false)
 	{
 		if (position.x < (c->rect.x + c->rect.w) &&
 			horizontalDirection == -1)
@@ -1100,26 +757,26 @@ void Player::ControlWallCollision(Collider* c)
 			wallCollisionFromRight = true;
 		}
 
-		if ((position.x + playerWidth) > c->rect.x &&
+		if ((position.x + width) > c->rect.x &&
 			horizontalDirection == 1)
 		{
 			velocity.x = 0.0f;
 			wallCollisionFromLeft = true;
 		}
-	}
+	}*/
 }
 void Player::ControlPlatformCollision(Collider* c)
 {
-	fallStraight = false;
+	//fallStraight = false;
 	isJumping = false;
 	isDoubleJumping = false;
 	canDoubleJump = false;
 
-	if ((position.y + playerHeight) > c->rect.y)
+	if ((position.y + height) > c->rect.y)
 	{
 		velocity.y = 0.0f;
-		position.y = (float)c->rect.y - playerHeight;
-		isTouchingGround = true;
+		position.y = (float)c->rect.y - height;
+		//isTouchingGround = true;
 	}
 }
 void Player::ControlCameraMovement(Collider* c)
@@ -1128,17 +785,17 @@ void Player::ControlCameraMovement(Collider* c)
 	{
 		c->rect.x -= c->rect.x - (int)position.x;
 	}
-	if ((position.x + playerWidth) > (c->rect.x + c->rect.w))
+	if ((position.x + width) > (c->rect.x + c->rect.w))
 	{
-		c->rect.x += ((int)position.x + playerWidth) - (c->rect.x + c->rect.w);
+		c->rect.x += ((int)position.x + width) - (c->rect.x + c->rect.w);
 	}
 	if (position.y < c->rect.y)
 	{
 		c->rect.y -= c->rect.y - (int)position.y;
 	}
-	if ((position.y + playerHeight) > (c->rect.y + c->rect.h))
+	if ((position.y + height) > (c->rect.y + c->rect.h))
 	{
-		c->rect.y += ((int)position.y + playerHeight) - (c->rect.y + c->rect.h);
+		c->rect.y += ((int)position.y + height) - (c->rect.y + c->rect.h);
 	}
 
 	//cameraCollider->rect = c->rect;
@@ -1146,36 +803,150 @@ void Player::ControlCameraMovement(Collider* c)
 
 }
 
-void Player::ControlFall(Map* map)
+
+// Player's Rectangle Getter
+SDL_Rect Player::GetRect()
 {
-	// Convert world position to map position
-	iPoint playerTile = map->WorldToMap((int)position.x, (int)position.y + (28 - TILE_SIZE)); // Player's position
+	return { (int)position.x, (int)position.y, width, height };
+}
 
-	iPoint playerTilePerfect = map->MapToWorld(playerTile.x, playerTile.y); // Limits of the current tile
 
-	if (playerTilePerfect.x == (int)position.x || playerTilePerfect.x + TILE_SIZE == (int)position.x + PLAYER_WIDTH) // Checks to see if the player has finished moving in this tile
+
+
+
+void Player::MovingRightLogic()
+{
+	// Check if it's hitting a wall
+	MapLayer* layer;
+	for (ListItem<MapLayer*>* item = map->data.layers.start; item; item = item->next)
 	{
-		MapLayer* layer;
-		for (ListItem<MapLayer*>* item = map->data.layers.start; item; item = item->next)
+		layer = item->data;
+		SString walls = "walls";
+		SString colliders = "colliders";
+		if (layer->name == walls)
 		{
-			layer = item->data;
-			int tileId;
-			tileId = layer->Get(playerTile.x, playerTile.y + 1); // Checks if the next walkable tile is actually void
-			if (tileId == 5)
-			{
-				isFalling = false;
-				isTouchingGround = true;
-			}
-			else
-			{
-				isFalling = true;
-				isTouchingGround = false;
-			}
+			ControlWallCollisionWhenMovingRight(layer);
+		}
+		else if (layer->name == colliders && isFalling == false)
+		{
+			ControlFloorCollisionWhenMovingRight(layer);
+		}
+		else
+		{
+			continue;
+		}
+	}
+}
+void Player::MovingLeftLogic()
+{
+	// Check if it's hitting a wall
+	MapLayer* layer;
+	for (ListItem<MapLayer*>* item = map->data.layers.start; item; item = item->next)
+	{
+		layer = item->data;
+		SString walls = "walls";
+		SString colliders = "colliders";
+		if (layer->name == walls)
+		{
+			ControlWallCollisionWhenMovingLeft(layer);
+		}
+		else if (layer->name == colliders && isFalling == false)
+		{
+			ControlFloorCollisionWhenMovingLeft(layer);
+		}
+		else
+		{
+			continue;
 		}
 	}
 }
 
-SDL_Rect Player::GetRect()
+void Player::ControlWallCollisionWhenMovingRight(MapLayer* layer)
 {
-	return { (int)position.x, (int)position.y, playerWidth, playerHeight };
+	iPoint playerTile = map->WorldToMap((int)position.x, (int)position.y + (PLAYER_HEIGHT - TILE_SIZE));
+	iPoint perfectPlayerTile = map->MapToWorld(playerTile.x, playerTile.y);
+	int tileID = layer->Get(playerTile.x + 1, playerTile.y);
+	if ((tileID == 4) && (position.x >= perfectPlayerTile.x + (TILE_SIZE - PLAYER_WIDTH)))
+	{
+		position.x = perfectPlayerTile.x + (TILE_SIZE - PLAYER_WIDTH);
+		canMoveHorizontally = false;
+	}
+	else
+	{
+		canMoveHorizontally = true;
+	}
+}
+void Player::ControlWallCollisionWhenMovingLeft(MapLayer* layer)
+{
+	iPoint playerTile = map->WorldToMap((int)position.x, (int)position.y + (PLAYER_HEIGHT - TILE_SIZE));
+	iPoint perfectPlayerTile = map->MapToWorld(playerTile.x, playerTile.y);
+	int tileID = layer->Get(playerTile.x - 1, playerTile.y);
+	if (tileID == 4 && position.x < perfectPlayerTile.x + 4)
+	{
+		position.x = perfectPlayerTile.x + 1;
+		canMoveHorizontally = false;
+	}
+	else
+	{
+		canMoveHorizontally = true;
+	}
+}
+void Player::ControlFloorCollisionWhenMovingRight(MapLayer* layer)
+{
+	iPoint playerTile = map->WorldToMap((int)position.x, (int)position.y + (PLAYER_HEIGHT - TILE_SIZE));
+	iPoint perfectPlayerTile = map->MapToWorld(playerTile.x, playerTile.y);
+	int tileID = layer->Get(playerTile.x + 1, playerTile.y + 1);
+	if (tileID == 0 && position.x >= perfectPlayerTile.x + TILE_SIZE - 2)
+	{
+		isFalling = true;
+	}
+	else
+	{
+		isFalling = false;
+	}
+}
+void Player::ControlFloorCollisionWhenMovingLeft(MapLayer* layer)
+{
+	iPoint playerTile = map->WorldToMap((int)position.x, (int)position.y + (PLAYER_HEIGHT - TILE_SIZE));
+	iPoint perfectPlayerTile = map->MapToWorld(playerTile.x, playerTile.y);
+	int tileID = layer->Get(playerTile.x, playerTile.y + 1);
+	if (tileID == 0 && position.x < perfectPlayerTile.x + (TILE_SIZE - PLAYER_WIDTH + 1))
+	{
+		isFalling = true;
+	}
+	else
+	{
+		isFalling = false;
+	}
+}
+void Player::ControlFloorCollisionWhenFalling()
+{
+	MapLayer* layer;
+	for (ListItem<MapLayer*>* item = map->data.layers.start; item; item = item->next)
+	{
+		layer = item->data;
+		SString colliders = "colliders";
+		if (layer->name == colliders)
+		{
+			iPoint playerTile = map->WorldToMap((int)position.x, (int)position.y + (PLAYER_HEIGHT - TILE_SIZE));
+			iPoint perfectNextTile = map->MapToWorld(playerTile.x, playerTile.y + 1);
+			int tileID = layer->Get(playerTile.x, playerTile.y + 1);
+			if (tileID == 1 && position.y + height > perfectNextTile.y - 4)
+			{
+				velocity.y = 0.0f;
+				position.y = perfectNextTile.y - height;
+				canJump = true;
+				isJumping = false;
+				isFalling = false;
+			}
+			else
+			{
+				isJumping = true;
+			}
+		}
+		else
+		{
+			continue;
+		}
+	}
 }

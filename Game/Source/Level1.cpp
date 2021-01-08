@@ -60,7 +60,8 @@ bool Level1::Load()
 	// Load player
 	//
 	player = (Player*)entityManager->CreateEntity(EntityType::PLAYER);
-	player->position = fPoint(TILE_SIZE * 9, TILE_SIZE * 17 - player->playerHeight);
+	player->position = fPoint(TILE_SIZE * 9, TILE_SIZE * 17 - player->height);
+	//player->position = fPoint(TILE_SIZE * 38, TILE_SIZE * 15 - player->height); // debugging position
 
 	//
 	// Add enemies
@@ -68,7 +69,7 @@ bool Level1::Load()
 	enemySkeleton = (EnemySkeleton*)entityManager->CreateEntity(EntityType::ENEMY_SKELETON);
 	enemySkeleton->position = fPoint(TILE_SIZE * 39, TILE_SIZE * 15 - enemySkeleton->height);
 	enemyGhost = (EnemyGhost*)entityManager->CreateEntity(EntityType::ENEMY_GHOST);
-	enemyGhost->position = fPoint(TILE_SIZE * 19, TILE_SIZE * 12 - enemyGhost->height);
+	//enemyGhost->position = fPoint(TILE_SIZE * 19, TILE_SIZE * 12 - enemyGhost->height);
 
 
 	//
@@ -108,7 +109,7 @@ bool Level1::Update(float dt)
 	//
 	if (player->godMode == false)
 	{
-		CollisionLogic();
+		//CollisionLogic();
 	}
 
 	//
@@ -236,7 +237,7 @@ void Level1::CollisionLogic()
 						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
 						if(CheckCollision(colliderRect, player->GetRect()) == true)
 						{
-							player->isTouchingGround = true;
+							//player->isTouchingGround = true;
 						}
 					}
 					if (tileId == 2)
@@ -264,7 +265,7 @@ void Level1::CollisionLogic()
 						colliderRect = { coords.x, coords.y, tileRect.w, tileRect.h };
 						if (CheckCollision(colliderRect, player->GetRect()) == true)
 						{
-							player->isTouchingWall = true;
+							//player->canMoveHorizontally = false;
 						}
 					}
 				}
