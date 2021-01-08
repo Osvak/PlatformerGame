@@ -31,6 +31,12 @@ Player* Player::GetInstance(Input* input, Render* render, Textures* tex, AudioMa
 
 	return instance;
 }
+// Instance reseter
+void Player::ResetInstance()
+{
+	delete instance;
+	instance = nullptr;
+}
 // Constructor
 Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioManager) : Entity(EntityType::PLAYER)
 {
@@ -49,6 +55,7 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	//
 	// Set the lifes to 3
 	//
+	destroyed = false;
 	lifes = 3;
 
 	//
@@ -82,6 +89,14 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	shootAnim->speed = 0.2f;
 	for (int i = 0; i < 10; i++)
 		shootAnim->PushBack({ 50 * i, 185, 50, 37 });
+	crouchAnim->loop = false;
+	crouchAnim->speed = 0.2f;
+	for (int i = 0; i < 4; i++)
+		crouchAnim->PushBack({ 50 * i, 259, 50, 37 });
+	godAnim->loop = true;
+	godAnim->speed = 0.2f;
+	for (int i = 0; i < 4; i++)
+		godAnim->PushBack({ 50 * i, 296, 50, 37 });
 
 	//
 	// Load Player textures files
@@ -178,6 +193,16 @@ void Player::UpdateState()
 			ChangeState(state, DYING);
 			break;
 		}
+		if (isWinning == true)
+		{
+			ChangeState(state, WINNING);
+			break;
+		}
+		if (godMode == true)
+		{
+			ChangeState(state, GOD_MODE);
+			break;
+		}
 
 
 		break;
@@ -203,6 +228,16 @@ void Player::UpdateState()
 		if (isDying == true || isHit == true)
 		{
 			ChangeState(state, DYING);
+			break;
+		}
+		if (isWinning == true)
+		{
+			ChangeState(state, WINNING);
+			break;
+		}
+		if (godMode == true)
+		{
+			ChangeState(state, GOD_MODE);
 			break;
 		}
 
@@ -232,6 +267,16 @@ void Player::UpdateState()
 			ChangeState(state, DYING);
 			break;
 		}
+		if (isWinning == true)
+		{
+			ChangeState(state, WINNING);
+			break;
+		}
+		if (godMode == true)
+		{
+			ChangeState(state, GOD_MODE);
+			break;
+		}
 
 
 		break;
@@ -239,15 +284,23 @@ void Player::UpdateState()
 
 	case GOD_MODE:
 	{
-		
-
+		if (godMode == false)
+		{
+			ChangeState(state, IDLE);
+			break;
+		}
 
 		break;
 	}
 
 	case WINNING:
 	{
-		// Nothing to do here
+		if (isWinning == false)
+		{
+			ChangeState(state, IDLE);
+		}
+
+
 		break;
 	}
 
@@ -282,6 +335,7 @@ void Player::UpdateLogic(float dt)
 
 	case IDLE:
 	{
+		ControlFloorCollisionWhenFalling();
 		if (isFalling == true)
 		{
 			currentAnimation = fallAnim;
@@ -289,6 +343,7 @@ void Player::UpdateLogic(float dt)
 		}
 		else
 		{
+			currentAnimation = idleAnim;
 			velocity = { 0.0f, 0.0f };
 		}
 
@@ -414,7 +469,44 @@ void Player::UpdateLogic(float dt)
 
 	case GOD_MODE:
 	{
-		
+		// Move freely when player is in god mode
+		if (input->GetKey(SDL_SCANCODE_W) == KEY_DOWN ||
+			input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
+		{
+			velocity.y = -3* PLAYER_SPEED * dt;
+		}
+		if (input->GetKey(SDL_SCANCODE_S) == KEY_DOWN ||
+			input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
+		{
+			velocity.y = 3 * PLAYER_SPEED * dt;
+		}
+		if (input->GetKey(SDL_SCANCODE_W) != KEY_DOWN &&
+			input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT &&
+			input->GetKey(SDL_SCANCODE_S) != KEY_DOWN &&
+			input->GetKey(SDL_SCANCODE_S) != KEY_REPEAT)
+		{
+			velocity.y = 0.0f;
+		}
+		if (input->GetKey(SDL_SCANCODE_D) == KEY_DOWN ||
+			input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+		{
+			velocity.x = 3 * PLAYER_SPEED * dt;
+		}
+		if (input->GetKey(SDL_SCANCODE_A) == KEY_DOWN ||
+			input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+		{
+			velocity.x = -3 * PLAYER_SPEED * dt;
+		}
+		if (input->GetKey(SDL_SCANCODE_D) != KEY_DOWN &&
+			input->GetKey(SDL_SCANCODE_D) != KEY_REPEAT &&
+			input->GetKey(SDL_SCANCODE_A) != KEY_DOWN &&
+			input->GetKey(SDL_SCANCODE_A) != KEY_REPEAT)
+		{
+			velocity.x = 0.0f;
+		}
+
+		// Update God Animation
+		currentAnimation->Update();
 
 
 		break;
@@ -422,7 +514,16 @@ void Player::UpdateLogic(float dt)
 
 	case WINNING:
 	{
-		// Nothing to do here
+		currentAnimation->Update();
+
+		if (currentAnimation->HasFinished() == true)
+		{
+			isWinning = false;
+
+			changeLevel = true;
+		}
+
+
 		break;
 	}
 
@@ -508,13 +609,17 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		currentAnimation = jumpAnim;
 		currentAnimation->Reset();
 
+		audioManager->PlayFX(jumpFX);
+
 
 		break;
 	}
 
 	case GOD_MODE:
 	{
-		
+		currentAnimation = godAnim;
+		acceleration = { 0.0f, 0.0f };
+		velocity = { 0.0f, 0.0f };
 
 
 		break;
@@ -522,7 +627,16 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 
 	case WINNING:
 	{
-		
+		currentAnimation = crouchAnim;
+		currentAnimation->Reset();
+		acceleration = { 0.0f, 0.0f };
+		velocity = { 0.0f, 0.0f };
+
+		if (playFX == true)
+		{
+			audioManager->PlayFX(nextLevelFX);
+			playFX = false;
+		}
 
 
 		break;
@@ -643,6 +757,7 @@ void Player::LoadPlayer()
 	isJumping = false;
 	isDoubleJumping = false;
 	isWinning = false;
+	changeLevel = false;
 	isDying = false;
 	isHit = false;
 	playFX = true;
@@ -773,8 +888,11 @@ void Player::Jump(float dt)
 
 	if (isDoubleJumping == true && canDoubleJump == true)
 	{
+		audioManager->PlayFX(secondJumpFX);
+
 		currentAnimation = jumpAnim;
 		currentAnimation->Reset();
+
 		canDoubleJump = false;
 		timeInAir = 0.0f;
 	}
@@ -930,7 +1048,8 @@ void Player::ControlFloorCollisionWhenFalling()
 			iPoint rightSideTile = map->WorldToMap((int)position.x + width, (int)position.y + (PLAYER_HEIGHT - TILE_SIZE));
 			int tileID = layer->Get(playerTile.x, playerTile.y + 1);
 			int rightTileID = layer->Get(rightSideTile.x, rightSideTile.y + 1);
-			if ((tileID == 1 && position.y + height > perfectNextTile.y - 5) || (playerTile != rightSideTile && rightTileID == 1))
+			if ((tileID == 1 && position.y + height > perfectNextTile.y - 5) ||
+				(playerTile != rightSideTile && rightTileID == 1))
 			{
 				velocity.y = 0.0f;
 				position.y = perfectNextTile.y - height;

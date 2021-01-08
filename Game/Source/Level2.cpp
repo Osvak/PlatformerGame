@@ -58,6 +58,8 @@ bool Level2::Load()
 	//
 	player = (Player*)entityManager->CreateEntity(EntityType::PLAYER);
 	player->position = fPoint(TILE_SIZE * 10, TILE_SIZE * 32 - player->height);
+	player->savedPos = player->position;
+	player->LoadPlayer();
 
 	//
 	// Add enemies
@@ -115,17 +117,14 @@ bool Level2::Update(float dt)
 	//
 	// Scene change
 	//
-	if (player->isWinning == true)
+	if (player->changeLevel == true)
 	{
 		TransitionToScene(SceneType::WIN);
 	}
 
-	if (player->isDying == true)
+	if (player->destroyed == true)
 	{
-		if (player->lifes <= 0)
-		{
-			TransitionToScene(SceneType::LOSE);
-		}
+		TransitionToScene(SceneType::LOSE);
 	}
 
 
@@ -178,6 +177,7 @@ bool Level2::Unload()
 	if (player->destroyed == true)
 	{
 		entityManager->DestroyEntity(player);
+		player->ResetInstance();
 	}
 
 	active = false;

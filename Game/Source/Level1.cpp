@@ -59,9 +59,13 @@ bool Level1::Load()
 	// Add player
 	//
 	player = (Player*)entityManager->CreateEntity(EntityType::PLAYER);
+	if (player->destroyed == true)
+	{
+		player->LoadPlayer();
+	}
 	player->position = fPoint(TILE_SIZE * 9, TILE_SIZE * 17 - player->height);
-	player->savedPos = player->position;
 	//player->position = fPoint(TILE_SIZE * 38, TILE_SIZE * 15 - player->height); // debugging position
+	player->savedPos = player->position;
 
 	//
 	// Add enemies
@@ -120,12 +124,17 @@ bool Level1::Update(float dt)
 	{
 		map->drawColliders = !map->drawColliders;
 	}
+	if (input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+	{
+		player->godMode = !player->godMode;
+	}
 
 	//
 	// Scene change
 	//
-	if (player->isWinning == true)
+	if (player->changeLevel == true)
 	{
+		player->changeLevel = false;
 		TransitionToScene(SceneType::LEVEL2);
 	}
 	if (player->destroyed == true)
@@ -188,6 +197,7 @@ bool Level1::Unload()
 	if (player->destroyed == true)
 	{
 		entityManager->DestroyEntity(player);
+		player->ResetInstance();
 	}
 
 	active = false;

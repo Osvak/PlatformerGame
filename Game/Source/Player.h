@@ -51,8 +51,7 @@ public:
 
 	// Get unique isntance of the class
 	static Player* GetInstance(Input* input, Render* render, Textures* tex, AudioManager* audioManager);
-	// Destructor
-	virtual ~Player();
+	static void ResetInstance();
 
 
 	// Called at the middle of the application loop
@@ -76,6 +75,8 @@ public:
 	bool CleanUp();
 
 
+	// Loads the player's variables and flags
+	void LoadPlayer();
 	bool LoadState(pugi::xml_node&) override;
 	bool SaveState(pugi::xml_node&) const override;
 
@@ -93,14 +94,14 @@ private:
 	static Player* instance;
 	// Private Constructor
 	Player(Input* input, Render* render, Textures* tex, AudioManager* audioManager);
+	// Private Destructor
+	virtual ~Player();
 	// Declare the copy constructor and the assignment operator as 
 	// private (or delete them explicitly) to prevent cloning your object
 	Player(const Player&);
 	Player& operator=(const Player&);
 	// ----------------------------- //
 
-	// Loads the player's variables and flags
-	void LoadPlayer();
 
 	// ---- PLAYER MOVEMENT METHODS ----- //
 	void Jump(float dt);
@@ -131,6 +132,7 @@ public:
 	bool godMode = false;
 	// Flag to know if the player is skipping level
 	bool isWinning = false;
+	bool changeLevel = false;
 	// Flag to know if the player is dying
 	bool isDying = false;
 	// Flag to know if the player has been hit
@@ -187,6 +189,8 @@ private:
 	Animation* jumpAnim = new Animation();
 	Animation* fallAnim = new Animation();
 	Animation* deathAnim = new Animation();
+	Animation* crouchAnim = new Animation();
+	Animation* godAnim = new Animation();
 	//--------------------------- //
 
 
