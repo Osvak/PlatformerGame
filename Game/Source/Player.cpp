@@ -57,7 +57,7 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	// Animation pushbacks
 	//
 	standUpAnim->loop = false;
-	standUpAnim->speed = 0.1f;
+	standUpAnim->speed = 0.15f;
 	for (int i = 0; i < 7; i++)
 		standUpAnim->PushBack({ 50 * i, 222, 50, 37 });
 	idleAnim->loop = true;
@@ -221,6 +221,10 @@ void Player::UpdateState()
 			break;
 		}
 
+		if (isDying == true || isHit == true)
+		{
+			//ChangeState(state, DYING);
+		}
 
 		break;
 	}
@@ -457,16 +461,11 @@ void Player::UpdateLogic(float dt)
 	position.x += velocity.x;
 	position.y += velocity.y;
 
-
-	//
-	// Flags reset
-	//
-	// TODO: Player possible flags reset
-
 	//
 	// Update Camera Position
 	//
 	// TODO: Fix camera position
+
 }
 // Change the State
 void Player::ChangeState(PlayerState previousState, PlayerState newState)
@@ -903,7 +902,7 @@ void Player::ControlWallCollisionWhenMovingLeft(MapLayer* layer)
 	iPoint playerTile = map->WorldToMap((int)position.x, (int)position.y + (PLAYER_HEIGHT - TILE_SIZE));
 	iPoint perfectPlayerTile = map->MapToWorld(playerTile.x, playerTile.y);
 	int tileID = layer->Get(playerTile.x - 1, playerTile.y);
-	if (tileID == 4 && position.x < perfectPlayerTile.x + 4)
+	if (tileID == 4 && position.x <= perfectPlayerTile.x + 4)
 	{
 		position.x = perfectPlayerTile.x + 1;
 		canMoveHorizontally = false;
@@ -918,7 +917,7 @@ void Player::ControlFloorCollisionWhenMovingRight(MapLayer* layer)
 	iPoint playerTile = map->WorldToMap((int)position.x, (int)position.y + (PLAYER_HEIGHT - TILE_SIZE));
 	iPoint perfectPlayerTile = map->MapToWorld(playerTile.x, playerTile.y);
 	int tileID = layer->Get(playerTile.x + 1, playerTile.y + 1);
-	if (tileID == 0 && position.x >= perfectPlayerTile.x + TILE_SIZE - 2)
+	if (tileID == 0 && position.x >= perfectPlayerTile.x + TILE_SIZE - 3)
 	{
 		isFalling = true;
 	}
@@ -932,7 +931,7 @@ void Player::ControlFloorCollisionWhenMovingLeft(MapLayer* layer)
 	iPoint playerTile = map->WorldToMap((int)position.x, (int)position.y + (PLAYER_HEIGHT - TILE_SIZE));
 	iPoint perfectPlayerTile = map->MapToWorld(playerTile.x, playerTile.y);
 	int tileID = layer->Get(playerTile.x, playerTile.y + 1);
-	if (tileID == 0 && position.x < perfectPlayerTile.x + (TILE_SIZE - PLAYER_WIDTH + 1))
+	if (tileID == 0 && position.x < perfectPlayerTile.x + 5)
 	{
 		isFalling = true;
 	}
@@ -952,8 +951,10 @@ void Player::ControlFloorCollisionWhenFalling()
 		{
 			iPoint playerTile = map->WorldToMap((int)position.x, (int)position.y + (PLAYER_HEIGHT - TILE_SIZE));
 			iPoint perfectNextTile = map->MapToWorld(playerTile.x, playerTile.y + 1);
+			iPoint rightSideTile = map->WorldToMap((int)position.x + width, (int)position.y + (PLAYER_HEIGHT - TILE_SIZE));
 			int tileID = layer->Get(playerTile.x, playerTile.y + 1);
-			if (tileID == 1 && position.y + height > perfectNextTile.y - 4)
+			int rightTileID = layer->Get(rightSideTile.x, rightSideTile.y + 1);
+			if ((tileID == 1 && position.y + height > perfectNextTile.y - 5) || (playerTile != rightSideTile && rightTileID == 1))
 			{
 				velocity.y = 0.0f;
 				position.y = perfectNextTile.y - height;
