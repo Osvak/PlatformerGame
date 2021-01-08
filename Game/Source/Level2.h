@@ -5,6 +5,8 @@
 
 #include "Map.h"
 #include "Player.h"
+#include "EnemySkeleton.h"
+#include "EnemyGhost.h"
 
 
 
@@ -13,13 +15,14 @@ class Render;
 class Textures;
 class AudioManager;
 class EntityManager;
+class PathFinding;
 
 class Level2 : public Scene
 {
 public:
 
 	// Constructor
-	Level2(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
+	Level2(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, PathFinding* pathfinding);
 	// Destructor
 	virtual ~Level2();
 
@@ -37,6 +40,9 @@ public:
 	// Called before quitting
 	bool Unload();
 
+
+	void CollisionLogic();
+
 private:
 
 	Map* map = nullptr;
@@ -47,6 +53,7 @@ private:
 	Textures* tex;
 	AudioManager* audioManager;
 	EntityManager* entityManager;
+	PathFinding* pathFinding;
 };
 
 #endif // __LEVEL2_H__

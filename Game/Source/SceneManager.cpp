@@ -188,7 +188,7 @@ bool SceneManager::Update(float dt)
 		case SceneType::LOGO: next = new SceneLogo(input, render, tex, audioManager); break;
 		case SceneType::TITLE: next = new SceneTitle(input, render, tex, audioManager, entityManager); break;
 		case SceneType::LEVEL1: next = new Level1(input, render, tex, audioManager, entityManager, pathFinding); break;
-		case SceneType::LEVEL2: next = new Level2(input, render, tex, audioManager, entityManager); break;
+		case SceneType::LEVEL2: next = new Level2(input, render, tex, audioManager, entityManager, pathFinding); break;
 		case SceneType::WIN: next = new SceneWin(input, render, tex, audioManager, entityManager); break;
 		case SceneType::LOSE: next = new SceneLose(input, render, tex, audioManager, entityManager); break;
 		default: break;

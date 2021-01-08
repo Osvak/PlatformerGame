@@ -27,7 +27,6 @@ Level1::Level1(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	this->entityManager = entityManager;
 	this->pathFinding = pathFinding;
 }
-
 // Destructor
 Level1::~Level1()
 {
@@ -57,7 +56,7 @@ bool Level1::Load()
 	}
 
 	//
-	// Load player
+	// Add player
 	//
 	player = (Player*)entityManager->CreateEntity(EntityType::PLAYER);
 	player->position = fPoint(TILE_SIZE * 9, TILE_SIZE * 17 - player->height);
@@ -102,15 +101,16 @@ bool Level1::Update(float dt)
 	enemySkeleton->Update(dt, player, map);
 	enemyGhost->Update(dt, player, map);
 
-		
 
 	//
-	// Collision check between player and map
+	// Collision check between player and map (death and win)
 	//
 	if (player->godMode == false)
 	{
-		//CollisionLogic();
+		CollisionLogic();
 	}
+
+
 
 	//
 	// Scene controls
@@ -205,9 +205,6 @@ inline bool CheckCollision(SDL_Rect rec1, SDL_Rect rec2)
 		(rec1.y < (rec2.y + rec2.h) && (rec1.y + rec1.h) > rec2.y)) return true;
 	else return false;
 }
-
-
-
 void Level1::CollisionLogic()
 {
 	MapLayer* layer;
@@ -215,7 +212,6 @@ void Level1::CollisionLogic()
 	iPoint coords;
 	SDL_Rect tileRect;
 	SDL_Rect colliderRect;
-	fPoint tempPlayerPosition = player->position;
 	
 	for (ListItem<MapLayer*>* item = map->data.layers.start; item; item = item->next)
 	{
@@ -239,7 +235,6 @@ void Level1::CollisionLogic()
 						if (CheckCollision(colliderRect, player->GetRect()) == true)
 						{
 							player->isDying = true;
-							--player->lifes;
 						}
 					}
 					if (tileId == 3)
