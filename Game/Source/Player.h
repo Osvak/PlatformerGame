@@ -15,7 +15,6 @@
 #define GRAVITY 10.0f
 #define MAX_VELOCITY 50.0f
 #define MAX_AIR_TIME 2.0f
-#define ARROW_SPEED 120.0f
 
 
 
@@ -146,8 +145,6 @@ public:
 	bool destroyed = false;
 	// Flag to know if we can move the camera or not
 	bool freeCamera = false;
-	// Flag to know if the player is shooting
-	bool isShooting = false;
 	// ------------------------ //
 
 private:
@@ -215,27 +212,6 @@ private:
 	// Sound effects flags
 	bool playFX = true;
 	// ------------------------- //
-
-private:
-	// ----- ARROW VARIABLES ----- //
-	fPoint arrowPos = { 0.0f,0.0f };
-	fPoint arrowVel = { 0.0f,0.0f };
-	SDL_Rect arrowRect = { 0,0,0,0 };
-	int arrowCooldown = 0;
-	// The arrow spritesheet loaded into an SDL_Texture
-	SDL_Texture* arrowTexture = nullptr;
-
-	// --------------------------- //
-
-public:
-	// ----- ARROW FLAGS ----- //
-	bool arrowReady = true;
-	int arrowHorizontalDirection = 1;
-
-	// ----------------------- //
-
-	// Arrow size getter
-	SDL_Rect GetArrowRect();
 
 public:
 

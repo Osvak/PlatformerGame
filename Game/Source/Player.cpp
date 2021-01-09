@@ -103,11 +103,6 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	//
 	playerTexture = tex->Load("Assets/Textures/Player/player_spritesheet.png");
 
-	//
-	// Load Arrow texture file
-	//
-	arrowTexture = tex->Load("Assets/Textures/Player/arrow_sprite.png");
-
 
 	//
 	// Load Player FX files
@@ -564,80 +559,6 @@ void Player::UpdateLogic(float dt)
 		break;
 	}
 
-	//
-	// Arrow Controller
-	//
-	if (input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
-	{
-		if (arrowReady == true)
-		{
-			if (horizontalDirection == 1) arrowHorizontalDirection = 1;
-			if (horizontalDirection == -1) arrowHorizontalDirection = -1;
-			arrowCooldown = 2;
-			arrowPos = { position.x, position.y + 8 };
-			isShooting = true;
-
-			currentAnimation = shootAnim;
-			currentAnimation->Update();
-
-			/*if (playFX == true)
-			{
-				audioManager->PlayFX(arrowFX);
-				playFX = false;
-			}*/
-
-		}
-
-		if (arrowCooldown >= 2)
-		{
-			arrowReady = false;
-		}
-	}
-
-	if (isShooting == true)
-	{
-		arrowRect = { (int)arrowPos.x, (int)arrowPos.y, 17, 5 };
-
-		if (arrowHorizontalDirection == 1)
-		{
-			arrowPos.x += ARROW_SPEED * dt;
-		}
-
-		if (arrowHorizontalDirection == -1)
-		{
-			arrowPos.x -= ARROW_SPEED * dt;
-		}
-
-		if (currentAnimation->HasFinished() == true)
-		{
-			currentAnimation->Reset();
-			currentAnimation = idleAnim;
-			currentAnimation->Update();
-		}
-		if (arrowHorizontalDirection == 1)
-		{
-			if (arrowPos.x >= position.x + 250.0f) arrowCooldown = 5;
-		}
-		if (arrowHorizontalDirection == -1)
-		{
-			if (arrowPos.x <= position.x + 250.0f) arrowCooldown = 5;
-		}
-	}
-
-	if (arrowCooldown >= 5)
-	{
-		arrowRect = { 0,0,0,0 };
-		isShooting = false;
-	}
-
-	while (isShooting == false && arrowReady == false)
-	{
-		arrowCooldown = arrowCooldown + 1;
-		if (arrowCooldown >= 10)
-		{
-			arrowReady = true;
-		}
-	}
 
 
 	//
@@ -659,6 +580,7 @@ void Player::UpdateLogic(float dt)
 	{
 		CameraMovement();
 	}
+
 }
 // Control what happens when the State is changed
 void Player::ChangeState(PlayerState previousState, PlayerState newState)
@@ -775,17 +697,6 @@ bool Player::Draw()
 			render->DrawFlippedTexture(playerTexture, (int)position.x - 19, (int)position.y - 9, &rect);
 	}
 
-	if (isShooting == true)
-	{
-		// Arrow draw when looking right
-		if (arrowHorizontalDirection == 1)
-			render->DrawTexture(arrowTexture, (int)arrowPos.x, (int)arrowPos.y);
-
-		// Arrow draw when looking left
-		if (arrowHorizontalDirection == -1)
-			render->DrawFlippedTexture(arrowTexture, (int)arrowPos.x, (int)arrowPos.y);
-	}
-
 
 	return true;
 }
@@ -795,11 +706,6 @@ void Player::DrawColliders()
 	{
 		render->DrawRectangle(GetRect(), 0, 255, 0, 100);
 		render->DrawRectangle(cameraRect, 240, 257, 209, 50);
-	}
-
-	if (isShooting == true)
-	{
-		render->DrawRectangle(GetArrowRect(), 155, 155, 0, 100);
 	}
 }
 
@@ -821,7 +727,6 @@ bool Player::CleanUp()
 	deathAnim = nullptr;
 
 	tex->UnLoad(playerTexture);
-	tex->UnLoad(arrowTexture);
 
 	audioManager->UnloadFX(jumpFX);
 	audioManager->UnloadFX(secondJumpFX);
@@ -877,9 +782,6 @@ void Player::LoadPlayer()
 	isHit = false;
 	playFX = true;
 	destroyed = false;
-	isShooting = false;
-	arrowReady = true;
-	arrowHorizontalDirection = 1;
 	state = APPEAR;
 
 	//
@@ -997,14 +899,6 @@ SDL_Rect Player::GetRect()
 {
 	return { (int)position.x, (int)position.y, width, height };
 }
-
-// Arrow's Rectangle Getter
-SDL_Rect Player::GetArrowRect()
-{
-	return { (int)arrowPos.x, (int)arrowPos.y, 17, 5 };
-}
-
-
 
 
 
