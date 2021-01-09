@@ -13,6 +13,7 @@ enum class EntityType
     ENEMY_GHOST,
     ITEM_POTION,
     ITEM_COIN,
+    CHECKPOINT,
     MAP,
     UNKNOWN
 };
