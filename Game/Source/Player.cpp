@@ -308,6 +308,7 @@ void Player::UpdateState()
 		if (isWinning == false)
 		{
 			ChangeState(state, IDLE);
+			break;
 		}
 
 
@@ -316,9 +317,10 @@ void Player::UpdateState()
 
 	case DYING:
 	{
-		if (isDying == false)
+		if (isDying == false && isHit == false)
 		{
 			ChangeState(state, IDLE);
+			break;
 		}
 
 

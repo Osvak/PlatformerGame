@@ -83,6 +83,7 @@ EnemySkeleton::EnemySkeleton(Render* render, Textures* tex, AudioManager* audioM
 	//
 	width = SKELETON_WIDTH;
 	height = SKELETON_HEIGHT;
+	playFX = true;
 }
 // Destructor
 EnemySkeleton::~EnemySkeleton()
@@ -122,12 +123,14 @@ void EnemySkeleton::UpdateState()
 		if (Radar(player->position, visionRange) == true)
 		{
 			ChangeState(state, SKELETON_MOVE);
+			break;
 		}
 		if (horizontalDirection == -1)
 		{
 			if (Radar(player->position, attackRange + 4) == true)
 			{
 				ChangeState(state, SKELETON_ATTACK);
+				break;
 			}
 		}
 		else
@@ -135,6 +138,7 @@ void EnemySkeleton::UpdateState()
 			if (Radar(player->position, attackRange) == true)
 			{
 				ChangeState(state, SKELETON_ATTACK);
+				break;
 			}
 		}
 
@@ -142,6 +146,7 @@ void EnemySkeleton::UpdateState()
 		if (isHit == true)
 		{
 			ChangeState(state, SKELETON_DYING);
+			break;
 		}
 
 
@@ -153,12 +158,14 @@ void EnemySkeleton::UpdateState()
 		if (Radar(player->position, visionRange) == false)
 		{
 			ChangeState(state, SKELETON_IDLE);
+			break;
 		}
 		if (horizontalDirection == -1)
 		{
 			if (Radar(player->position, attackRange + 4) == true)
 			{
 				ChangeState(state, SKELETON_ATTACK);
+				break;
 			}
 		}
 		else
@@ -166,6 +173,7 @@ void EnemySkeleton::UpdateState()
 			if (Radar(player->position, attackRange) == true)
 			{
 				ChangeState(state, SKELETON_ATTACK);
+				break;
 			}
 		}
 
@@ -173,6 +181,7 @@ void EnemySkeleton::UpdateState()
 		if (isHit == true)
 		{
 			ChangeState(state, SKELETON_DYING);
+			break;
 		}
 
 
@@ -184,12 +193,14 @@ void EnemySkeleton::UpdateState()
 		if ((Radar(player->position, attackRange) == false) && (attackFinished == true))
 		{
 				ChangeState(state, SKELETON_IDLE);
+				break;
 		}
 
 		// Check for skeleton death
 		if (isHit == true)
 		{
 			ChangeState(state, SKELETON_DYING);
+			break;
 		}
 
 

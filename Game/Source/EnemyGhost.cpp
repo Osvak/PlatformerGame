@@ -129,12 +129,20 @@ void EnemyGhost::UpdateState()
 		if (Radar(player->position, visionRange) == true)
 		{
 			ChangeState(state, GHOST_AGGRO);
+			break;
 		}
 
 		// Check for ghost death
 		if (isHit == true)
 		{
 			ChangeState(state, GHOST_DYING);
+			break;
+		}
+
+		if (player->isHit == true)
+		{
+			ChangeState(state, GHOST_STOP);
+			break;
 		}
 
 
@@ -148,10 +156,12 @@ void EnemyGhost::UpdateState()
 			if (Radar(player->position, visionRange) == true)
 			{
 				ChangeState(state, GHOST_ATTACK);
+				break;
 			}
 			else
 			{
 				ChangeState(state, GHOST_DEAGGRO);
+				break;
 			}
 		}
 
@@ -159,6 +169,13 @@ void EnemyGhost::UpdateState()
 		if (isHit == true)
 		{
 			ChangeState(state, GHOST_DYING);
+			break;
+		}
+
+		if (player->isHit == true)
+		{
+			ChangeState(state, GHOST_STOP);
+			break;
 		}
 
 
@@ -170,12 +187,20 @@ void EnemyGhost::UpdateState()
 		if (Radar(player->position, visionRange) == false)
 		{
 			ChangeState(state, GHOST_DEAGGRO);
+			break;
 		}
 
 		// Check for ghost death
 		if (isHit == true)
 		{
 			ChangeState(state, GHOST_DYING);
+			break;
+		}
+
+		if (player->isHit == true)
+		{
+			ChangeState(state, GHOST_STOP);
+			break;
 		}
 
 
@@ -189,10 +214,12 @@ void EnemyGhost::UpdateState()
 			if (Radar(player->position, visionRange) == true)
 			{
 				ChangeState(state, GHOST_AGGRO);
+				break;
 			}
 			else
 			{
 				ChangeState(state, GHOST_IDLE);
+				break;
 			}
 		}
 
@@ -200,6 +227,13 @@ void EnemyGhost::UpdateState()
 		if (isHit == true)
 		{
 			ChangeState(state, GHOST_DYING);
+			break;
+		}
+
+		if (player->isHit == true)
+		{
+			ChangeState(state, GHOST_STOP);
+			break;
 		}
 
 
@@ -212,6 +246,15 @@ void EnemyGhost::UpdateState()
 
 
 		break;
+	}
+
+	case GHOST_STOP:
+	{
+		if (player->isHit == false)
+		{
+			ChangeState(state, GHOST_IDLE);
+			break;
+		}
 	}
 
 	default:
@@ -351,6 +394,14 @@ void EnemyGhost::UpdateLogic(float dt)
 		break;
 	}
 
+	case GHOST_STOP:
+	{
+		currentAnimation->Update();
+
+
+		break;
+	}
+
 	default:
 		break;
 	}
@@ -417,6 +468,14 @@ void EnemyGhost::ChangeState(GhostState previousState, GhostState newState)
 	{
 		currentAnimation = deathAnim;
 		currentAnimation->Reset();
+
+		break;
+	}
+
+	case GHOST_STOP:
+	{
+		currentAnimation = idleAnim;
+
 
 		break;
 	}
