@@ -3,10 +3,6 @@
 
 #include "Scene.h"
 
-#include "Map.h"
-//#include "GuiButton.h"
-
-
 #define BLINK_TIME 35
 
 
@@ -16,6 +12,11 @@ class Render;
 class Textures;
 class AudioManager;
 class EntityManager;
+
+class Map;
+class GUIButton;
+
+struct SDL_Texture;
 
 class SceneTitle : public Scene
 {
@@ -42,10 +43,14 @@ public:
 
 private:
 
-	SDL_Texture* pressEnterToStart = nullptr;
-	int blinkCont = 0;
-
 	Map* map = nullptr;
+
+	SDL_Texture* GUITexture = nullptr;
+	GUIButton* buttonPlay = nullptr;
+	GUIButton* buttonContinue = nullptr;
+	GUIButton* buttonSettings = nullptr;
+	GUIButton* buttonCredits = nullptr;
+	GUIButton* buttonExit = nullptr;
 
 	Input* input;
 	Render* render;

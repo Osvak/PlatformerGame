@@ -70,7 +70,8 @@ bool SceneLose::Update(float dt)
 	//
 	if (input->GetKey(SDL_SCANCODE_KP_ENTER) == KEY_DOWN ||
 		input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN ||
-		input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN)
+		input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN ||
+		input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 	{
 		TransitionToScene(SceneType::TITLE);
 		return false;

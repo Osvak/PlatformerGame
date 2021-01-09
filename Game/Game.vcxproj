@@ -94,6 +94,7 @@
     <ClCompile Include="Source\EnemyGhost.cpp" />
     <ClCompile Include="Source\EnemySkeleton.cpp" />
     <ClCompile Include="Source\EntityManager.cpp" />
+    <ClCompile Include="Source\GUIButton.cpp" />
     <ClCompile Include="Source\ItemCoin.cpp" />
     <ClCompile Include="Source\ItemPotion.cpp" />
     <ClCompile Include="Source\Main.cpp" />
@@ -121,6 +122,8 @@
     <ClInclude Include="Source\EnemySkeleton.h" />
     <ClInclude Include="Source\Entity.h" />
     <ClInclude Include="Source\EntityManager.h" />
+    <ClInclude Include="Source\GUIButton.h" />
+    <ClInclude Include="Source\GUIControl.h" />
     <ClInclude Include="Source\ItemCoin.h" />
     <ClInclude Include="Source\ItemPotion.h" />
     <ClInclude Include="Source\Map.h" />

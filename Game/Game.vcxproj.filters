@@ -78,6 +78,9 @@
     <ClCompile Include="Source\Checkpoint.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Source\GUIButton.cpp">
+      <Filter>GUIControls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\App.h" />
@@ -188,6 +191,12 @@
     </ClInclude>
     <ClInclude Include="Source\Checkpoint.h">
       <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUIControl.h">
+      <Filter>GUIControls</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUIButton.h">
+      <Filter>GUIControls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

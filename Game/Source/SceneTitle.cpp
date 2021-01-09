@@ -6,6 +6,9 @@
 #include "AudioManager.h"
 #include "EntityManager.h"
 
+#include "Map.h"
+#include "GUIButton.h"
+
 #include "Log.h"
 
 
@@ -39,10 +42,22 @@ bool SceneTitle::Load()
 	//
 	// Load map
 	//
-	Textures* p = tex;
 	map = (Map*)entityManager->CreateEntity(EntityType::MAP);
 	map->Load("scene_title.tmx");
-	pressEnterToStart = tex->Load("Assets/Maps/press_enter_to_start.png");
+
+	//
+	// Load buttons
+	//
+	buttonPlay = new GUIButton(1, { 56, 128, 100, 24 }, "PLAY");
+	buttonPlay->SetObserver(this);
+	buttonContinue = new GUIButton(2, { 166, 128, 100, 24 }, "CONTINUE");
+	buttonContinue->SetObserver(this);
+	buttonSettings = new GUIButton(3, { 276, 128, 100, 24 }, "SETTINGS");
+	buttonSettings->SetObserver(this);
+	buttonCredits = new GUIButton(4, { 111, 176, 100, 24 }, "CREDITS");
+	buttonCredits->SetObserver(this);
+	buttonExit = new GUIButton(5, { 221, 176, 100, 24 }, "EXIT");
+	buttonExit->SetObserver(this);
 
 	//
 	// Load music
@@ -73,6 +88,15 @@ bool SceneTitle::Update(float dt)
 		return false;
 	}
 
+	//
+	// Buttons update
+	//
+	buttonPlay->Update(input, dt);
+	buttonContinue->Update(input, dt);
+	buttonSettings->Update(input, dt);
+	buttonCredits->Update(input, dt);
+	buttonExit->Update(input, dt);
+
 
 	return false;
 }
@@ -85,16 +109,14 @@ bool SceneTitle::Draw()
 	//
 	map->Draw();
 
-	++blinkCont;
-	if (blinkCont >= BLINK_TIME)
-	{
-		render->DrawTexture(pressEnterToStart, 9 * TILE_SIZE, 11 * TILE_SIZE);
-
-		if (blinkCont == (2 * BLINK_TIME))
-		{
-			blinkCont = 0;
-		}
-	}
+	//
+	// Draw buttons
+	//
+	buttonPlay->Draw(render);
+	buttonContinue->Draw(render);
+	buttonSettings->Draw(render);
+	buttonCredits->Draw(render);
+	buttonExit->Draw(render);
 
 	return false;
 }
@@ -110,8 +132,19 @@ bool SceneTitle::Unload()
 
 	LOG("Unloading Title Sreen");
 
-	tex->UnLoad(pressEnterToStart);
+	tex->UnLoad(GUITexture);
 	entityManager->DestroyEntity(map);
+
+	delete buttonPlay;
+	buttonPlay = nullptr;
+	delete buttonContinue;
+	buttonContinue = nullptr;
+	delete buttonSettings;
+	buttonSettings = nullptr;
+	delete buttonCredits;
+	buttonCredits = nullptr;
+	delete buttonExit;
+	buttonExit = nullptr;
 
 
 	active = false;

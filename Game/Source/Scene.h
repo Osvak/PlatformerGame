@@ -13,7 +13,7 @@ class Textures;
 class AudioManager;
 class EntityManager;
 
-//class GuiControl;
+class GUIControl;
 
 enum class SceneType
 {
@@ -61,10 +61,10 @@ public:
 
 
 	// Define multiple Gui Event methods
-	/*virtual bool OnGuiMouseClickEvent(GuiControl* control)
+	virtual bool OnGUIMouseClickEvent(GUIControl* control)
 	{
 		return true;
-	}*/
+	}
 
 
 public:
