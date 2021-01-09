@@ -48,6 +48,10 @@ public:
 
 private:
 
+	void CheckpointLogic();
+
+private:
+
 	Map* map = nullptr;
 	Player* player = nullptr;
 	EnemySkeleton* enemySkeleton = nullptr;

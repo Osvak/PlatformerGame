@@ -125,16 +125,7 @@ bool Level2::Update(float dt)
 	//
 	checkpoint1->Update(dt, player);
 	checkpoint2->Update(dt, player);
-	if (checkpoint1->isActivated == true)
-	{
-		player->savedPos.x = checkpoint1->position.x;
-		player->savedPos.y = checkpoint1->position.y - 8;
-	}
-	if (checkpoint2->isActivated == true)
-	{
-		player->savedPos.x = checkpoint2->position.x;
-		player->savedPos.y = checkpoint2->position.y - 8;
-	}
+	CheckpointLogic();
 
 	//
 	// Enemies Update
@@ -309,6 +300,65 @@ void Level2::CollisionLogic()
 					}
 				}
 			}
+		}
+	}
+}
+
+void Level2::CheckpointLogic()
+{
+	// Control when a checkpoint is activated
+	if (checkpoint1->isActivated == true)
+	{
+		player->savedPos.x = checkpoint1->position.x;
+		player->savedPos.y = checkpoint1->position.y - 8;
+	}
+	if (checkpoint2->isActivated == true)
+	{
+		player->savedPos.x = checkpoint2->position.x;
+		player->savedPos.y = checkpoint2->position.y - 8;
+	}
+
+	// Control when you start travelling
+	if (checkpoint1->playerNearby == true && input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+	{
+		checkpoint1->travelling = !checkpoint1->travelling;
+		checkpoint2->travelling = !checkpoint2->travelling;
+		player->isTravelling = !player->isTravelling;
+		player->position.x = checkpoint1->position.x;
+		player->position.y = checkpoint1->position.y - 8;
+	}
+	if (checkpoint2->playerNearby == true && input->GetKey(SDL_SCANCODE_E) == KEY_DOWN)
+	{
+		checkpoint1->travelling = !checkpoint1->travelling;
+		checkpoint2->travelling = !checkpoint2->travelling;
+		player->isTravelling = !player->isTravelling;
+		player->position.x = checkpoint2->position.x;
+		player->position.y = checkpoint2->position.y - 8;
+	}
+
+	// Control travelling mechanic
+	if (player->position.x == checkpoint1->position.x && player->isTravelling && checkpoint2->isActivated)
+	{
+		if (input->GetKey(SDL_SCANCODE_D) == KEY_DOWN ||
+			input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
+		{
+			player->position.x = checkpoint2->position.x;
+			player->position.y = checkpoint2->position.y - 8;
+			player->cameraRect.x = (int)player->position.x;
+			player->cameraRect.y = (int)player->position.y - (TILE_SIZE * 3);
+			player->cameraPosition.x = player->position.x;
+			player->cameraPosition.y = player->position.y + player->height - player->cameraRect.h;
+		}
+	}
+	if (player->position.x == checkpoint2->position.x && player->isTravelling && checkpoint2->isActivated)
+	{
+		if (input->GetKey(SDL_SCANCODE_A) == KEY_DOWN ||
+			input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
+		{
+			player->position.x = checkpoint1->position.x;
+			player->position.y = checkpoint1->position.y - 8;
+			player->cameraRect.x = (int)player->position.x;
+			player->cameraRect.y = (int)player->position.y - (TILE_SIZE * 3);
 		}
 	}
 }

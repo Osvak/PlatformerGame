@@ -39,6 +39,7 @@ enum PlayerState
 	WINNING,
 	DYING,
 	APPEAR,
+	TRAVELLING,
 	
 	MAX
 };
@@ -128,6 +129,9 @@ public:
 	fPoint savedPos = { 0.0f,0.0f };
 	// Lifes variable
 	int lifes = 3;
+	// Camera
+	fPoint cameraPosition = { 0.0f, 0.0f };
+	SDL_Rect cameraRect = { 0,0,0,0 };
 	// ---------------------------- //
 
 
@@ -145,6 +149,8 @@ public:
 	bool destroyed = false;
 	// Flag to know if we can move the camera or not
 	bool freeCamera = false;
+	// Flag to know whether the player is travelling between checkpoints or not
+	bool isTravelling = false;
 	// ------------------------ //
 
 private:
@@ -172,9 +178,6 @@ private:
 	SDL_Rect rect;
 	mutable int st = 0; // current state for save/load
 	mutable int sc = 0; // current scene for save/load
-	// Camera
-	fPoint cameraPosition = { 0.0f, 0.0f };
-	SDL_Rect cameraRect = { 0,0,0,0 };
 	// ---------------------------- //
 
 

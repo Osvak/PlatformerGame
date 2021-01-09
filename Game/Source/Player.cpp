@@ -188,6 +188,11 @@ void Player::UpdateState()
 			break;
 		}
 
+		if (isTravelling == true)
+		{
+			ChangeState(state, TRAVELLING);
+			break;
+		}
 		if (isDying == true || isHit == true)
 		{
 			ChangeState(state, DYING);
@@ -225,6 +230,11 @@ void Player::UpdateState()
 			break;
 		}
 
+		if (isTravelling == true)
+		{
+			ChangeState(state, TRAVELLING);
+			break;
+		}
 		if (isDying == true || isHit == true)
 		{
 			ChangeState(state, DYING);
@@ -315,6 +325,17 @@ void Player::UpdateState()
 		break;
 	}
 
+	case TRAVELLING:
+	{
+		if (isTravelling == false)
+		{
+			ChangeState(state, IDLE);
+			break;
+		}
+
+
+		break;
+	}
 	
 	default:
 		break;
@@ -667,6 +688,13 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		break;
 	}
 
+	case TRAVELLING:
+	{
+
+
+
+		break;
+	}
 
 	default:
 		break;
@@ -683,7 +711,7 @@ bool Player::Draw()
 	//
 	// Draw Player
 	//
-	if (destroyed == false)
+	if (destroyed == false && isTravelling == false)
 	{
 		SDL_Rect rect = currentAnimation->GetCurrentFrame();
 
@@ -782,6 +810,8 @@ void Player::LoadPlayer()
 	isHit = false;
 	playFX = true;
 	destroyed = false;
+	godMode = false;
+	isTravelling = false;
 	state = APPEAR;
 
 	//

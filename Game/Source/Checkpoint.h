@@ -60,12 +60,15 @@ public:
 
 	// ----- CHECKPOINT FLAGS ----- //
 	bool isActivated = false;
+	bool playerNearby = false;
+	bool travelling = false;
 	// ------------------------ //
 
 private:
 
 	// ----- CHECKPOINT VARIABLES ----- //
 	SDL_Texture* checkpointTexture = nullptr;
+	SDL_Texture* checkpointMenus = nullptr;
 	// ---------------------------- //
 
 

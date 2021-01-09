@@ -44,6 +44,7 @@ Checkpoint::Checkpoint(Render* render, Textures* tex, AudioManager* audioManager
 	// Load Checkpoint texture file
 	//
 	checkpointTexture = tex->Load("Assets/Textures/Items/checkpoint_spritesheet.png");
+	checkpointMenus = tex->Load("Assets/Textures/Items/checkpoint_menu_sprites.png");
 
 	//
 	// Load Checkpoint FX file
@@ -89,6 +90,15 @@ bool Checkpoint::Update(float dt, Player* player)
 	else
 	{
 		currentAnimation->Update();
+
+		if (CheckCollision({ (int)position.x - width, (int)position.y - height, 3 * width, 3 * height }, player->GetRect()))
+		{
+			playerNearby = true;
+		}
+		else
+		{
+			playerNearby = false;
+		}
 	}
 
 	
@@ -105,6 +115,16 @@ bool Checkpoint::Draw()
 	SDL_Rect rect = currentAnimation->GetCurrentFrame();
 	render->DrawTexture(checkpointTexture, (int)position.x, (int)position.y, &rect);
 
+	if (playerNearby == true && travelling == false)
+	{
+		SDL_Rect rect = { 0, 0, 40, 32 };
+		render->DrawTexture(checkpointMenus, (int)position.x - 14, (int)position.y - 14, &rect);
+	}
+	if (travelling == true)
+	{
+		SDL_Rect rect = { 40, 0, 40, 32 };
+		render->DrawTexture(checkpointMenus, (int)position.x - 14, (int)position.y - 14, &rect);
+	}
 
 	return true;
 }
@@ -125,6 +145,7 @@ bool Checkpoint::CleanUp()
 	LOG("Unloading Checkpoint");
 
 	tex->UnLoad(checkpointTexture);
+	tex->UnLoad(checkpointMenus);
 
 	audioManager->UnloadFX(checkpointFX);
 
