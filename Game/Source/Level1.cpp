@@ -64,6 +64,14 @@ bool Level1::Load()
 	}
 
 	//
+	// Add Checkpoints
+	//
+	checkpoint1 = (Checkpoint*)entityManager->CreateEntity(EntityType::CHECKPOINT);
+	checkpoint1->position = fPoint(TILE_SIZE * 17, TILE_SIZE * 16 - checkpoint1->height);
+	checkpoint2 = (Checkpoint*)entityManager->CreateEntity(EntityType::CHECKPOINT);
+	checkpoint2->position = fPoint(TILE_SIZE * 55, TILE_SIZE * 11 - checkpoint2->height);
+
+	//
 	// Add player
 	//
 	player = (Player*)entityManager->CreateEntity(EntityType::PLAYER);
@@ -89,6 +97,7 @@ bool Level1::Load()
 	itemCoin = (ItemCoin*)entityManager->CreateEntity(EntityType::ITEM_COIN);
 	itemCoin->position = fPoint(TILE_SIZE * 17, TILE_SIZE * 15 - itemCoin->height);
 
+	
 
 	//
 	// Load music
@@ -123,10 +132,27 @@ bool Level1::Update(float dt)
 	}
 
 	//
+	// Checkpoint Update
+	//
+	checkpoint1->Update(dt, player);
+	checkpoint2->Update(dt, player);
+	if (checkpoint1->isActivated == true)
+	{
+		player->savedPos.x = checkpoint1->position.x;
+		player->savedPos.y = checkpoint1->position.y - 8;
+	}
+	if (checkpoint2->isActivated == true)
+	{
+		player->savedPos.x = checkpoint2->position.x;
+		player->savedPos.y = checkpoint2->position.y - 8;
+	}
+
+	//
 	// Enemies Update
 	//
 	enemySkeleton->Update(dt, player, map);
 	enemyGhost->Update(dt, player, map);
+	
 
 	//
 	// Items Update
@@ -183,6 +209,18 @@ bool Level1::Draw()
 	map->Draw();
 
 	//
+	// Draw Checkpoints
+	//
+	checkpoint1->Draw();
+	checkpoint2->Draw();
+
+	//
+	// Draw Items
+	//
+	itemPotion->Draw();
+	itemCoin->Draw();
+
+	//
 	// Draw Player
 	//
 	player->Draw();
@@ -193,11 +231,7 @@ bool Level1::Draw()
 	enemySkeleton->Draw();
 	enemyGhost->Draw();
 
-	//
-	// Draw Items
-	//
-	itemPotion->Draw();
-	itemCoin->Draw();
+	
 
 	//
 	// Draw Colliders
@@ -205,6 +239,8 @@ bool Level1::Draw()
 	if (map->drawColliders == true)
 	{
 		map->DrawColliders();
+		checkpoint1->DrawColliders();
+		checkpoint2->DrawColliders();
 		player->DrawColliders();
 		enemySkeleton->DrawColliders();
 		enemyGhost->DrawColliders();
@@ -228,6 +264,8 @@ bool Level1::Unload()
 	LOG("Unloading Level 1");
 
 	entityManager->DestroyEntity(map);
+	entityManager->DestroyEntity(checkpoint1);
+	entityManager->DestroyEntity(checkpoint2);
 	entityManager->DestroyEntity(enemySkeleton);
 	entityManager->DestroyEntity(enemyGhost);
 	entityManager->DestroyEntity(itemPotion);

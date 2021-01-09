@@ -6,6 +6,7 @@
 #include "EnemyGhost.h"
 #include "ItemPotion.h"
 #include "ItemCoin.h"
+#include "Checkpoint.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -125,7 +126,11 @@ Entity* EntityManager::CreateEntity(EntityType type)
 	case EntityType::ITEM_COIN:
 		ret = new ItemCoin(render, tex, audioManager);
 		break;
-	default: break;
+	case EntityType::CHECKPOINT:
+		ret = new Checkpoint(render, tex, audioManager);
+		break;
+	default:
+		break;
 	}
 
 	// Created entities are added to the list

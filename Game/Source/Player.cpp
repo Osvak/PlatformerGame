@@ -387,6 +387,8 @@ void Player::UpdateLogic(float dt)
 		{
 			currentAnimation = fallAnim;
 			acceleration.y = GRAVITY;
+			// TODO: FIX ERROR WHEN FALLING AFTER MOVING
+			//ControlFloorCollisionWhenFalling();
 		}
 		else
 		{
@@ -410,12 +412,6 @@ void Player::UpdateLogic(float dt)
 
 		// Control the jump
 		Jump(dt);
-
-		// Check for floor
-		if (isFalling == true)
-		{
-			ControlFloorCollisionWhenFalling();
-		}
 
 		// Move right control
 		if (input->GetKey(SDL_SCANCODE_D) == KEY_DOWN ||
@@ -450,6 +446,12 @@ void Player::UpdateLogic(float dt)
 			{
 				velocity.x = 0.0f;
 			}
+		}
+
+		// Check for floor
+		if (isFalling == true)
+		{
+			ControlFloorCollisionWhenFalling();
 		}
 
 		if (input->GetKey(SDL_SCANCODE_D) != KEY_DOWN &&

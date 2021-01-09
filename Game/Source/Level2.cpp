@@ -7,9 +7,18 @@
 #include "EntityManager.h"
 #include "Pathfinding.h"
 
+#include "Map.h"
+#include "Player.h"
+#include "EnemySkeleton.h"
+#include "EnemyGhost.h"
+#include "ItemPotion.h"
+#include "ItemCoin.h"
+#include "Checkpoint.h"
+
 #include "Log.h"
 
 #include "SDL/include/SDL_rect.h"
+
 
 // Constructor
 Level2::Level2(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, PathFinding* pathFinding)
@@ -52,6 +61,14 @@ bool Level2::Load()
 
 		RELEASE_ARRAY(data);
 	}
+
+	//
+	// Add Checkpoints
+	//
+	checkpoint1 = (Checkpoint*)entityManager->CreateEntity(EntityType::CHECKPOINT);
+	checkpoint1->position = fPoint(TILE_SIZE * 38, TILE_SIZE * 28 - checkpoint1->height);
+	checkpoint2 = (Checkpoint*)entityManager->CreateEntity(EntityType::CHECKPOINT);
+	checkpoint2->position = fPoint(TILE_SIZE * 43, TILE_SIZE * 17 - checkpoint2->height);
 
 	//
 	// Add player
@@ -101,6 +118,22 @@ bool Level2::Update(float dt)
 	else
 	{
 		player->freeCamera = false;
+	}
+
+	//
+	// Checkpoint Update
+	//
+	checkpoint1->Update(dt, player);
+	checkpoint2->Update(dt, player);
+	if (checkpoint1->isActivated == true)
+	{
+		player->savedPos.x = checkpoint1->position.x;
+		player->savedPos.y = checkpoint1->position.y - 8;
+	}
+	if (checkpoint2->isActivated == true)
+	{
+		player->savedPos.x = checkpoint2->position.x;
+		player->savedPos.y = checkpoint2->position.y - 8;
 	}
 
 	//
@@ -162,6 +195,17 @@ bool Level2::Draw()
 	map->Draw();
 
 	//
+	// Draw Checkpoints
+	//
+	checkpoint1->Draw();
+	checkpoint2->Draw();
+
+	//
+	// Draw Items
+	//
+	itemPotion->Draw();
+
+	//
 	// Draw Player
 	//
 	player->Draw();
@@ -171,10 +215,7 @@ bool Level2::Draw()
 	//
 
 
-	//
-	// Draw Items
-	//
-	itemPotion->Draw();
+	
 
 	//
 	// Draw Colliders
@@ -182,6 +223,8 @@ bool Level2::Draw()
 	if (map->drawColliders == true)
 	{
 		map->DrawColliders();
+		checkpoint1->DrawColliders();
+		checkpoint2->DrawColliders();
 		player->DrawColliders();
 		itemPotion->DrawColliders();
 	}
@@ -202,6 +245,8 @@ bool Level2::Unload()
 	LOG("Unloading Level 2");
 
 	entityManager->DestroyEntity(map);
+	entityManager->DestroyEntity(checkpoint1);
+	entityManager->DestroyEntity(checkpoint2);
 	entityManager->DestroyEntity(itemPotion);
 	if (player->destroyed == true)
 	{

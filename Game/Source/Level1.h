@@ -11,6 +11,7 @@ class Textures;
 class AudioManager;
 class EntityManager;
 class PathFinding;
+
 class Map;
 class Player;
 class EnemySkeleton;
@@ -53,7 +54,8 @@ private:
 	EnemyGhost* enemyGhost = nullptr;
 	ItemPotion* itemPotion = nullptr;
 	ItemCoin* itemCoin = nullptr;
-	Checkpoint* checkpoint = nullptr;
+	Checkpoint* checkpoint1 = nullptr;
+	Checkpoint* checkpoint2 = nullptr;
 
 	Input* input;
 	Render* render;

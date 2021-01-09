@@ -3,12 +3,6 @@
 
 #include "Scene.h"
 
-#include "Map.h"
-#include "Player.h"
-#include "EnemySkeleton.h"
-#include "EnemyGhost.h"
-#include "ItemPotion.h"
-
 
 
 class Input;
@@ -17,6 +11,14 @@ class Textures;
 class AudioManager;
 class EntityManager;
 class PathFinding;
+
+class Map;
+class Player;
+class EnemySkeleton;
+class EnemyGhost;
+class ItemPotion;
+class ItemCoin;
+class Checkpoint;
 
 class Level2 : public Scene
 {
@@ -49,6 +51,8 @@ private:
 	Map* map = nullptr;
 	Player* player = nullptr;
 	ItemPotion* itemPotion = nullptr;
+	Checkpoint* checkpoint1 = nullptr;
+	Checkpoint* checkpoint2 = nullptr;
 
 	Input* input;
 	Render* render;
