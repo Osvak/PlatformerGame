@@ -1100,19 +1100,19 @@ void Player::CameraColliderMovement()
 {
 	if (position.x < cameraPosition.x)
 	{
-		cameraPosition.x += velocity.x;
+		cameraPosition.x = position.x;
 	}
 	if (position.x + width > cameraPosition.x + cameraRect.w)
 	{
-		cameraPosition.x += velocity.x;
+		cameraPosition.x = position.x + width - cameraRect.w;
 	}
 	if (position.y < cameraPosition.y)
 	{
-		cameraPosition.y += velocity.y;
+		cameraPosition.y = position.y;
 	}
 	if (position.y + height > cameraPosition.y + cameraRect.h)
 	{
-		cameraPosition.y += velocity.y;
+		cameraPosition.y = position.y + height - cameraRect.h;
 	}
 
 	cameraRect.x = (int)cameraPosition.x;

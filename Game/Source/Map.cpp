@@ -359,7 +359,7 @@ bool Map::Load(const char* filename)
 	cameraMaxBottomPosition = (data.height * TILE_SIZE) - (TILE_SIZE * 12);
 	cameraMaxTopPosition = 0 + TILE_SIZE * 5;
 	cameraMaxLeftPosition = 0 + TILE_SIZE * 5;
-	cameraMaxRightPosition = (data.width * TILE_SIZE) - (TILE_SIZE * 20);
+	cameraMaxRightPosition = (data.width * TILE_SIZE) - (TILE_SIZE * 35);
 
 
 	if (ret == true)

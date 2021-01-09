@@ -7,6 +7,14 @@
 #include "EntityManager.h"
 #include "Pathfinding.h"
 
+#include "Map.h"
+#include "Player.h"
+#include "EnemySkeleton.h"
+#include "EnemyGhost.h"
+#include "ItemPotion.h"
+#include "ItemCoin.h"
+#include "Checkpoint.h"
+
 #include "Log.h"
 
 #include "SDL/include/SDL_rect.h"
