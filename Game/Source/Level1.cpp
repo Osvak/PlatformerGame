@@ -78,6 +78,8 @@ bool Level1::Load()
 	//
 	itemPotion = (ItemPotion*)entityManager->CreateEntity(EntityType::ITEM_POTION);
 	itemPotion->position = fPoint(TILE_SIZE * 65 + 4, TILE_SIZE * 13 - itemPotion->height);
+	itemCoin = (ItemCoin*)entityManager->CreateEntity(EntityType::ITEM_COIN);
+	itemCoin->position = fPoint(TILE_SIZE * 17, TILE_SIZE * 15 - itemCoin->height);
 
 
 	//
@@ -122,6 +124,7 @@ bool Level1::Update(float dt)
 	// Items Update
 	//
 	itemPotion->Update(dt, player);
+	itemCoin->Update(dt, player);
 
 
 	//
@@ -186,6 +189,7 @@ bool Level1::Draw()
 	// Draw Items
 	//
 	itemPotion->Draw();
+	itemCoin->Draw();
 
 	//
 	// Draw Colliders
@@ -197,6 +201,7 @@ bool Level1::Draw()
 		enemySkeleton->DrawColliders();
 		enemyGhost->DrawColliders();
 		itemPotion->DrawColliders();
+		itemCoin->DrawColliders();
 	}
 
 
@@ -218,6 +223,7 @@ bool Level1::Unload()
 	entityManager->DestroyEntity(enemySkeleton);
 	entityManager->DestroyEntity(enemyGhost);
 	entityManager->DestroyEntity(itemPotion);
+	entityManager->DestroyEntity(itemCoin);
 	if (player->destroyed == true)
 	{
 		entityManager->DestroyEntity(player);

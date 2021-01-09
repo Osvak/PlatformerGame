@@ -8,6 +8,7 @@
 #include "EnemySkeleton.h"
 #include "EnemyGhost.h"
 #include "ItemPotion.h"
+#include "ItemCoin.h"
 
 
 
@@ -51,6 +52,7 @@ private:
 	EnemySkeleton* enemySkeleton = nullptr;
 	EnemyGhost* enemyGhost = nullptr;
 	ItemPotion* itemPotion = nullptr;
+	ItemCoin* itemCoin = nullptr;
 
 	Input* input;
 	Render* render;

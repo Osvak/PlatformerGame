@@ -104,7 +104,7 @@ bool ItemPotion::CleanUp()
 		return true;
 	}
 
-	LOG("Unloading Ghost");
+	LOG("Unloading Potion");
 
 	tex->UnLoad(potionTexture);
 

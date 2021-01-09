@@ -5,6 +5,7 @@
 #include "EnemySkeleton.h"
 #include "EnemyGhost.h"
 #include "ItemPotion.h"
+#include "ItemCoin.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -120,6 +121,9 @@ Entity* EntityManager::CreateEntity(EntityType type)
 		break;
 	case EntityType::ITEM_POTION:
 		ret = new ItemPotion(render, tex, audioManager);
+		break;
+	case EntityType::ITEM_COIN:
+		ret = new ItemCoin(render, tex, audioManager);
 		break;
 	default: break;
 	}

@@ -12,6 +12,7 @@ enum class EntityType
     ENEMY_SKELETON,
     ENEMY_GHOST,
     ITEM_POTION,
+    ITEM_COIN,
     MAP,
     UNKNOWN
 };
