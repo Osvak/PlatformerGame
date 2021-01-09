@@ -107,6 +107,7 @@ private:
 	bool canWalk = true;
 	bool aggroFinished = false;
 	bool deaggroFinished = false;
+	bool playFX = true;
 	// -------------------------- //
 
 

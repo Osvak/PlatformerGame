@@ -67,6 +67,14 @@ EnemyGhost::EnemyGhost(Render* render, Textures* tex, AudioManager* audioManager
 	ghostTexture = tex->Load("Assets/Textures/Enemies/ghost_spritesheet.png");
 
 	//
+	// Load Ghost FX files
+	//
+	attackFX = audioManager->LoadFX("Assets/Audio/FX/ghost_attack.wav");
+	audioManager->musicList.Add(&attackFX);
+	deathFX = audioManager->LoadFX("Assets/Audio/FX/ghost_death.wav");
+	audioManager->musicList.Add(&deathFX);
+
+	//
 	// Set current animation
 	//
 	currentAnimation = idleAnim;
@@ -81,6 +89,7 @@ EnemyGhost::EnemyGhost(Render* render, Textures* tex, AudioManager* audioManager
 	//
 	width = GHOST_WIDTH;
 	height = GHOST_HEIGHT;
+	playFX = true;
 }
 // Destructor
 EnemyGhost::~EnemyGhost()
@@ -284,6 +293,11 @@ void EnemyGhost::UpdateLogic(float dt)
 		// Check if the ghost hits the player
 		if (CheckCollision(player->GetRect(), GetRect()) == true)
 		{
+			if (playFX == true)
+			{
+				audioManager->PlayFX(attackFX);
+				playFX = false;
+			}
 			player->isHit = true;
 		}
 
@@ -314,6 +328,12 @@ void EnemyGhost::UpdateLogic(float dt)
 
 	case GHOST_DYING:
 	{
+		if (playFX == true)
+		{
+			audioManager->PlayFX(deathFX);
+			playFX = false;
+		}
+
 		// Make sure the ghost doesn't move when it's dying
 		velocity = { 0,0 };
 
@@ -323,6 +343,7 @@ void EnemyGhost::UpdateLogic(float dt)
 		// If the death Animation has finished, destroy the ghost
 		if (currentAnimation->HasFinished() == true)
 		{
+			playFX = true;
 			isDestroyed = true;
 		}
 

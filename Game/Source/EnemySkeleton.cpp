@@ -400,7 +400,7 @@ void EnemySkeleton::UpdateLogic(float dt)
 
 	case SKELETON_DYING:
 	{
-		if (playFX = true)
+		if (playFX == true)
 		{
 			audioManager->PlayFX(deathFX);
 			playFX = false;
