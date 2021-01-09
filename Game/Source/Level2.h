@@ -54,6 +54,11 @@ private:
 
 	Map* map = nullptr;
 	Player* player = nullptr;
+	EnemySkeleton* enemySkeleton1 = nullptr;
+	EnemySkeleton* enemySkeleton2 = nullptr;
+	EnemySkeleton* enemySkeleton3 = nullptr;
+	EnemyGhost* enemyGhost1 = nullptr;
+	EnemyGhost* enemyGhost2 = nullptr;
 	ItemPotion* itemPotion = nullptr;
 	Checkpoint* checkpoint1 = nullptr;
 	Checkpoint* checkpoint2 = nullptr;

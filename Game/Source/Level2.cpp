@@ -80,7 +80,16 @@ bool Level2::Load()
 	//
 	// Add enemies
 	//
-	// TODO: Level 2 enemies
+	enemySkeleton1 = (EnemySkeleton*)entityManager->CreateEntity(EntityType::ENEMY_SKELETON);
+	enemySkeleton1->position = fPoint(TILE_SIZE * 21, TILE_SIZE * 32 - enemySkeleton1->height);
+	enemySkeleton2 = (EnemySkeleton*)entityManager->CreateEntity(EntityType::ENEMY_SKELETON);
+	enemySkeleton2->position = fPoint(TILE_SIZE * 55, TILE_SIZE * 28 - enemySkeleton2->height);
+	enemySkeleton3 = (EnemySkeleton*)entityManager->CreateEntity(EntityType::ENEMY_SKELETON);
+	enemySkeleton3->position = fPoint(TILE_SIZE * 43, TILE_SIZE * 17 - enemySkeleton3->height);
+	enemyGhost1 = (EnemyGhost*)entityManager->CreateEntity(EntityType::ENEMY_GHOST);
+	enemyGhost1->position = fPoint(TILE_SIZE * 35, TILE_SIZE * 13 - enemyGhost1->height);
+	enemyGhost2 = (EnemyGhost*)entityManager->CreateEntity(EntityType::ENEMY_GHOST);
+	enemyGhost2->position = fPoint(TILE_SIZE * 23, TILE_SIZE * 10 - enemyGhost2->height);
 
 	//
 	// Add items
@@ -130,7 +139,11 @@ bool Level2::Update(float dt)
 	//
 	// Enemies Update
 	//
-	// TODO: Level 2 enemies
+	enemySkeleton1->Update(dt, player, map);
+	enemySkeleton2->Update(dt, player, map);
+	enemySkeleton3->Update(dt, player, map);
+	enemyGhost1->Update(dt, player, map);
+	enemyGhost2->Update(dt, player, map);
 
 	//
 	// Items Update
@@ -204,8 +217,11 @@ bool Level2::Draw()
 	//
 	// Draw Enemies
 	//
-
-
+	enemySkeleton1->Draw();
+	enemySkeleton2->Draw();
+	enemySkeleton3->Draw();
+	enemyGhost1->Draw();
+	enemyGhost2->Draw();
 	
 
 	//
@@ -217,6 +233,11 @@ bool Level2::Draw()
 		checkpoint1->DrawColliders();
 		checkpoint2->DrawColliders();
 		player->DrawColliders();
+		enemySkeleton1->DrawColliders();
+		enemySkeleton2->DrawColliders();
+		enemySkeleton3->DrawColliders();
+		enemyGhost1->DrawColliders();
+		enemyGhost2->DrawColliders();
 		itemPotion->DrawColliders();
 	}
 
@@ -238,6 +259,11 @@ bool Level2::Unload()
 	entityManager->DestroyEntity(map);
 	entityManager->DestroyEntity(checkpoint1);
 	entityManager->DestroyEntity(checkpoint2);
+	entityManager->DestroyEntity(enemySkeleton1);
+	entityManager->DestroyEntity(enemySkeleton2);
+	entityManager->DestroyEntity(enemySkeleton3);
+	entityManager->DestroyEntity(enemyGhost1);
+	entityManager->DestroyEntity(enemyGhost2);
 	entityManager->DestroyEntity(itemPotion);
 	if (player->destroyed == true)
 	{
