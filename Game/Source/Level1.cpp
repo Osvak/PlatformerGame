@@ -64,7 +64,6 @@ bool Level1::Load()
 	{
 		player->LoadPlayer();
 	}
-	
 
 	//
 	// Add enemies
@@ -73,6 +72,12 @@ bool Level1::Load()
 	enemySkeleton->position = fPoint(TILE_SIZE * 39, TILE_SIZE * 15 - enemySkeleton->height);
 	enemyGhost = (EnemyGhost*)entityManager->CreateEntity(EntityType::ENEMY_GHOST);
 	//enemyGhost->position = fPoint(TILE_SIZE * 19, TILE_SIZE * 12 - enemyGhost->height);
+
+	//
+	// Add items
+	//
+	itemPotion = (ItemPotion*)entityManager->CreateEntity(EntityType::ITEM_POTION);
+	itemPotion->position = fPoint(TILE_SIZE * 65 + 4, TILE_SIZE * 13 - itemPotion->height);
 
 
 	//
@@ -112,6 +117,11 @@ bool Level1::Update(float dt)
 	//
 	enemySkeleton->Update(dt, player, map);
 	enemyGhost->Update(dt, player, map);
+
+	//
+	// Items Update
+	//
+	itemPotion->Update(dt, player);
 
 
 	//
@@ -173,6 +183,11 @@ bool Level1::Draw()
 	enemyGhost->Draw();
 
 	//
+	// Draw Items
+	//
+	itemPotion->Draw();
+
+	//
 	// Draw Colliders
 	//
 	if (map->drawColliders == true)
@@ -181,6 +196,7 @@ bool Level1::Draw()
 		player->DrawColliders();
 		enemySkeleton->DrawColliders();
 		enemyGhost->DrawColliders();
+		itemPotion->DrawColliders();
 	}
 
 
@@ -196,11 +212,12 @@ bool Level1::Unload()
 		return false;
 	}
 
-	LOG("Freeing Level 1");
+	LOG("Unloading Level 1");
 
 	entityManager->DestroyEntity(map);
 	entityManager->DestroyEntity(enemySkeleton);
 	entityManager->DestroyEntity(enemyGhost);
+	entityManager->DestroyEntity(itemPotion);
 	if (player->destroyed == true)
 	{
 		entityManager->DestroyEntity(player);

@@ -93,6 +93,7 @@
     <ClCompile Include="Source\EnemyGhost.cpp" />
     <ClCompile Include="Source\EnemySkeleton.cpp" />
     <ClCompile Include="Source\EntityManager.cpp" />
+    <ClCompile Include="Source\ItemCoin.cpp" />
     <ClCompile Include="Source\ItemPotion.cpp" />
     <ClCompile Include="Source\Main.cpp" />
     <ClCompile Include="Source\App.cpp" />
@@ -102,7 +103,6 @@
     <ClCompile Include="Source\Pathfinding.cpp" />
     <ClCompile Include="Source\PerfTimer.cpp" />
     <ClCompile Include="Source\Player.cpp" />
-    <ClCompile Include="Source\Potion.cpp" />
     <ClCompile Include="Source\Level1.cpp" />
     <ClCompile Include="Source\Render.cpp" />
     <ClCompile Include="Source\Level2.cpp" />
@@ -119,12 +119,12 @@
     <ClInclude Include="Source\EnemySkeleton.h" />
     <ClInclude Include="Source\Entity.h" />
     <ClInclude Include="Source\EntityManager.h" />
+    <ClInclude Include="Source\ItemCoin.h" />
     <ClInclude Include="Source\ItemPotion.h" />
     <ClInclude Include="Source\Map.h" />
     <ClInclude Include="Source\Pathfinding.h" />
     <ClInclude Include="Source\PerfTimer.h" />
     <ClInclude Include="Source\Player.h" />
-    <ClInclude Include="Source\Potion.h" />
     <ClInclude Include="Source\PQueue.h" />
     <ClInclude Include="Source\Level1.h" />
     <ClInclude Include="Source\AudioManager.h" />

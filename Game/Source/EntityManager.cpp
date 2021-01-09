@@ -4,7 +4,7 @@
 #include "Map.h"
 #include "EnemySkeleton.h"
 #include "EnemyGhost.h"
-//#include "Item.h"
+#include "ItemPotion.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -118,7 +118,9 @@ Entity* EntityManager::CreateEntity(EntityType type)
 	case EntityType::ENEMY_GHOST:
 		ret = new EnemyGhost(render, tex, audioManager, pathFinding);
 		break;
-	//case EntityType::ITEM: ret = new Item();  break;
+	case EntityType::ITEM_POTION:
+		ret = new ItemPotion(render, tex, audioManager);
+		break;
 	default: break;
 	}
 

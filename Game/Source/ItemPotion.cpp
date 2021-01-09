@@ -3,6 +3,7 @@
 #include "Render.h"
 #include "Textures.h"
 #include "AudioManager.h"
+#include "Player.h"
 
 #include "Log.h"
 #include "Defs.h"
@@ -27,6 +28,18 @@ ItemPotion::ItemPotion(Render* render, Textures* tex, AudioManager* audioManager
 	// Load Potion texture file
 	//
 	potionTexture = tex->Load("Assets/Textures/Items/potion_sprite.png");
+
+	//
+	// Load Potion FX file
+	//
+	potionFX = audioManager->LoadFX("Assets/Audio/FX/potion.wav");
+	audioManager->musicList.Add(&potionFX);
+
+	//
+	// Potion variables
+	//
+	isPickedUp = false;
+
 }
 // Destructor
 ItemPotion::~ItemPotion()
@@ -47,9 +60,16 @@ bool ItemPotion::Update(float dt, Player* player)
 {
 	if (isPickedUp == false)
 	{
-		this->player = player;
-		
+		if (CheckCollision(GetRect(), player->GetRect()) == true)
+		{
+			isPickedUp = true;
+			audioManager->PlayFX(potionFX);
+			player->lifes++;
+		}
 	}
+
+
+	return true;
 }
 
 
@@ -63,12 +83,15 @@ bool ItemPotion::Draw()
 	{
 		render->DrawTexture(potionTexture, (int)position.x, (int)position.y);
 	}
+
+
+	return true;
 }
 void ItemPotion::DrawColliders()
 {
 	if (isPickedUp == false)
 	{
-		render->DrawRectangle({ (int)position.x, (int)position.y, width, height }, 69, 245, 80, 100);
+		render->DrawRectangle(GetRect(), 69, 245, 80, 100);
 	}
 }
 
@@ -84,6 +107,8 @@ bool ItemPotion::CleanUp()
 	LOG("Unloading Ghost");
 
 	tex->UnLoad(potionTexture);
+
+	audioManager->UnloadFX(potionFX);
 
 	active = false;
 
@@ -104,6 +129,7 @@ bool ItemPotion::LoadState(pugi::xml_node& potionNode)
 
 	return true;
 }
+// Saves the potion state
 bool ItemPotion::SaveState(pugi::xml_node& potionNode) const
 {
 	// Save position
@@ -117,4 +143,11 @@ bool ItemPotion::SaveState(pugi::xml_node& potionNode) const
 
 
 	return true;
+}
+
+
+// Getter for the potion's Rectangle
+SDL_Rect ItemPotion::GetRect()
+{
+	return { (int)position.x, (int)position.y, width, height };
 }

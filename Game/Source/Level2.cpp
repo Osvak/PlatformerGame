@@ -65,6 +65,12 @@ bool Level2::Load()
 	//
 	// TODO: Level 2 enemies
 
+	//
+	// Add items
+	//
+	itemPotion = (ItemPotion*)entityManager->CreateEntity(EntityType::ITEM_POTION);
+	itemPotion->position = fPoint(TILE_SIZE * 57 + 4, TILE_SIZE * 23 - itemPotion->height);
+
 
 	//
 	// Load music
@@ -101,6 +107,11 @@ bool Level2::Update(float dt)
 	// Enemies Update
 	//
 	// TODO: Level 2 enemies
+
+	//
+	// Items Update
+	//
+	itemPotion->Update(dt, player);
 
 
 	//
@@ -161,12 +172,18 @@ bool Level2::Draw()
 
 
 	//
+	// Draw Items
+	//
+	itemPotion->Draw();
+
+	//
 	// Draw Colliders
 	//
 	if (map->drawColliders == true)
 	{
 		map->DrawColliders();
 		player->DrawColliders();
+		itemPotion->DrawColliders();
 	}
 
 
@@ -185,6 +202,7 @@ bool Level2::Unload()
 	LOG("Unloading Level 2");
 
 	entityManager->DestroyEntity(map);
+	entityManager->DestroyEntity(itemPotion);
 	if (player->destroyed == true)
 	{
 		entityManager->DestroyEntity(player);
@@ -233,7 +251,6 @@ void Level2::CollisionLogic()
 						if (CheckCollision(colliderRect, player->GetRect()) == true)
 						{
 							player->isDying = true;
-							--player->lifes;
 						}
 					}
 					if (tileId == 3)

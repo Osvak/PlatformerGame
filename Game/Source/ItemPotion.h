@@ -41,10 +41,14 @@ public:
 	bool CleanUp();
 
 
-	// Loads the skeleton state
+	// Loads the Potion state
 	bool LoadState(pugi::xml_node&) override;
-	// Saves the skeleton state
+	// Saves the Potion state
 	bool SaveState(pugi::xml_node&) const override;
+
+
+	// Getter for the potion's Rectangle
+	SDL_Rect GetRect();
 
 public:
 

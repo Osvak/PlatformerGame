@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "EnemySkeleton.h"
 #include "EnemyGhost.h"
+#include "ItemPotion.h"
 
 
 
@@ -49,6 +50,7 @@ private:
 	Player* player = nullptr;
 	EnemySkeleton* enemySkeleton = nullptr;
 	EnemyGhost* enemyGhost = nullptr;
+	ItemPotion* itemPotion = nullptr;
 
 	Input* input;
 	Render* render;

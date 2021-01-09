@@ -30,9 +30,6 @@
     <ClCompile Include="Source\SceneLose.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Potion.cpp">
-      <Filter>Entities</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Level1.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
@@ -72,7 +69,12 @@
     <ClCompile Include="Source\EnemyGhost.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
-    <ClCompile Include="Source\ItemPotion.cpp" />
+    <ClCompile Include="Source\ItemPotion.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ItemCoin.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\App.h" />
@@ -127,9 +129,6 @@
     <ClInclude Include="Source\SceneLose.h">
       <Filter>Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Potion.h">
-      <Filter>Entities</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Level1.h">
       <Filter>Scenes</Filter>
     </ClInclude>
@@ -179,6 +178,9 @@
       <Filter>Entities</Filter>
     </ClInclude>
     <ClInclude Include="Source\ItemPotion.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ItemCoin.h">
       <Filter>Entities</Filter>
     </ClInclude>
   </ItemGroup>
