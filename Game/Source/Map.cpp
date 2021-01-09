@@ -356,11 +356,10 @@ bool Map::Load(const char* filename)
 		if (ret == true) data.layers.Add(lay);
 	}
 
-
-	//CreateColliders(); // RIP old Colliders
-
-
 	cameraMaxBottomPosition = (data.height * TILE_SIZE) - (TILE_SIZE * 12);
+	cameraMaxTopPosition = 0 + TILE_SIZE * 5;
+	cameraMaxLeftPosition = 0 + TILE_SIZE * 5;
+	cameraMaxRightPosition = (data.width * TILE_SIZE) - (TILE_SIZE * 20);
 
 
 	if (ret == true)

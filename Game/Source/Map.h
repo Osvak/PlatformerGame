@@ -183,6 +183,9 @@ public:
 	bool drawColliders = false;
 
 	int cameraMaxBottomPosition = 0;
+	int cameraMaxTopPosition = 0;
+	int cameraMaxLeftPosition = 0;
+	int cameraMaxRightPosition = 0;
 
 private:
 

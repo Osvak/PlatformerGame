@@ -57,8 +57,7 @@ bool Level2::Load()
 	// Add player
 	//
 	player = (Player*)entityManager->CreateEntity(EntityType::PLAYER);
-	player->position = fPoint(TILE_SIZE * 10, TILE_SIZE * 32 - player->height);
-	player->savedPos = player->position;
+	player->InitPositions(fPoint(TILE_SIZE * 10, TILE_SIZE * 32 - player->height));
 	player->LoadPlayer();
 
 	//
@@ -89,6 +88,14 @@ bool Level2::Update(float dt)
 	// Player Update
 	//
 	player->Update(dt, map);
+	if (freeCamera == true)
+	{
+		player->freeCamera = true;
+	}
+	else
+	{
+		player->freeCamera = false;
+	}
 
 	//
 	// Enemies Update
@@ -113,15 +120,19 @@ bool Level2::Update(float dt)
 	{
 		map->drawColliders = !map->drawColliders;
 	}
+	if (input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+	{
+		player->godMode = !player->godMode;
+	}
 
 	//
 	// Scene change
 	//
 	if (player->changeLevel == true)
 	{
+		player->changeLevel = false;
 		TransitionToScene(SceneType::WIN);
 	}
-
 	if (player->destroyed == true)
 	{
 		TransitionToScene(SceneType::LOSE);

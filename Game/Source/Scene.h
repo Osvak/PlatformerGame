@@ -75,6 +75,8 @@ public:
 
 	bool loaded = false;
 	bool transitionRequired;
+
+	bool freeCamera = false;
 };
 
 #endif // !__SCENE_H__

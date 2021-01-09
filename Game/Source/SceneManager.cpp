@@ -119,6 +119,7 @@ bool SceneManager::Update(float dt)
 		if (input->GetKey(SDL_SCANCODE_C) == KEY_DOWN)
 		{
 			freeCamera = !freeCamera;
+			current->freeCamera = !current->freeCamera;
 		}
 		if (freeCamera == true)
 		{

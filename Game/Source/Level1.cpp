@@ -59,13 +59,12 @@ bool Level1::Load()
 	// Add player
 	//
 	player = (Player*)entityManager->CreateEntity(EntityType::PLAYER);
+	player->InitPositions(fPoint(TILE_SIZE * 9, TILE_SIZE * 17 - player->height));
 	if (player->destroyed == true)
 	{
 		player->LoadPlayer();
 	}
-	player->position = fPoint(TILE_SIZE * 9, TILE_SIZE * 17 - player->height);
-	//player->position = fPoint(TILE_SIZE * 38, TILE_SIZE * 15 - player->height); // debugging position
-	player->savedPos = player->position;
+	
 
 	//
 	// Add enemies
@@ -99,6 +98,14 @@ bool Level1::Update(float dt)
 	// Player Update
 	//
 	player->Update(dt, map);
+	if (freeCamera == true)
+	{
+		player->freeCamera = true;
+	}
+	else
+	{
+		player->freeCamera = false;
+	}
 
 	//
 	// Enemies Update

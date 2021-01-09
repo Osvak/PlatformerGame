@@ -84,8 +84,7 @@ public:
 	SDL_Rect GetRect();
 
 
-	// Collision callback, called when the player intersects with another collider
-	//void OnCollision(Collider* c1, Collider* c2) override;
+	void InitPositions(fPoint playerPosition);
 
 private:
 
@@ -103,7 +102,7 @@ private:
 	// ----------------------------- //
 
 
-	// ---- PLAYER MOVEMENT METHODS ----- //
+	// ----- PLAYER MOVEMENT METHODS ----- //
 	void Jump(float dt);
 	void MovingRightLogic();
 	void MovingLeftLogic();
@@ -112,7 +111,12 @@ private:
 	void ControlFloorCollisionWhenMovingRight(MapLayer* layer);
 	void ControlFloorCollisionWhenMovingLeft(MapLayer* layer);
 	void ControlFloorCollisionWhenFalling();
-	// ---------------------------------- //
+	// ----------------------------------- //
+
+	// ----- CAMERA METHODS ----- //
+	void CameraColliderMovement();
+	void CameraMovement();
+	// -------------------------- //
 
 public:
 
@@ -139,6 +143,8 @@ public:
 	bool isHit = false;
 	// A flag to detect when the player has been destroyed
 	bool destroyed = false;
+	// Flag to know if we can move the camera or not
+	bool freeCamera = false;
 	// ------------------------ //
 
 private:
@@ -166,6 +172,9 @@ private:
 	SDL_Rect rect;
 	mutable int st = 0; // current state for save/load
 	mutable int sc = 0; // current scene for save/load
+	// Camera
+	fPoint cameraPosition = { 0.0f, 0.0f };
+	SDL_Rect cameraRect = { 0,0,0,0 };
 	// ---------------------------- //
 
 

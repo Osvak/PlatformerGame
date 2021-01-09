@@ -570,7 +570,14 @@ void Player::UpdateLogic(float dt)
 	//
 	// Update Camera Position
 	//
-	// TODO: Fix camera position
+	if (CheckCollision(GetRect(), cameraRect))
+	{
+		CameraColliderMovement();
+	}
+	if (freeCamera == false)
+	{
+		CameraMovement();
+	}
 
 }
 // Control what happens when the State is changed
@@ -696,6 +703,7 @@ void Player::DrawColliders()
 	if (destroyed == false)
 	{
 		render->DrawRectangle(GetRect(), 0, 255, 0, 100);
+		render->DrawRectangle(cameraRect, 240, 257, 209, 50);
 	}
 }
 
@@ -730,6 +738,16 @@ bool Player::CleanUp()
 }
 
 
+// Initialize player positions
+void Player::InitPositions(fPoint playerPosition)
+{
+	position = playerPosition;
+	savedPos = position;
+	cameraPosition.x = position.x;
+	cameraPosition.y = position.y - (TILE_SIZE * 3);
+	cameraRect.x = (int)cameraPosition.x;
+	cameraRect.y = (int)cameraPosition.y;
+}
 // Load the player's variables and flags
 void Player::LoadPlayer()
 {
@@ -763,6 +781,12 @@ void Player::LoadPlayer()
 	playFX = true;
 	destroyed = false;
 	state = APPEAR;
+
+	//
+	// Set cameraRect
+	//
+	cameraRect = { (int)position.x, (int)position.y - (TILE_SIZE * 4), TILE_SIZE * 6, TILE_SIZE * 5 };
+	InitPositions(position);
 }
 // Load the player's state
 bool Player::LoadState(pugi::xml_node& playerNode)
@@ -1068,5 +1092,43 @@ void Player::ControlFloorCollisionWhenFalling()
 		{
 			continue;
 		}
+	}
+}
+
+
+void Player::CameraColliderMovement()
+{
+	if (position.x < cameraPosition.x)
+	{
+		cameraPosition.x += velocity.x;
+	}
+	if (position.x + width > cameraPosition.x + cameraRect.w)
+	{
+		cameraPosition.x += velocity.x;
+	}
+	if (position.y < cameraPosition.y)
+	{
+		cameraPosition.y += velocity.y;
+	}
+	if (position.y + height > cameraPosition.y + cameraRect.h)
+	{
+		cameraPosition.y += velocity.y;
+	}
+
+	cameraRect.x = (int)cameraPosition.x;
+	cameraRect.y = (int)cameraPosition.y;
+}
+void Player::CameraMovement()
+{
+	if (cameraRect.x + width <= map->cameraMaxRightPosition &&
+		cameraRect.x >= map->cameraMaxLeftPosition)
+	{
+		render->camera.x = -(cameraRect.x - (TILE_SIZE * 6)) * (int)render->scale;
+	}
+	
+	if (cameraRect.y <= map->cameraMaxBottomPosition &&
+		cameraRect.y >= map->cameraMaxTopPosition)
+	{
+		render->camera.y = -(cameraRect.y - (TILE_SIZE * 5)) * (int)render->scale;
 	}
 }
