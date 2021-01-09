@@ -72,6 +72,7 @@
     <ClCompile Include="Source\EnemyGhost.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ItemPotion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\App.h" />
@@ -175,6 +176,9 @@
       <Filter>Entities</Filter>
     </ClInclude>
     <ClInclude Include="Source\EnemyGhost.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ItemPotion.h">
       <Filter>Entities</Filter>
     </ClInclude>
   </ItemGroup>

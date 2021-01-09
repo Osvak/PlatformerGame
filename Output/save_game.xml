@@ -7,9 +7,9 @@
 	<entityManager>
 		<map />
 		<player>
-			<position position_x="282.660614" position_y="244" />
+			<position position_x="163.759964" position_y="244" />
 			<velocity velocity_x="0" velocity_y="0" />
-			<state player_state="1" current_frame="5" horizontal_direction="-1" />
+			<state player_state="0" current_frame="0" horizontal_direction="-1" />
 			<lifes lifes="3" />
 		</player>
 		<skeleton>
@@ -18,9 +18,9 @@
 			<state skeleton_state="0" horizontal_direction="-1" />
 		</skeleton>
 		<ghost>
-			<position position_x="304" position_y="158" />
+			<position position_x="0" position_y="0" />
 			<velocity velocity_x="0" velocity_y="0" />
-			<state ghost_state="2" horizontal_direction="-1" />
+			<state ghost_state="0" horizontal_direction="-1" />
 		</ghost>
 	</entityManager>
 	<pathFinding />
@@ -28,6 +28,6 @@
 		<scene current="level1" />
 	</sceneManager>
 	<renderer>
-		<camera x="-144" y="-336" />
+		<camera x="-198" y="-324" />
 	</renderer>
 </save_state>

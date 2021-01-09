@@ -11,7 +11,7 @@ enum class EntityType
     PLAYER,
     ENEMY_SKELETON,
     ENEMY_GHOST,
-    ITEM,
+    ITEM_POTION,
     MAP,
     UNKNOWN
 };
