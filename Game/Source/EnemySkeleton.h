@@ -109,6 +109,7 @@ private:
 	// ----- SKELETON FLAGS ----- //
 	bool canWalk = true;
 	bool attackFinished = false;
+	bool playFX = true;
 	// -------------------------- //
 
 

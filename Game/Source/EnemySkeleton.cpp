@@ -61,6 +61,14 @@ EnemySkeleton::EnemySkeleton(Render* render, Textures* tex, AudioManager* audioM
 	skeletonTexture = tex->Load("Assets/Textures/Enemies/skeleton_spritesheet.png");
 
 	//
+	// Load Skeleton FX files
+	//
+	attackFX = audioManager->LoadFX("Assets/Audio/FX/skeleton_attack.wav");
+	audioManager->musicList.Add(&attackFX);
+	deathFX = audioManager->LoadFX("Assets/Audio/FX/skeleton_death.wav");
+	audioManager->musicList.Add(&deathFX);
+
+	//
 	// Set current animation
 	//
 	currentAnimation = idleAnim;
@@ -303,6 +311,7 @@ void EnemySkeleton::UpdateLogic(float dt)
 	{
 		if (currentAnimation->HasFinished() == true) // Checks if an attack has finished
 		{
+			playFX = true;
 			attackFinished = true;
 			currentAnimation->Reset();
 		}
@@ -329,6 +338,12 @@ void EnemySkeleton::UpdateLogic(float dt)
 		}
 		else // Things the skeleton does DURING an attack
 		{
+			if (playFX == true)
+			{
+				audioManager->PlayFX(attackFX);
+				playFX = false;
+			}
+
 			currentAnimation->Update();
 
 			// The Skeleton can HIT during these frames of the animation
@@ -385,10 +400,16 @@ void EnemySkeleton::UpdateLogic(float dt)
 
 	case SKELETON_DYING:
 	{
+		if (playFX = true)
+		{
+			audioManager->PlayFX(deathFX);
+			playFX = false;
+		}
 		currentAnimation->Update();
 
 		if (currentAnimation->HasFinished() == true)
 		{
+			playFX = true;
 			isDestroyed = true;
 		}
 
