@@ -340,6 +340,13 @@ void EnemyGhost::UpdateLogic(float dt)
 	position.x += velocity.x;
 	position.y += velocity.y;
 
+	// Check if ghost hit skeleton
+	if (CheckCollision(GetRect(), player->GetArrowRect()) == true)
+	{
+		isHit = true;
+	}
+
+
 }
 // Changes the state
 void EnemyGhost::ChangeState(GhostState previousState, GhostState newState)

@@ -406,6 +406,13 @@ void EnemySkeleton::UpdateLogic(float dt)
 	position.x += velocity.x;
 	position.y += velocity.y;
 
+	// Check if arrow hit skeleton
+	if (CheckCollision(GetRect(), player->GetArrowRect()) == true)
+	{
+		isHit = true;
+	}
+
+
 }
 // Changes the state
 void EnemySkeleton::ChangeState(SkeletonState previousState, SkeletonState newState)
