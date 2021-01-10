@@ -193,7 +193,7 @@ void Player::UpdateState()
 			break;
 		}
 
-		if (input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+		if (input->GetKey(SDL_SCANCODE_F) == KEY_DOWN && horizontalDirection == 1)
 		{
 			ChangeState(state, SHOOTING);
 			break;
@@ -241,7 +241,7 @@ void Player::UpdateState()
 			break;
 		}
 
-		if (input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+		if (input->GetKey(SDL_SCANCODE_F) == KEY_DOWN && horizontalDirection == 1)
 		{
 			ChangeState(state, SHOOTING);
 			break;
@@ -450,8 +450,6 @@ void Player::UpdateLogic(float dt)
 		{
 			currentAnimation = fallAnim;
 			acceleration.y = GRAVITY;
-			// TODO: FIX ERROR WHEN FALLING AFTER MOVING
-			//ControlFloorCollisionWhenFalling();
 		}
 		else
 		{
@@ -758,8 +756,6 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		currentAnimation = shootAnim;
 		currentAnimation->Reset();
 		velocity.x = 0.0f;
-		if (horizontalDirection == 1) arrowHorizontalDirection = 1;
-		if (horizontalDirection == -1) arrowHorizontalDirection = -1;
 		arrowTimer = 0.0f;
 		canShoot = true;
 		arrowPos = { 0.0f,0.0f };
@@ -800,13 +796,8 @@ bool Player::Draw()
 
 	if (isShooting == true)
 	{
-		// Player draw when looking right
-		if (horizontalDirection == 1)
+		// Arrpw draw when shooting
 			render->DrawTexture(arrowTexture, (int)arrowPos.x, (int)arrowPos.y);
-
-		// Player draw when looking left
-		if (horizontalDirection == -1)
-			render->DrawFlippedTexture(arrowTexture, (int)arrowPos.x, (int)arrowPos.y);
 	}
 
 
@@ -1090,33 +1081,15 @@ void Player::Jump(float dt)
 
 void Player::Shoot(float dt)
 {
-	if (arrowHorizontalDirection == 1)
-	{
-		arrowPos = { position.x, position.y + 11 };
-	}
-	if (arrowHorizontalDirection == -1)
-	{
-		arrowPos = { position.x - arrowWidth /2, position.y + 11 };
-	}
+	arrowPos = { position.x, position.y + 11 };
+
 	if (isShooting == true)
 	{
-		if (arrowHorizontalDirection == 1)
-		{
-			arrowVel.x = ARROW_SPEED;
-
-			if (arrowPos.x >= position.x + 50.0f)
-				maxRange = true;
-		}
-		if (arrowHorizontalDirection == -1)
-		{
-			arrowVel.x = ARROW_SPEED;
-
-			if (arrowPos.x <= position.x + 50.0f)
-				maxRange = true;
-		}
+		arrowVel.x = ARROW_SPEED;
+		canShoot = false;
 	}
 
-	if (maxRange == true)
+	if (arrowPos.x >= position.x + 100.0f == true)
 	{
 		arrowRect = { 0,0,0,0 };
 		isShooting = false;
