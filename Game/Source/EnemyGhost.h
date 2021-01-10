@@ -74,7 +74,7 @@ public:
 
 public:
 
-	// ----- GHOST VARIABLES ----- //
+	// ----- SKELETON VARIABLES ----- //
 	int width = GHOST_WIDTH, height = GHOST_HEIGHT;
 	fPoint position;
 	fPoint velocity = { 0.0f,0.0f };
@@ -83,14 +83,14 @@ public:
 	// ------------------------------ //
 
 
-	// ----- GHOST FLAGS ----- //
+	// ----- SKELETON FLAGS ----- //
 	bool isHit = false;
 	bool isDestroyed = false;
 	// -------------------------- //
 
 private:
 
-	// ----- GHOST VARIABLES ----- //
+	// ----- SKELETON VARIABLES ----- //
 	int horizontalDirection = -1;
 	int verticalDirection = 0;
 	mutable int st = 0;
