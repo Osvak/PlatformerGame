@@ -9,6 +9,7 @@
 
 #include "MenuSettings.h"
 
+#include "Window.h"
 #include "Input.h"
 #include "Render.h"
 #include "Textures.h"
@@ -25,7 +26,7 @@
 
 
 // Constructor
-SceneManager::SceneManager(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, PathFinding* pathFinding, Fonts* fonts) : Module()
+SceneManager::SceneManager(Window* win, Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, PathFinding* pathFinding, Fonts* fonts) : Module()
 {
 	name.Create("sceneManager");
 
@@ -33,6 +34,7 @@ SceneManager::SceneManager(Input* input, Render* render, Textures* tex, AudioMan
 	fadeOutCompleted = false;
 	transitionAlpha = 0.0f;;
 
+	this->win = win;
 	this->input = input;
 	this->render = render;
 	this->tex = tex;
@@ -61,7 +63,7 @@ bool SceneManager::Start()
 {
 	LOG("SceneManager.Start(): Making SceneLogo be the first Scene");
 
-	menuSettings = new MenuSettings(input, render, tex, audioManager, fonts);
+	menuSettings = new MenuSettings(win, input, render, tex, audioManager, fonts);
 	menuSettings->Load();
 	current = new SceneLogo(input, render, tex, audioManager);
 	current->Load();

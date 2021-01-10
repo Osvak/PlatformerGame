@@ -30,7 +30,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	audioManager = new AudioManager();
 	pathFinding = PathFinding::GetInstance();
 	entityManager = new EntityManager(win, input, render, tex, audioManager, pathFinding);
-	sceneManager = new SceneManager(input, render, tex, audioManager, entityManager, pathFinding, fonts);
+	sceneManager = new SceneManager(win, input, render, tex, audioManager, entityManager, pathFinding, fonts);
 	
 
 	// Ordered for awake / Start / Update

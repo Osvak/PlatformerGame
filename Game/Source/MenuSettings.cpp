@@ -1,5 +1,6 @@
 #include "MenuSettings.h"
 
+#include "Window.h"
 #include "Input.h"
 #include "Render.h"
 #include "Textures.h"
@@ -9,19 +10,20 @@
 #include "Map.h"
 #include "GUIButton.h"
 #include "GUISlider.h"
-//#include "GUICheckBox.h;
+#include "GUICheckBox.h"
 
 #include "Log.h"
 
 
 // Constructor
-MenuSettings::MenuSettings(Input* input, Render* render, Textures* tex, AudioManager* audioManager, Fonts* fonts)
+MenuSettings::MenuSettings(Window* win, Input* input, Render* render, Textures* tex, AudioManager* audioManager, Fonts* fonts)
 {
 	LOG("Creating Title Screen");
 
 	name.Create("sceneTitle");
 
 
+	this->win = win;
 	this->input = input;
 	this->render = render;
 	this->tex = tex;
@@ -43,15 +45,21 @@ bool MenuSettings::Load()
 	// Load buttons
 	//
 	GUITexture = tex->Load("Assets/Textures/GUI/gui_spritesheet.png");
-	buttonBack = new GUIButton(1, { 163, 205, 100, 24 }, "BACK", audioManager, fonts);
+	buttonBack = new GUIButton(6, { 163, 205, 100, 24 }, "BACK", audioManager, fonts);
 	buttonBack->SetObserver(this);
 	buttonBack->SetTexture(GUITexture);
-	sliderMusic = new GUISlider(2, { 163, 65, 100, 10 }, audioManager, fonts, "Music Volume", audioManager->GetMusicVolume(), 0, 100);
+	sliderMusic = new GUISlider(7, { 163, 65, 100, 10 }, audioManager, fonts, "Music Volume", audioManager->GetMusicVolume(), 0, 100);
 	sliderMusic->SetObserver(this);
 	sliderMusic->SetTexture(GUITexture);
-	sliderFX = new GUISlider(3, { 163, 95, 100, 10 }, audioManager, fonts, "FX Volume", audioManager->GetFXVolume(), 0, 100);
+	sliderFX = new GUISlider(8, { 163, 95, 100, 10 }, audioManager, fonts, "FX Volume", audioManager->GetFXVolume(), 0, 100);
 	sliderFX->SetObserver(this);
 	sliderFX->SetTexture(GUITexture);
+	checkBoxFullScreen = new GUICheckBox(9, { 206, 125, 15, 15 }, "Full Screen", audioManager, fonts, false);
+	checkBoxFullScreen->SetObserver(this);
+	checkBoxFullScreen->SetTexture(GUITexture);
+	checkBoxVSync = new GUICheckBox(10, { 206, 155, 15, 15 }, "VSync", audioManager, fonts, false);
+	checkBoxVSync->SetObserver(this);
+	checkBoxVSync->SetTexture(GUITexture);
 
 	//
 	// Load white font
@@ -81,6 +89,12 @@ bool MenuSettings::Update(float dt)
 	sliderMusic->Update(input, dt);
 	sliderFX->Update(input, dt);
 
+	//
+	// CheckBoxes update
+	//
+	checkBoxFullScreen->Update(input, dt);
+	checkBoxVSync->Update(input, dt);
+
 	return false;
 }
 
@@ -108,6 +122,12 @@ bool MenuSettings::Draw()
 	sliderMusic->Draw(render, drawGUI);
 	sliderFX->Draw(render, drawGUI);
 
+	//
+	// Draw checkboxes
+	//
+	checkBoxFullScreen->Draw(render, drawGUI);
+	checkBoxVSync->Draw(render, drawGUI);
+
 
 	return false;
 }
@@ -131,6 +151,10 @@ bool MenuSettings::Unload()
 	sliderMusic = nullptr;
 	delete sliderFX;
 	sliderFX = nullptr;
+	delete checkBoxFullScreen;
+	checkBoxFullScreen = nullptr;
+	delete checkBoxVSync;
+	checkBoxVSync = nullptr;
 
 	active = false;
 
@@ -144,7 +168,7 @@ bool MenuSettings::OnGUIMouseClickEvent(GUIControl* control)
 	{
 	case GUIControlType::BUTTON:
 	{
-		if (control->id == 1) // Back Button
+		if (control->id == 6) // Back Button
 		{
 			exitMenuSettings = true;
 		}
@@ -155,16 +179,41 @@ bool MenuSettings::OnGUIMouseClickEvent(GUIControl* control)
 
 	case GUIControlType::CHECKBOX:
 	{
+		if (control->id == 9) // Full Screen checkbox
+		{
+			if (control->value == 1)
+			{
+				win->FullScreen(true);
+			}
+			else
+			{
+				win->FullScreen(false);
+			}
+			
+		}
+		if (control->id == 10) // VSync checkbox
+		{
+			if (control->value == 1)
+			{
+				render->ToggleVSync(true);
+			}
+			else
+			{
+				render->ToggleVSync(false);
+			}
+		}
+
+
 		break;
 	}
 
 	case GUIControlType::SLIDER:
 	{
-		if (control->id == 2) // Music slider
+		if (control->id == 7) // Music slider
 		{
 			audioManager->SetMusicVolume(control->value);
 		}
-		if (control->id == 3) // FX slider
+		if (control->id == 8) // FX slider
 		{
 			audioManager->SetFXVolume(control->value);
 		}

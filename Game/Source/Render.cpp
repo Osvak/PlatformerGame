@@ -313,3 +313,17 @@ bool Render::DrawCircle(int x, int y, int radius, Uint8 r, Uint8 g, Uint8 b, Uin
 
 	return ret;
 }
+
+void Render::ToggleVSync(bool vs)
+{
+	if (vs == true)
+	{
+		SDL_GL_SetSwapInterval(1);
+		usingVSync = "ON";
+	}
+	else
+	{
+		SDL_GL_SetSwapInterval(0);
+		usingVSync = "OFF";
+	}
+}

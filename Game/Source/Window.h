@@ -39,6 +39,8 @@ public:
 	// Retrieve window height
 	uint GetHeight() const;
 
+	void FullScreen(bool fs);
+
 public:
 
 	// The window we'll be rendering to

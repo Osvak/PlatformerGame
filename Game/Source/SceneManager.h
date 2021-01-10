@@ -8,6 +8,7 @@
 
 class GuiButton;
 
+class Window;
 class Input;
 class Render;
 class Textures;
@@ -21,7 +22,7 @@ class SceneManager : public Module
 public:
 
 	// Constructor
-	SceneManager(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, PathFinding* pathFinding, Fonts* fonts);
+	SceneManager(Window* win, Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, PathFinding* pathFinding, Fonts* fonts);
 	// Destructor
 	virtual ~SceneManager();
 
@@ -63,6 +64,7 @@ public:
 	mutable bool saveGameRequested = false;
 	bool loadGameRequested = false;
 
+	Window* win;
 	Input* input;
 	Render* render;
 	Textures* tex;

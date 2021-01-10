@@ -5,6 +5,7 @@
 
 
 
+class Window;
 class Input;
 class Render;
 class Textures;
@@ -23,7 +24,7 @@ class MenuSettings : public Scene
 public:
 
 	// Constructor
-	MenuSettings(Input* input, Render* render, Textures* tex, AudioManager* audioManager, Fonts* fonts);
+	MenuSettings(Window* win, Input* input, Render* render, Textures* tex, AudioManager* audioManager, Fonts* fonts);
 	// Destructor
 	virtual ~MenuSettings();
 
@@ -55,6 +56,7 @@ private:
 	GUICheckBox* checkBoxFullScreen = nullptr;
 	GUICheckBox* checkBoxVSync = nullptr;
 
+	Window* win;
 	Input* input;
 	Render* render;
 	Textures* tex;

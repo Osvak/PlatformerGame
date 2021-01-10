@@ -62,11 +62,6 @@ bool GUISlider::Update(Input* input, float dt)
 				SliderControl(mouseX, mouseY);
 				NotifyObserver();
 			}
-			if (input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KeyState::KEY_UP)
-			{
-				
-
-			}
 		}
 		else
 		{
