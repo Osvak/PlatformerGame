@@ -46,10 +46,10 @@ bool MenuSettings::Load()
 	buttonBack = new GUIButton(1, { 163, 205, 100, 24 }, "BACK", audioManager, fonts);
 	buttonBack->SetObserver(this);
 	buttonBack->SetTexture(GUITexture);
-	sliderMusic = new GUISlider(2, { 163, 65, 100, 10 }, audioManager, fonts, "Music Volume", 0, 100);
+	sliderMusic = new GUISlider(2, { 163, 65, 100, 10 }, audioManager, fonts, "Music Volume", audioManager->GetMusicVolume(), 0, 100);
 	sliderMusic->SetObserver(this);
 	sliderMusic->SetTexture(GUITexture);
-	sliderFX = new GUISlider(3, { 163, 95, 100, 10 }, audioManager, fonts, "FX Volume", 0, 100);
+	sliderFX = new GUISlider(3, { 163, 95, 100, 10 }, audioManager, fonts, "FX Volume", audioManager->GetFXVolume(), 0, 100);
 	sliderFX->SetObserver(this);
 	sliderFX->SetTexture(GUITexture);
 
@@ -95,7 +95,7 @@ bool MenuSettings::Draw()
 	//
 	// Draw title
 	//
-	fonts->DrawText(136, 27, font, "Settings Menu"); // TODO: Fix size and position
+	fonts->DrawText(136, 27, font, "Settings Menu");
 
 	//
 	// Draw buttons
@@ -162,11 +162,11 @@ bool MenuSettings::OnGUIMouseClickEvent(GUIControl* control)
 	{
 		if (control->id == 2) // Music slider
 		{
-			//audioManager->SetMusicVolume(control->value);
+			audioManager->SetMusicVolume(control->value);
 		}
 		if (control->id == 3) // FX slider
 		{
-			//audioManager->SetFXVolume(control->value);
+			audioManager->SetFXVolume(control->value);
 		}
 
 			
@@ -181,3 +181,5 @@ bool MenuSettings::OnGUIMouseClickEvent(GUIControl* control)
 
 	return true;
 }
+
+// TODO: Load/Save settings

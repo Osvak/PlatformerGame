@@ -34,6 +34,11 @@ bool AudioManager::Awake(pugi::xml_node& config)
 		active = false;
 		ret = true;
 	}
+	else
+	{
+		volumeMusic = config.child("music").attribute("volume").as_int(100);
+		volumeFX = config.child("fx").attribute("volume").as_int(100);
+	}
 
 	// Load support for the JPG and PNG image formats
 	int flags = MIX_INIT_OGG;
@@ -87,6 +92,7 @@ bool AudioManager::CleanUp()
 bool AudioManager::PlayMusic(const char* path, float fadeTime)
 {
 	bool ret = true;
+	Mix_VolumeMusic(volumeMusic);
 
 	if(!active)
 		return false;
@@ -187,17 +193,72 @@ bool AudioManager::UnloadFX(unsigned int id)
 
 
 // Play WAV
-bool AudioManager::PlayFX(unsigned int id, int repeat)
+bool AudioManager::PlayFX(unsigned int id, int volume)
 {
 	bool ret = false;
 
-	if(!active)
-		return false;
-
-	if(id > 0 && id <= fx.Count())
+	if (volume > 100)
 	{
-		Mix_PlayChannel(-1, fx[id - 1], repeat);
+		volume = 100;
+	}
+	else if (volume < 0)
+	{
+		volume = 0;
+	}
+
+	if (id > 0 && id <= fx.Count())
+	{
+		if (volume == 0)
+		{
+			Mix_VolumeChunk(fx[id - 1], volumeFX);
+		}
+		else
+		{
+			Mix_VolumeChunk(fx[id - 1], volume);
+		}
+
+		Mix_PlayChannel(-1, fx[id - 1], 0);
+		ret = true;
 	}
 
 	return ret;
+}
+
+
+void AudioManager::SetMusicVolume(int volume)
+{
+	volumeMusic = volume;
+	Mix_VolumeMusic(volumeMusic);
+}
+void AudioManager::SetFXVolume(int volume)
+{
+	volumeFX = volume;
+}
+int AudioManager::GetMusicVolume()
+{
+	return (int)volumeMusic;
+}
+int AudioManager::GetFXVolume()
+{
+	return (int)volumeFX;
+}
+
+
+bool AudioManager::LoadState(pugi::xml_node& node)
+{
+	volumeMusic = node.child("music").attribute("volume").as_int();
+	volumeFX = node.child("fx").attribute("volume").as_int();
+	Mix_VolumeMusic(volumeMusic);
+
+
+	return true;
+}
+bool AudioManager::SaveState(pugi::xml_node& node) const
+{
+	pugi::xml_node audio = node.append_child("audioManager");
+	audio.child("music").attribute("volume").set_value(volumeMusic);
+	audio.child("fx").attribute("volume").set_value(volumeFX);
+
+
+	return true;
 }

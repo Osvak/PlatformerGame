@@ -3,10 +3,11 @@
 
 
 // Constructor
-GUISlider::GUISlider(uint32 id, SDL_Rect bounds, AudioManager* audioManager, Fonts* fonts, const char* text, int min, int max) : GUIControl(GUIControlType::SLIDER, id)
+GUISlider::GUISlider(uint32 id, SDL_Rect bounds, AudioManager* audioManager, Fonts* fonts, const char* text, int initialValue, int min, int max) : GUIControl(GUIControlType::SLIDER, id)
 {
 	this->sliderBar = bounds;
 	this->text = text;
+	this->value = initialValue;
 	if (min > max)
 	{
 		this->minValue = max;
@@ -23,7 +24,7 @@ GUISlider::GUISlider(uint32 id, SDL_Rect bounds, AudioManager* audioManager, Fon
 	sliderButton.w = 10;
 	sliderButton.h = 6;
 	sliderButton.y = sliderBar.y + ((sliderBar.h / 2) - 3);
-	sliderButton.x = sliderBar.x + 2;
+	sliderButton.x = (int)((float)sliderBar.x + 2 + ((float)(sliderBar.w - 4) / max) * value);
 
 
 	guiFont = fonts->Load("Assets/Fonts/font_white.png", "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ ", 2, 189, 18);
@@ -185,7 +186,6 @@ SDL_Rect GUISlider::FindPositionInAtlas()
 
 void GUISlider::SliderControl(int mouseX, int mouseY)
 {
-
 	sliderButton.x = mouseX - (sliderButton.w / 2);
 
 	value = ((maxValue - minValue) * (mouseX - (float)(sliderBar.x + 2 + sliderButton.w / 2))) / (float)(sliderBar.w - 2 - sliderButton.w) + minValue;

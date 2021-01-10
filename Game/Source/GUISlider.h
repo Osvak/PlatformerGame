@@ -13,7 +13,7 @@ class GUISlider : public GUIControl
 {
 public:
 
-	GUISlider(uint32 id, SDL_Rect bounds, AudioManager* audioManager, Fonts* fonts, const char* text, int min = 0, int max = 100);
+	GUISlider(uint32 id, SDL_Rect bounds, AudioManager* audioManager, Fonts* fonts, const char* text, int initialValue = 0, int min = 0, int max = 100);
 	virtual ~GUISlider();
 
 	bool Update(Input* input, float dt);
@@ -43,7 +43,6 @@ private:
 
 	int guiFont = 0;
 
-	int value;
 	int lastValue;
 	int minValue;
 	int maxValue;

@@ -1,5 +1,4 @@
 <!-- Config file for the game -->
-<!-- L01: DONE 1: Create configuration file-->
 <config>
   <app>
     <title>Lato Viridi</title>
@@ -19,7 +18,11 @@
     <fullscreen_window value="false"/>
   </window>
 
-  <!-- L03: Added maps folder as config option -->
+  <audioManager>
+	<music volume="42" />
+	<fx volume="60" />
+  </audioManager>
+	
   <map>
     <folder>Assets/Maps/</folder>
   </map>

@@ -27,6 +27,10 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
+	// Save and Load volume
+	bool LoadState(pugi::xml_node& node);
+	bool SaveState(pugi::xml_node& node)const;
+
 	// Play a music file
 	bool PlayMusic(const char* path, float fadeTime = DEFAULT_MUSIC_FADE_TIME);
 	void StopMusic();
@@ -36,6 +40,11 @@ public:
 	bool UnloadFX(unsigned int id);
 	// Play a previously loaded WAV
 	bool PlayFX(unsigned int fx, int repeat = 0);
+
+	void SetMusicVolume(int volume);
+	void SetFXVolume(int volume);
+	int GetMusicVolume();
+	int GetFXVolume();
 	
 public:
 
@@ -45,6 +54,9 @@ private:
 
 	_Mix_Music* music;
 	List<Mix_Chunk *>	fx;
+
+	uint volumeMusic = 0;
+	uint volumeFX = 0;
 };
 
 #endif // __AUDIOMANAGER_H__
