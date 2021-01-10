@@ -11,30 +11,39 @@ This new revolutionary game will break the standards of 2D platformers. A new ta
  - Tiled TMX map loading and drawing (orthographic)
  - Map collisions detection (platforms)
  - Map navigation: player movement and jumping
- - Player sprint
  - Beautiful landscapes
  - Logo screen with fade-in fade-out
  - Title screen (press ENTER to start)
  - Player walk/jump/die animations
  - Ending screen (on dying)
  - Player double jump
- - Second level
- - Camera window
- - Game stable at 60 FPS
- - Game title showing FPS data
- - Game item to increase lifes
+ - Background scroll with parallax
+ - Walking enemy type with pathfinding
+ - Flying enemy type with pathfinding
+ - Load/Save considers each enemy state
+ - Game stable at 60 FPS without Vsync
+ - Window title shows: FPS / Avg. FPS / Last-frame MS / Vsync: on/off
+ - Game have all it’s movement normalized using dt
+ - Destroy enemies by shooting them
+ - Game items to recover health / lives
+ - Game collectable items to accumulate points: coins
  - Checkpoint autosave with feedback on passing
- - Animated checkpoint
  - Map checkpoints teleportation
+ - Player weapons to shot enemies
  - Audio feedback
+ - Entity System
+ - GUI: Title Screen Main Menu
+ - GUI: Gameplay Screen Pause Menu
+ - Second level
+ - Camera follows the player
  - DEBUG Keys
  
 ## Controls
 
  - D -> Move to the Right
  - A -> Move to the Left
- - SHIFT -> Sprint
  - SPACE -> Jump / Double Jump
+ - F -> Shoot arrow
 
 ## DEBUG Keys
 
@@ -43,11 +52,12 @@ This new revolutionary game will break the standards of 2D platformers. A new ta
  - F3 -> Start from the beginning of the current level
  - F5 -> Save the current game state
  - F6 -> Load the previous state (even across levels)
- - F7 -> Go to last save point (checkpoint or start of level)
- - F8 -> Unlock/Lock the camera
- - F9 -> Show collisions
+ - F8 -> View GUI bounds rectangles and state in different colors
+ - F9 -> Show collisions and pathfinding
  - F10 -> God Mode
  - F11 -> Enable/Disable FPS cap to 30
+ 
+ - C -> Enable/Disable free camera mode
  - Arrow Keys -> Move the camera if the camera is unlocked
 
 ## Developers
@@ -84,3 +94,5 @@ Skeleton license: credit goes to [Jesse Munguia](https://jesse-m.itch.io/)
 Ghost license: credit goes to [ansimuz](https://ansimuz.itch.io/)
 
 Coins license: credit goes to [irmirx](https://opengameart.org/users/irmirx)
+
+Arrow license: credit goes to [kenam0](https://kenam0.itch.io/arrows-pack)
