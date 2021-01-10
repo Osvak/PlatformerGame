@@ -3,15 +3,24 @@
 
 
 // Constructor
-GUIButton::GUIButton(uint32 id, SDL_Rect bounds, const char* text) : GUIControl(GUIControlType::BUTTON, id)
+GUIButton::GUIButton(uint32 id, SDL_Rect bounds, const char* text, AudioManager* audioManager) : GUIControl(GUIControlType::BUTTON, id)
 {
 	this->bounds = bounds;
 	this->text = text;
+    this->audioManager = audioManager;
+
+
+
+    buttonFocusedFX = audioManager->LoadFX("Assets/Audio/FX/button_focused.wav");
+    audioManager->musicList.Add(&buttonFocusedFX);
+    buttonPressedFX = audioManager->LoadFX("Assets/Audio/FX/button_pressed.wav");
+    audioManager->musicList.Add(&buttonPressedFX);
 }
 // Destructor
 GUIButton::~GUIButton()
 {
-
+    audioManager->UnloadFX(buttonFocusedFX);
+    audioManager->UnloadFX(buttonPressedFX);
 }
 
 
@@ -28,6 +37,12 @@ bool GUIButton::Update(Input* input, float dt)
             (mouseY > bounds.y) && (mouseY < (bounds.y + bounds.h)))
         {
             state = GUIControlState::FOCUSED;
+            if (playFocusedFX == true)
+            {
+                audioManager->PlayFX(buttonFocusedFX);
+                playFocusedFX = false;
+            }
+            
 
             if (input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KeyState::KEY_REPEAT)
             {
@@ -37,31 +52,109 @@ bool GUIButton::Update(Input* input, float dt)
             // If mouse button pressed -> Generate event!
             if (input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KeyState::KEY_UP)
             {
+                audioManager->PlayFX(buttonPressedFX);
                 NotifyObserver();
             }
         }
-        else state = GUIControlState::NORMAL;
+        else
+        {
+            state = GUIControlState::NORMAL;
+            playFocusedFX = true;
+        }
     }
 
     return false;
 }
 
-bool GUIButton::Draw(Render* render)
+bool GUIButton::Draw(Render* render, bool drawGUI)
 {
+    SDL_Rect rect = FindPositionInAtlas();
+
     // Draw the right button depending on state
     switch (state)
     {
-    case GUIControlState::DISABLED: render->DrawRectangle(bounds, 100, 100, 100, 255);
+    case GUIControlState::DISABLED:
+    {
+        render->DrawTexture(texture, bounds.x, bounds.y, &rect);
+
+        if (drawGUI == true)
+        {
+            render->DrawRectangle(bounds, 100, 100, 100, 150);
+        }
+      
+
         break;
-    case GUIControlState::NORMAL: render->DrawRectangle(bounds, 0, 255, 0, 255);
+    }
+
+    case GUIControlState::NORMAL:
+    {
+        render->DrawTexture(texture, bounds.x, bounds.y, &rect);
+
+        if (drawGUI == true)
+        {
+            render->DrawRectangle(bounds, 0, 255, 0, 150);
+        }
+
+
         break;
-    case GUIControlState::FOCUSED: render->DrawRectangle(bounds, 255, 255, 0, 255);
+    }
+
+    case GUIControlState::FOCUSED:
+    {
+        render->DrawTexture(texture, bounds.x, bounds.y, &rect);
+
+        if (drawGUI == true)
+        {
+            render->DrawRectangle(bounds, 255, 255, 0, 150);
+        }
+
+
         break;
-    case GUIControlState::PRESSED: render->DrawRectangle(bounds, 0, 255, 255, 255);
+    }
+
+    case GUIControlState::PRESSED:
+    {
+        render->DrawTexture(texture, bounds.x, bounds.y, &rect);
+
+        if (drawGUI == true)
+        {
+            render->DrawRectangle(bounds, 0, 255, 255, 150);
+        }
+
+
         break;
+    }
+
     default:
         break;
     }
 
     return false;
+}
+
+
+SDL_Rect GUIButton::FindPositionInAtlas()
+{
+    SDL_Rect rect;
+
+    switch (state)
+    {
+    case GUIControlState::DISABLED:
+        rect = { 103, 144, 100, 24 };
+        break;
+    case GUIControlState::NORMAL:
+        rect = { 103, 27, 100, 24 };
+        break;
+    case GUIControlState::FOCUSED:
+        rect = { 103, 66, 100, 24 };
+        break;
+    case GUIControlState::PRESSED:
+        rect = { 103, 105, 100, 24 };
+        break;
+    default:
+        break;
+    }
+
+
+    return rect;
 }

@@ -48,16 +48,22 @@ bool SceneTitle::Load()
 	//
 	// Load buttons
 	//
-	buttonPlay = new GUIButton(1, { 56, 128, 100, 24 }, "PLAY");
+	GUITexture = tex->Load("Assets/Textures/GUI/gui_spritesheet.png");
+	buttonPlay = new GUIButton(1, { 56, 128, 100, 24 }, "PLAY", audioManager);
 	buttonPlay->SetObserver(this);
-	buttonContinue = new GUIButton(2, { 166, 128, 100, 24 }, "CONTINUE");
+	buttonPlay->SetTexture(GUITexture);
+	buttonContinue = new GUIButton(2, { 166, 128, 100, 24 }, "CONTINUE", audioManager);
 	buttonContinue->SetObserver(this);
-	buttonSettings = new GUIButton(3, { 276, 128, 100, 24 }, "SETTINGS");
+	buttonContinue->SetTexture(GUITexture);
+	buttonSettings = new GUIButton(3, { 276, 128, 100, 24 }, "SETTINGS", audioManager);
 	buttonSettings->SetObserver(this);
-	buttonCredits = new GUIButton(4, { 111, 176, 100, 24 }, "CREDITS");
+	buttonSettings->SetTexture(GUITexture);
+	buttonCredits = new GUIButton(4, { 111, 176, 100, 24 }, "CREDITS", audioManager);
 	buttonCredits->SetObserver(this);
-	buttonExit = new GUIButton(5, { 221, 176, 100, 24 }, "EXIT");
+	buttonCredits->SetTexture(GUITexture);
+	buttonExit = new GUIButton(5, { 221, 176, 100, 24 }, "EXIT", audioManager);
 	buttonExit->SetObserver(this);
+	buttonExit->SetTexture(GUITexture);
 
 	//
 	// Load music
@@ -112,11 +118,11 @@ bool SceneTitle::Draw()
 	//
 	// Draw buttons
 	//
-	buttonPlay->Draw(render);
-	buttonContinue->Draw(render);
-	buttonSettings->Draw(render);
-	buttonCredits->Draw(render);
-	buttonExit->Draw(render);
+	buttonPlay->Draw(render, drawGUI);
+	buttonContinue->Draw(render, drawGUI);
+	buttonSettings->Draw(render, drawGUI);
+	buttonCredits->Draw(render, drawGUI);
+	buttonExit->Draw(render, drawGUI);
 
 	return false;
 }
@@ -150,4 +156,32 @@ bool SceneTitle::Unload()
 	active = false;
 
 	return false;
+}
+
+
+bool SceneTitle::OnGUIMouseClickEvent(GUIControl* control)
+{
+	switch (control->type)
+	{
+	case GUIControlType::BUTTON:
+	{
+		break;
+	}
+	
+	case GUIControlType::CHECKBOX:
+	{
+		break;
+	}
+
+	case GUIControlType::SLIDER:
+	{
+		break;
+	}
+
+	default:
+		break;
+	}
+
+
+	return true;
 }

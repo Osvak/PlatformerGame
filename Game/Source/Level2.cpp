@@ -164,13 +164,21 @@ bool Level2::Update(float dt)
 	//
 	// Scene controls
 	//
-	if (input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
+	if (drawColliders == true)
 	{
-		map->drawColliders = !map->drawColliders;
+		map->drawColliders = true;
 	}
-	if (input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+	else
 	{
-		player->godMode = !player->godMode;
+		map->drawColliders = false;
+	}
+	if (playerGodMode == true)
+	{
+		player->godMode = true;
+	}
+	else
+	{
+		player->godMode = false;
 	}
 
 	//

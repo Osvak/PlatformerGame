@@ -110,6 +110,18 @@ bool SceneManager::Update(float dt)
 			{
 				loadGameRequested = true;
 			}
+			if (input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
+			{
+				current->drawColliders = !current->drawColliders;
+			}
+			if (input->GetKey(SDL_SCANCODE_F10) == KEY_DOWN)
+			{
+				current->playerGodMode = !current->playerGodMode;
+			}
+		}
+		if (input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
+		{
+			current->drawGUI = !current->drawGUI;
 		}
 		if (input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN)
 		{

@@ -77,6 +77,9 @@ public:
 	bool transitionRequired;
 
 	bool freeCamera = false;
+	bool drawColliders = false;
+	bool drawGUI = false;
+	bool playerGodMode = false;
 };
 
 #endif // !__SCENE_H__

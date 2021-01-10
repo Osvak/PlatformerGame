@@ -41,6 +41,9 @@ public:
 	// Called before quitting
 	bool Unload();
 
+
+	bool OnGUIMouseClickEvent(GUIControl* control);
+
 private:
 
 	Map* map = nullptr;

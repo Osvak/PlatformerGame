@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "Render.h"
 #include "Scene.h"
+#include "AudioManager.h"
 
 #include "Point.h"
 #include "SString.h"
@@ -31,7 +32,7 @@ public:
 
     GUIControl(GUIControlType type, uint32 id) : type(type), id(id), state(GUIControlState::NORMAL) {}
 
-    GUIControl(GUIControlType type, SDL_Rect bounds, const char* text) :
+    GUIControl(GUIControlType type, SDL_Rect bounds, const char* text, AudioManager* audioManager) :
         type(type),
         state(GUIControlState::NORMAL),
         bounds(bounds),
@@ -46,7 +47,7 @@ public:
         return true;
     }
 
-    virtual bool Draw(Render* render) const
+    virtual bool Draw(Render* render, bool drawGUI) const
     {
         return true;
     }
