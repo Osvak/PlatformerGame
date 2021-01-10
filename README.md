@@ -75,3 +75,12 @@ Game Over FX license: credit goes to [landlucky](https://freesound.org/people/la
 
 Victory FX license: credit goes to [humanoide9000](https://freesound.org/people/humanoide9000/).
 
+Buttons FX and Jump FX created using [rFXGen](https://github.com/raysan5/rfxgen)
+
+Buttons Textuers created using [rGuiStyler](https://github.com/raysan5/raygui)
+
+Skeleton license: credit goes to [Jesse Munguia](https://jesse-m.itch.io/)
+
+Ghost license: credit goes to [ansimuz](https://ansimuz.itch.io/)
+
+Coins license: credit goes to [irmirx](https://opengameart.org/users/irmirx)
