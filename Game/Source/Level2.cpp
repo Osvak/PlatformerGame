@@ -96,6 +96,12 @@ bool Level2::Load()
 	//
 	itemPotion = (ItemPotion*)entityManager->CreateEntity(EntityType::ITEM_POTION);
 	itemPotion->position = fPoint(TILE_SIZE * 57 + 4, TILE_SIZE * 23 - itemPotion->height);
+	itemCoin1 = (ItemCoin*)entityManager->CreateEntity(EntityType::ITEM_COIN);
+	itemCoin1->position = fPoint(TILE_SIZE * 51, TILE_SIZE * 19 - itemCoin1->height);
+	itemCoin2 = (ItemCoin*)entityManager->CreateEntity(EntityType::ITEM_COIN);
+	itemCoin2->position = fPoint(TILE_SIZE * 52, TILE_SIZE * 19 - itemCoin2->height);
+	itemCoin3 = (ItemCoin*)entityManager->CreateEntity(EntityType::ITEM_COIN);
+	itemCoin3->position = fPoint(TILE_SIZE * 53, TILE_SIZE * 19 - itemCoin3->height);
 
 
 	//
@@ -149,6 +155,9 @@ bool Level2::Update(float dt)
 	// Items Update
 	//
 	itemPotion->Update(dt, player);
+	itemCoin1->Update(dt, player);
+	itemCoin2->Update(dt, player);
+	itemCoin3->Update(dt, player);
 
 
 	//
@@ -216,6 +225,9 @@ bool Level2::Draw()
 	// Draw Items
 	//
 	itemPotion->Draw();
+	itemCoin1->Draw();
+	itemCoin2->Draw();
+	itemCoin3->Draw();
 
 	//
 	// Draw Player
@@ -247,6 +259,9 @@ bool Level2::Draw()
 		enemyGhost1->DrawColliders();
 		enemyGhost2->DrawColliders();
 		itemPotion->DrawColliders();
+		itemCoin1->DrawColliders();
+		itemCoin2->DrawColliders();
+		itemCoin3->DrawColliders();
 	}
 
 
@@ -275,6 +290,9 @@ bool Level2::Unload()
 	entityManager->DestroyEntity(enemyGhost1);
 	entityManager->DestroyEntity(enemyGhost2);
 	entityManager->DestroyEntity(itemPotion);
+	entityManager->DestroyEntity(itemCoin1);
+	entityManager->DestroyEntity(itemCoin2);
+	entityManager->DestroyEntity(itemCoin3);
 	if (player->destroyed == true)
 	{
 		entityManager->DestroyEntity(player);

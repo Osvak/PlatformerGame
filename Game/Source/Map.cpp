@@ -448,7 +448,6 @@ bool Map::LoadTilesetDetails(pugi::xml_node& tileset_node, TileSet* set)
 {
 	bool ret = true;
 
-	// L03: DONE: Load Tileset attributes
 	set->name.Create(tileset_node.attribute("name").as_string());
 	set->firstgid = tileset_node.attribute("firstgid").as_int();
 	set->tileWidth = tileset_node.attribute("tilewidth").as_int();

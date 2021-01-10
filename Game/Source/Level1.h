@@ -57,7 +57,9 @@ private:
 	EnemySkeleton* enemySkeleton = nullptr;
 	EnemyGhost* enemyGhost = nullptr;
 	ItemPotion* itemPotion = nullptr;
-	ItemCoin* itemCoin = nullptr;
+	ItemCoin* itemCoin1 = nullptr;
+	ItemCoin* itemCoin2 = nullptr;
+	ItemCoin* itemCoin3 = nullptr;
 	Checkpoint* checkpoint1 = nullptr;
 	Checkpoint* checkpoint2 = nullptr;
 

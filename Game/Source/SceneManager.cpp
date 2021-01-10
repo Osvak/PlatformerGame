@@ -319,7 +319,6 @@ bool SceneManager::CleanUp()
 // Save/Load scene info
 bool SceneManager::LoadState(pugi::xml_node& sceneNode)
 {
-	// TODO: Load SceneManager
 	const char* n = sceneNode.child("scene").attribute("current").as_string();
 	SString savedScene(n);
 	if (savedScene == "level1")
@@ -338,7 +337,6 @@ bool SceneManager::LoadState(pugi::xml_node& sceneNode)
 
 bool SceneManager::SaveState(pugi::xml_node& sceneNode) const
 {
-	// TODO: Save SceneManager
 	pugi::xml_node scene = sceneNode.append_child("scene");
 	scene.append_attribute("current").set_value(current->name.GetString());
 

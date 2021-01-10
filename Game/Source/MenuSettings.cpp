@@ -242,5 +242,3 @@ bool MenuSettings::OnGUIMouseClickEvent(GUIControl* control)
 
 	return true;
 }
-
-// TODO: Load/Save settings
