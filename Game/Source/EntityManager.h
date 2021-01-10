@@ -54,7 +54,7 @@ private:
 public:
 
 	List<Entity*> entities;
-
+	bool ids[5] = { false, false , false , false , false };
 	float accumulatedTime = 0.0f;
 	float updateMSCycle = 0.0f;
 	bool doLogic = false;

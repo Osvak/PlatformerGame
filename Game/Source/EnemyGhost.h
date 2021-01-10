@@ -38,7 +38,7 @@ class EnemyGhost : public Entity
 public:
 
 	// Constructor
-	EnemyGhost(Render* render, Textures* tex, AudioManager* audioManager, PathFinding* pathFinding);
+	EnemyGhost(Render* render, Textures* tex, AudioManager* audioManager, PathFinding* pathFinding, uint32 id = 0);
 	// Destructor
 	virtual ~EnemyGhost();
 

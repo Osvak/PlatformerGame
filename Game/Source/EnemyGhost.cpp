@@ -13,7 +13,7 @@
 
 
 // Constructor
-EnemyGhost::EnemyGhost(Render* render, Textures* tex, AudioManager* audioManager, PathFinding* pathFinding) : Entity(EntityType::ENEMY_GHOST)
+EnemyGhost::EnemyGhost(Render* render, Textures* tex, AudioManager* audioManager, PathFinding* pathFinding, uint32 id) : Entity(EntityType::ENEMY_GHOST)
 {
 	LOG("Creating Ghost Entity");
 

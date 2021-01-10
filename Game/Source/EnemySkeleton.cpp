@@ -13,7 +13,7 @@
 
 
 // Constructor
-EnemySkeleton::EnemySkeleton(Render* render, Textures* tex, AudioManager* audioManager, PathFinding* pathFinding) : Entity(EntityType::ENEMY_SKELETON)
+EnemySkeleton::EnemySkeleton(Render* render, Textures* tex, AudioManager* audioManager, PathFinding* pathFinding, uint32 id) : Entity(EntityType::ENEMY_SKELETON)
 {
 	LOG("Creating Skeleton Entity");
 

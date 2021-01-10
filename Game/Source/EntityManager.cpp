@@ -105,32 +105,37 @@ Entity* EntityManager::CreateEntity(EntityType type)
 {
 	Entity* ret = nullptr;
 
-	// TODO: Do entities switch
-	switch (type)
+	for (int i = 0; i < 5; i++)
 	{
-	case EntityType::MAP:
-		ret = new Map(tex, win, render);
-		break;
-	case EntityType::PLAYER:
-		ret = Player::GetInstance(input, render, tex, audioManager);
-		break;
-	case EntityType::ENEMY_SKELETON:
-		ret = new EnemySkeleton(render, tex, audioManager, pathFinding); 
-		break;
-	case EntityType::ENEMY_GHOST:
-		ret = new EnemyGhost(render, tex, audioManager, pathFinding);
-		break;
-	case EntityType::ITEM_POTION:
-		ret = new ItemPotion(render, tex, audioManager);
-		break;
-	case EntityType::ITEM_COIN:
-		ret = new ItemCoin(render, tex, audioManager);
-		break;
-	case EntityType::CHECKPOINT:
-		ret = new Checkpoint(render, tex, audioManager);
-		break;
-	default:
-		break;
+		if (ids[i] == true) i++;
+		switch (type)
+		{
+		case EntityType::MAP:
+			ret = new Map(tex, win, render);
+			break;
+		case EntityType::PLAYER:
+			ret = Player::GetInstance(input, render, tex, audioManager);
+			break;
+		case EntityType::ENEMY_SKELETON:
+			ret = new EnemySkeleton(render, tex, audioManager, pathFinding, ids[i]);
+			ids[i] = true;
+			break;
+		case EntityType::ENEMY_GHOST:
+			ret = new EnemyGhost(render, tex, audioManager, pathFinding, ids[i]);
+			ids[i] = true;
+			break;
+		case EntityType::ITEM_POTION:
+			ret = new ItemPotion(render, tex, audioManager);
+			break;
+		case EntityType::ITEM_COIN:
+			ret = new ItemCoin(render, tex, audioManager);
+			break;
+		case EntityType::CHECKPOINT:
+			ret = new Checkpoint(render, tex, audioManager);
+			break;
+		default:
+			break;
+		}
 	}
 
 	// Created entities are added to the list

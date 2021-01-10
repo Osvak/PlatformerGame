@@ -49,7 +49,7 @@ public:
     EntityType type;
     bool active = true;
     SString name;         // Entity name identifier
-    //uint32 id;            // Entity identifier?
+	uint32 id;
 
     // Possible properties, it depends on how generic we
     // want our Entity class, maybe it's not renderable...
