@@ -133,7 +133,8 @@ bool GUIButton::Draw(Render* render, bool drawGUI)
     }
 
     // Draw text of the button
-    int posX = (int)((float)bounds.x + ((float)bounds.w / 2) - ((float)text.Length() / 2 ) * 8.5f);
+    int posX = bounds.x + ((int)((float)bounds.w / 2));
+    posX = posX - (int)((((float)text.Length() / 2) + 0.5f) * 8);
     int posY = bounds.y + (int)(bounds.h / 2) - 5;
     fonts->DrawText(posX, posY, guiFont, text.GetString());
 

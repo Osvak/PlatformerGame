@@ -93,6 +93,9 @@
     <ClCompile Include="Source\GUICheckBox.cpp">
       <Filter>GUIControls</Filter>
     </ClCompile>
+    <ClCompile Include="Source\MenuPause.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\App.h" />
@@ -221,6 +224,9 @@
     </ClInclude>
     <ClInclude Include="Source\GUICheckBox.h">
       <Filter>GUIControls</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MenuPause.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

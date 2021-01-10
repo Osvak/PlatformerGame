@@ -105,6 +105,7 @@
     <ClCompile Include="Source\AudioManager.cpp" />
     <ClCompile Include="Source\Input.cpp" />
     <ClCompile Include="Source\Map.cpp" />
+    <ClCompile Include="Source\MenuPause.cpp" />
     <ClCompile Include="Source\MenuSettings.cpp" />
     <ClCompile Include="Source\Pathfinding.cpp" />
     <ClCompile Include="Source\PerfTimer.cpp" />
@@ -134,6 +135,7 @@
     <ClInclude Include="Source\ItemCoin.h" />
     <ClInclude Include="Source\ItemPotion.h" />
     <ClInclude Include="Source\Map.h" />
+    <ClInclude Include="Source\MenuPause.h" />
     <ClInclude Include="Source\MenuSettings.h" />
     <ClInclude Include="Source\Pathfinding.h" />
     <ClInclude Include="Source\PerfTimer.h" />

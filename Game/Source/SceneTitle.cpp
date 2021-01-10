@@ -55,6 +55,7 @@ bool SceneTitle::Load()
 	buttonContinue = new GUIButton(2, { 166, 128, 100, 24 }, "CONTINUE", audioManager, fonts);
 	buttonContinue->SetObserver(this);
 	buttonContinue->SetTexture(GUITexture);
+	buttonContinue->state = GUIControlState::DISABLED;
 	buttonSettings = new GUIButton(3, { 276, 128, 100, 24 }, "SETTINGS", audioManager, fonts);
 	buttonSettings->SetObserver(this);
 	buttonSettings->SetTexture(GUITexture);
