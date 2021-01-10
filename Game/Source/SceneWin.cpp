@@ -45,7 +45,6 @@ bool SceneWin::Load()
 	//
 	// Load music
 	//
-	audioManager->StopMusic();
 	victoryFX = audioManager->LoadFX("Assets/Audio/FX/victory.wav");
 	audioManager->musicList.Add(&victoryFX);
 

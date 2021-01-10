@@ -47,6 +47,7 @@ private:
 
 	Scene* current = nullptr;
 	Scene* next = nullptr;
+	Scene* menuSettings = nullptr;
 
 	// Required variables to manage screen transitions (fade-in, fade-out)
 	bool onTransition;

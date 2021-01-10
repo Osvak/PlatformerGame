@@ -43,7 +43,6 @@ bool SceneLose::Load()
 	//
 	// Load music
 	//
-	audioManager->StopMusic();
 	gameOverFX = audioManager->LoadFX("Assets/Audio/FX/game_over.wav");
 	audioManager->musicList.Add(&gameOverFX);
 

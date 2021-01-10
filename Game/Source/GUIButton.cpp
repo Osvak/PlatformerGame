@@ -17,7 +17,7 @@ GUIButton::GUIButton(uint32 id, SDL_Rect bounds, const char* text, AudioManager*
     buttonPressedFX = audioManager->LoadFX("Assets/Audio/FX/button_pressed.wav");
     audioManager->musicList.Add(&buttonPressedFX);
 
-    guiFont = fonts->Load("Assets/Fonts/pixel_intv.png", "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ ", 2, 206, 18);
+    guiFont = fonts->Load("Assets/Fonts/font_black.png", "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ ", 2, 189, 18);
 }
 // Destructor
 GUIButton::~GUIButton()

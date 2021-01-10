@@ -24,6 +24,8 @@ enum class SceneType
 	LEVEL2,
 	WIN,
 	LOSE,
+	SETTINGS,
+	PAUSE
 };
 
 
@@ -80,6 +82,9 @@ public:
 	bool drawColliders = false;
 	bool drawGUI = false;
 	bool playerGodMode = false;
+	bool exitGame = false;
+	bool menuSettings = false;
+	bool exitMenuSettings = false;
 };
 
 #endif // !__SCENE_H__

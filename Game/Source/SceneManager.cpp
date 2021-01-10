@@ -7,6 +7,8 @@
 #include "SceneWin.h"
 #include "SceneLose.h"
 
+#include "MenuSettings.h"
+
 #include "Input.h"
 #include "Render.h"
 #include "Textures.h"
@@ -59,6 +61,8 @@ bool SceneManager::Start()
 {
 	LOG("SceneManager.Start(): Making SceneLogo be the first Scene");
 
+	menuSettings = new MenuSettings(input, render, tex, audioManager, fonts);
+	menuSettings->Load();
 	current = new SceneLogo(input, render, tex, audioManager);
 	current->Load();
 	current->name = "sceneLogo";
@@ -82,7 +86,18 @@ bool SceneManager::Update(float dt)
 {
 	if (!onTransition)
 	{
-		if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+		if (current->exitGame == true)
+		{
+			return false;
+		}
+		if (menuSettings->exitMenuSettings == true)
+		{
+			current->menuSettings = false;
+		}
+		if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN &&
+			current->name != "sceneTitle"  &&
+			current->name != "level1" &&
+			current->name != "level2")
 		{
 			return false;
 		}
@@ -123,6 +138,7 @@ bool SceneManager::Update(float dt)
 		if (input->GetKey(SDL_SCANCODE_F8) == KEY_DOWN)
 		{
 			current->drawGUI = !current->drawGUI;
+			menuSettings->drawGUI = !menuSettings->drawGUI;
 		}
 		if (input->GetKey(SDL_SCANCODE_F11) == KEY_DOWN)
 		{
@@ -142,7 +158,14 @@ bool SceneManager::Update(float dt)
 			if (input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) render->camera.x -= 5;
 		}
 
-		current->Update(dt);
+		if (current->menuSettings == false)
+		{
+			current->Update(dt);
+		}
+		{
+			menuSettings->exitMenuSettings = false;
+			menuSettings->Update(dt);
+		}
 	}
 	else
 	{
@@ -184,6 +207,11 @@ bool SceneManager::Update(float dt)
 
 	// Draw current scene
 	current->Draw();
+	// Draw menus on top
+	if (current->menuSettings == true)
+	{
+		menuSettings->Draw();
+	}
 
 	// Draw full screen rectangle in front of everything
 	if (onTransition)
@@ -211,7 +239,7 @@ bool SceneManager::Update(float dt)
 		current->transitionRequired = false;
 	}
 
-	if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) return false;
+	//if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) return false;
 	return true;
 }
 

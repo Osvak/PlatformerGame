@@ -264,6 +264,8 @@ bool Level2::Unload()
 
 	LOG("Unloading Level 2");
 
+	audioManager->StopMusic();
+
 	entityManager->DestroyEntity(map);
 	entityManager->DestroyEntity(checkpoint1);
 	entityManager->DestroyEntity(checkpoint2);

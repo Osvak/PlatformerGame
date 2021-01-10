@@ -84,6 +84,9 @@
     <ClCompile Include="Source\Fonts.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
+    <ClCompile Include="Source\MenuSettings.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\App.h" />
@@ -203,6 +206,9 @@
     </ClInclude>
     <ClInclude Include="Source\Fonts.h">
       <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MenuSettings.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

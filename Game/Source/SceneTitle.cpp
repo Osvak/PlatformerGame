@@ -28,12 +28,10 @@ SceneTitle::SceneTitle(Input* input, Render* render, Textures* tex, AudioManager
 	this->entityManager = entityManager;
 	this->fonts = fonts;
 }
-
 // Destructor
 SceneTitle::~SceneTitle()
 {
 }
-
 
 
 // Called before the first frame / when activated
@@ -81,21 +79,9 @@ bool SceneTitle::Load()
 }
 
 
-
 // Called each loop iteration
 bool SceneTitle::Update(float dt)
 {
-	//
-	// Scene controls
-	//
-	if (input->GetKey(SDL_SCANCODE_KP_ENTER) == KEY_DOWN ||
-		input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN ||
-		input->GetKey(SDL_SCANCODE_RETURN2) == KEY_DOWN)
-	{
-		TransitionToScene(SceneType::LEVEL1);
-		return false;
-	}
-
 	//
 	// Buttons update
 	//
@@ -140,7 +126,10 @@ bool SceneTitle::Unload()
 
 	LOG("Unloading Title Sreen");
 
+	audioManager->StopMusic();
+
 	tex->UnLoad(GUITexture);
+
 	entityManager->DestroyEntity(map);
 
 	delete buttonPlay;
@@ -167,6 +156,23 @@ bool SceneTitle::OnGUIMouseClickEvent(GUIControl* control)
 	{
 	case GUIControlType::BUTTON:
 	{
+		if (control->id == 1) // Play Button
+		{
+			TransitionToScene(SceneType::LEVEL1);
+		}
+		if (control->id == 3) // Settings Button
+		{
+			menuSettings = true;
+		}
+		if (control->id == 4) // Credits Button
+		{
+			TransitionToScene(SceneType::LOGO);
+		}
+		if (control->id == 5) // Exit Button
+		{
+			exitGame = true;
+		}
+
 		break;
 	}
 	
