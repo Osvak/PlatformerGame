@@ -11,7 +11,7 @@
 #include "Render.h"
 #include "Textures.h"
 #include "Pathfinding.h"
-//#include "GuiButton.h"
+#include "Fonts.h"
 
 #include "Defs.h"
 #include "Log.h"
@@ -23,7 +23,7 @@
 
 
 // Constructor
-SceneManager::SceneManager(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, PathFinding* pathFinding) : Module()
+SceneManager::SceneManager(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, PathFinding* pathFinding, Fonts* fonts) : Module()
 {
 	name.Create("sceneManager");
 
@@ -37,6 +37,7 @@ SceneManager::SceneManager(Input* input, Render* render, Textures* tex, AudioMan
 	this->audioManager = audioManager;
 	this->entityManager = entityManager;
 	this->pathFinding = pathFinding;
+	this->fonts = fonts;
 }
 
 // Destructor
@@ -199,7 +200,7 @@ bool SceneManager::Update(float dt)
 		switch (current->nextScene)
 		{
 		case SceneType::LOGO: next = new SceneLogo(input, render, tex, audioManager); break;
-		case SceneType::TITLE: next = new SceneTitle(input, render, tex, audioManager, entityManager); break;
+		case SceneType::TITLE: next = new SceneTitle(input, render, tex, audioManager, entityManager, fonts); break;
 		case SceneType::LEVEL1: next = new Level1(input, render, tex, audioManager, entityManager, pathFinding); break;
 		case SceneType::LEVEL2: next = new Level2(input, render, tex, audioManager, entityManager, pathFinding); break;
 		case SceneType::WIN: next = new SceneWin(input, render, tex, audioManager, entityManager); break;

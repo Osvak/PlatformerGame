@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "Render.h"
 #include "Textures.h"
+#include "Fonts.h"
 #include "AudioManager.h"
 #include "EntityManager.h"
 
@@ -13,7 +14,7 @@
 
 
 // Constructor
-SceneTitle::SceneTitle(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager)
+SceneTitle::SceneTitle(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, Fonts* fonts)
 {
 	LOG("Creating Title Screen");
 
@@ -25,6 +26,7 @@ SceneTitle::SceneTitle(Input* input, Render* render, Textures* tex, AudioManager
 	this->tex = tex;
 	this->audioManager = audioManager;
 	this->entityManager = entityManager;
+	this->fonts = fonts;
 }
 
 // Destructor
@@ -49,19 +51,19 @@ bool SceneTitle::Load()
 	// Load buttons
 	//
 	GUITexture = tex->Load("Assets/Textures/GUI/gui_spritesheet.png");
-	buttonPlay = new GUIButton(1, { 56, 128, 100, 24 }, "PLAY", audioManager);
+	buttonPlay = new GUIButton(1, { 56, 128, 100, 24 }, "PLAY", audioManager, fonts);
 	buttonPlay->SetObserver(this);
 	buttonPlay->SetTexture(GUITexture);
-	buttonContinue = new GUIButton(2, { 166, 128, 100, 24 }, "CONTINUE", audioManager);
+	buttonContinue = new GUIButton(2, { 166, 128, 100, 24 }, "CONTINUE", audioManager, fonts);
 	buttonContinue->SetObserver(this);
 	buttonContinue->SetTexture(GUITexture);
-	buttonSettings = new GUIButton(3, { 276, 128, 100, 24 }, "SETTINGS", audioManager);
+	buttonSettings = new GUIButton(3, { 276, 128, 100, 24 }, "SETTINGS", audioManager, fonts);
 	buttonSettings->SetObserver(this);
 	buttonSettings->SetTexture(GUITexture);
-	buttonCredits = new GUIButton(4, { 111, 176, 100, 24 }, "CREDITS", audioManager);
+	buttonCredits = new GUIButton(4, { 111, 176, 100, 24 }, "CREDITS", audioManager, fonts);
 	buttonCredits->SetObserver(this);
 	buttonCredits->SetTexture(GUITexture);
-	buttonExit = new GUIButton(5, { 221, 176, 100, 24 }, "EXIT", audioManager);
+	buttonExit = new GUIButton(5, { 221, 176, 100, 24 }, "EXIT", audioManager, fonts);
 	buttonExit->SetObserver(this);
 	buttonExit->SetTexture(GUITexture);
 

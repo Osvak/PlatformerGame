@@ -3,11 +3,12 @@
 
 
 // Constructor
-GUIButton::GUIButton(uint32 id, SDL_Rect bounds, const char* text, AudioManager* audioManager) : GUIControl(GUIControlType::BUTTON, id)
+GUIButton::GUIButton(uint32 id, SDL_Rect bounds, const char* text, AudioManager* audioManager, Fonts* fonts) : GUIControl(GUIControlType::BUTTON, id)
 {
 	this->bounds = bounds;
 	this->text = text;
     this->audioManager = audioManager;
+    this->fonts = fonts;
 
 
 
@@ -15,12 +16,15 @@ GUIButton::GUIButton(uint32 id, SDL_Rect bounds, const char* text, AudioManager*
     audioManager->musicList.Add(&buttonFocusedFX);
     buttonPressedFX = audioManager->LoadFX("Assets/Audio/FX/button_pressed.wav");
     audioManager->musicList.Add(&buttonPressedFX);
+
+    guiFont = fonts->Load("Assets/Fonts/pixel_intv.png", "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ ", 2, 206, 18);
 }
 // Destructor
 GUIButton::~GUIButton()
 {
     audioManager->UnloadFX(buttonFocusedFX);
     audioManager->UnloadFX(buttonPressedFX);
+    fonts->UnLoad(guiFont);
 }
 
 
@@ -129,13 +133,19 @@ bool GUIButton::Draw(Render* render, bool drawGUI)
         break;
     }
 
+    // Draw text of the button
+    int posX = (int)(bounds.x + (bounds.w / 2) - ((float)text.Length() / 2 ) * 8.5f);
+    int posY = bounds.y + (int)(bounds.h / 2) - 5;
+    fonts->DrawText(posX, posY, guiFont, text.GetString());
+
+
     return false;
 }
 
 
 SDL_Rect GUIButton::FindPositionInAtlas()
 {
-    SDL_Rect rect;
+    SDL_Rect rect = { 0, 0, 0, 0 };
 
     switch (state)
     {

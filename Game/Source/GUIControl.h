@@ -5,6 +5,7 @@
 #include "Render.h"
 #include "Scene.h"
 #include "AudioManager.h"
+#include "Fonts.h"
 
 #include "Point.h"
 #include "SString.h"
@@ -32,7 +33,7 @@ public:
 
     GUIControl(GUIControlType type, uint32 id) : type(type), id(id), state(GUIControlState::NORMAL) {}
 
-    GUIControl(GUIControlType type, SDL_Rect bounds, const char* text, AudioManager* audioManager) :
+    GUIControl(GUIControlType type, SDL_Rect bounds, const char* text, AudioManager* audioManager, Fonts* fonts) :
         type(type),
         state(GUIControlState::NORMAL),
         bounds(bounds),

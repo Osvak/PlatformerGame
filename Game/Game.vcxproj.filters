@@ -81,6 +81,9 @@
     <ClCompile Include="Source\GUIButton.cpp">
       <Filter>GUIControls</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Fonts.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\App.h" />
@@ -197,6 +200,9 @@
     </ClInclude>
     <ClInclude Include="Source\GUIButton.h">
       <Filter>GUIControls</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Fonts.h">
+      <Filter>Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

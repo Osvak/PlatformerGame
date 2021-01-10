@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "Render.h"
 #include "Textures.h"
+#include "Fonts.h"
 #include "AudioManager.h"
 #include "EntityManager.h"
 #include "Pathfinding.h"
@@ -25,10 +26,11 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	input = new Input(win);
 	render = new Render(win);
 	tex = new Textures(render);
+	fonts = new Fonts(render, tex);
 	audioManager = new AudioManager();
 	pathFinding = PathFinding::GetInstance();
 	entityManager = new EntityManager(win, input, render, tex, audioManager, pathFinding);
-	sceneManager = new SceneManager(input, render, tex, audioManager, entityManager, pathFinding);
+	sceneManager = new SceneManager(input, render, tex, audioManager, entityManager, pathFinding, fonts);
 	
 
 	// Ordered for awake / Start / Update
@@ -36,6 +38,7 @@ App::App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(win);
 	AddModule(input);
 	AddModule(tex);
+	AddModule(fonts);
 	AddModule(audioManager);
 	AddModule(entityManager);
 	AddModule(pathFinding);

@@ -16,6 +16,7 @@ class Window;
 class Input;
 class Render;
 class Textures;
+class Fonts;
 class AudioManager;
 class EntityManager;
 class PathFinding;
@@ -92,6 +93,7 @@ public:
 	Input* input;
 	Render* render;
 	Textures* tex;
+	Fonts* fonts;
 	AudioManager* audioManager;
 	EntityManager* entityManager;
 	PathFinding* pathFinding;

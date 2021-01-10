@@ -11,6 +11,7 @@ class GuiButton;
 class Input;
 class Render;
 class Textures;
+class Fonts;
 class AudioManager;
 class EntityManager;
 class PathFinding;
@@ -20,7 +21,7 @@ class SceneManager : public Module
 public:
 
 	// Constructor
-	SceneManager(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, PathFinding* pathFinding);
+	SceneManager(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, PathFinding* pathFinding, Fonts* fonts);
 	// Destructor
 	virtual ~SceneManager();
 
@@ -64,6 +65,7 @@ public:
 	Input* input;
 	Render* render;
 	Textures* tex;
+	Fonts* fonts;
 	AudioManager* audioManager;
 	EntityManager* entityManager;
 	PathFinding* pathFinding;

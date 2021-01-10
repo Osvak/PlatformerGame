@@ -12,7 +12,7 @@ class GUIButton : public GUIControl
 {
 public:
 
-	GUIButton(uint32 id, SDL_Rect bounds, const char* text, AudioManager* audioManager);
+	GUIButton(uint32 id, SDL_Rect bounds, const char* text, AudioManager* audioManager, Fonts* fonts);
 	virtual ~GUIButton();
 
 	bool Update(Input* input, float dt);
@@ -25,12 +25,15 @@ private:
 private:
 
 	AudioManager* audioManager;
+	Fonts* fonts;
 
 	// Gui Button specific properties
 	// Maybe some animation properties for state change?
 	unsigned int buttonFocusedFX = 0;
 	unsigned int buttonPressedFX = 0;
 	bool playFocusedFX = true;
+
+	int guiFont = 0;
 
 };
 

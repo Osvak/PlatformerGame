@@ -12,6 +12,7 @@ class Render;
 class Textures;
 class AudioManager;
 class EntityManager;
+class Fonts;
 
 class Map;
 class GUIButton;
@@ -23,7 +24,7 @@ class SceneTitle : public Scene
 public:
 
 	// Constructor
-	SceneTitle(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager);
+	SceneTitle(Input* input, Render* render, Textures* tex, AudioManager* audioManager, EntityManager* entityManager, Fonts* fonts);
 	// Destructor
 	virtual ~SceneTitle();
 
@@ -60,6 +61,7 @@ private:
 	Textures* tex;
 	AudioManager* audioManager;
 	EntityManager* entityManager;
+	Fonts* fonts;
 };
 
 #endif // !__SCENETITLE_H__
