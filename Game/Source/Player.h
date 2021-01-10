@@ -15,6 +15,7 @@
 #define GRAVITY 10.0f
 #define MAX_VELOCITY 50.0f
 #define MAX_AIR_TIME 2.0f
+#define ARROW_SPEED 200.0f
 
 
 
@@ -40,6 +41,7 @@ enum PlayerState
 	DYING,
 	APPEAR,
 	TRAVELLING,
+	SHOOTING,
 	
 	MAX
 };
@@ -114,6 +116,10 @@ private:
 	void ControlFloorCollisionWhenFalling();
 	// ----------------------------------- //
 
+	// ----- PLAYER MISC METHODS ----- //
+	void Shoot(float dt);
+	// ------------------------------- //
+
 	// ----- CAMERA METHODS ----- //
 	void CameraColliderMovement();
 	void CameraMovement();
@@ -151,6 +157,8 @@ public:
 	bool freeCamera = false;
 	// Flag to know whether the player is travelling between checkpoints or not
 	bool isTravelling = false;
+	// Flag to know if the player is shooting
+	bool isShooting = false;
 	// ------------------------ //
 
 private:
@@ -197,7 +205,6 @@ private:
 	Animation* idleAnim = new Animation();
 	Animation* walkAnim = new Animation();
 	Animation* shootAnim = new Animation();
-	//Animation* damageAnim = new Animation();
 	Animation* jumpAnim = new Animation();
 	Animation* fallAnim = new Animation();
 	Animation* deathAnim = new Animation();
@@ -212,9 +219,33 @@ private:
 	unsigned int oofFX;
 	unsigned int checkpointFX;
 	unsigned int nextLevelFX;
+	//unsigned int shootFX;
 	// Sound effects flags
 	bool playFX = true;
 	// ------------------------- //
+
+private:
+		// ----- ARROW VARIABLES ----- //
+		fPoint arrowPos = { 0.0f,0.0f };
+		fPoint arrowVel = { 0.0f,0.0f };
+		SDL_Rect arrowRect = { 0,0,0,0 };
+		float arrowTimer = 0.0f;
+		bool maxRange = false;
+		int arrowHorizontalDirection = 1;
+		SDL_Texture* arrowTexture = nullptr;
+		int arrowWidth = 17, arrowHeight = 5;
+
+		// --------------------------- //
+
+public:
+	// ----- ARROW FLAGS ----- //
+	// Flag to know if the player can shoot
+	bool canShoot = true;
+	// ----------------------- //
+
+	// Arrow size getter
+	SDL_Rect GetArrowRect();
+
 
 public:
 

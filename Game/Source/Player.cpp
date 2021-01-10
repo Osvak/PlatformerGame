@@ -85,7 +85,7 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	deathAnim->speed = 0.1f;
 	for (int i = 0; i < 10; i++)
 		deathAnim->PushBack({ 50 * i, 148, 50, 37 });
-	shootAnim->loop = true;
+	shootAnim->loop = false;
 	shootAnim->speed = 0.2f;
 	for (int i = 0; i < 10; i++)
 		shootAnim->PushBack({ 50 * i, 185, 50, 37 });
@@ -103,6 +103,10 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	//
 	playerTexture = tex->Load("Assets/Textures/Player/player_spritesheet.png");
 
+	//
+	// Load Arrow texture file
+	//
+	arrowTexture = tex->Load("Assets/Textures/Player/arrow_sprite.png");
 
 	//
 	// Load Player FX files
@@ -117,7 +121,8 @@ Player::Player(Input* input, Render* render, Textures* tex, AudioManager* audioM
 	audioManager->musicList.Add(&checkpointFX);
 	nextLevelFX = audioManager->LoadFX("Assets/Audio/FX/next_level.wav");
 	audioManager->musicList.Add(&nextLevelFX);
-
+	//shootFX = audioManager->LoadFX("Assets/Audio/FX/shoot.wav");
+	//audioManager->musicList.Add(&shootFX);
 
 	//
 	// Load Player variables
@@ -188,6 +193,12 @@ void Player::UpdateState()
 			break;
 		}
 
+		if (input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+		{
+			ChangeState(state, SHOOTING);
+			break;
+		}
+
 		if (isTravelling == true)
 		{
 			ChangeState(state, TRAVELLING);
@@ -227,6 +238,12 @@ void Player::UpdateState()
 		if (input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
 		{
 			ChangeState(state, JUMP);
+			break;
+		}
+
+		if (input->GetKey(SDL_SCANCODE_F) == KEY_DOWN)
+		{
+			ChangeState(state, SHOOTING);
 			break;
 		}
 
@@ -334,9 +351,32 @@ void Player::UpdateState()
 			ChangeState(state, IDLE);
 			break;
 		}
-
-
 		break;
+	}
+
+	case SHOOTING:
+	{
+		if (currentAnimation->HasFinished() == true)
+		{
+			currentAnimation->Reset();
+
+			if (input->GetKey(SDL_SCANCODE_D) == KEY_DOWN ||
+				input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT ||
+				input->GetKey(SDL_SCANCODE_A) == KEY_DOWN ||
+				input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+			{
+				ChangeState(state, MOVE);
+				break;
+			}
+			else if (isJumping == true) 
+			{
+				ChangeState(state, JUMP);
+				break;
+			}
+
+			ChangeState(state, IDLE);
+			break;
+		}
 	}
 	
 	default:
@@ -492,6 +532,17 @@ void Player::UpdateLogic(float dt)
 		break;
 	}
 
+	case SHOOTING:
+		if (canShoot == true) 
+		{
+			isShooting = true;
+			Shoot(dt);
+		}
+
+		currentAnimation->Update();
+
+		break;
+
 	case GOD_MODE:
 	{
 		// Move freely when player is in god mode
@@ -604,6 +655,11 @@ void Player::UpdateLogic(float dt)
 		CameraMovement();
 	}
 
+	//
+	// Update Arrow Position
+	//
+	arrowPos.x += arrowVel.x * arrowHorizontalDirection * dt;
+
 }
 // Control what happens when the State is changed
 void Player::ChangeState(PlayerState previousState, PlayerState newState)
@@ -698,6 +754,21 @@ void Player::ChangeState(PlayerState previousState, PlayerState newState)
 		break;
 	}
 
+	case SHOOTING:
+		currentAnimation = shootAnim;
+		currentAnimation->Reset();
+		velocity.x = 0.0f;
+		if (horizontalDirection == 1) arrowHorizontalDirection = 1;
+		if (horizontalDirection == -1) arrowHorizontalDirection = -1;
+		arrowTimer = 0.0f;
+		canShoot = true;
+		arrowPos = { 0.0f,0.0f };
+		arrowVel = { 0.0f,0.0f };
+
+		//audioManager->PlayFX(shootFX);
+
+		break;
+
 	default:
 		break;
 	}
@@ -727,6 +798,17 @@ bool Player::Draw()
 			render->DrawFlippedTexture(playerTexture, (int)position.x - 19, (int)position.y - 9, &rect);
 	}
 
+	if (isShooting == true)
+	{
+		// Player draw when looking right
+		if (horizontalDirection == 1)
+			render->DrawTexture(arrowTexture, (int)arrowPos.x, (int)arrowPos.y);
+
+		// Player draw when looking left
+		if (horizontalDirection == -1)
+			render->DrawFlippedTexture(arrowTexture, (int)arrowPos.x, (int)arrowPos.y);
+	}
+
 
 	return true;
 }
@@ -736,6 +818,11 @@ void Player::DrawColliders()
 	{
 		render->DrawRectangle(GetRect(), 0, 255, 0, 100);
 		render->DrawRectangle(cameraRect, 240, 257, 209, 50);
+	}
+
+	if (isShooting == true)
+	{
+		render->DrawRectangle(GetArrowRect(), 155, 155, 0, 100);
 	}
 }
 
@@ -755,14 +842,17 @@ bool Player::CleanUp()
 	jumpAnim = nullptr;
 	fallAnim = nullptr;
 	deathAnim = nullptr;
+	shootAnim = nullptr;
 
 	tex->UnLoad(playerTexture);
+	tex->UnLoad(arrowTexture);
 
 	audioManager->UnloadFX(jumpFX);
 	audioManager->UnloadFX(secondJumpFX);
 	audioManager->UnloadFX(oofFX);
 	audioManager->UnloadFX(checkpointFX);
 	audioManager->UnloadFX(nextLevelFX);
+	//audioManager->UnloadFX(shootFX);
 
 	active = false;
 
@@ -779,6 +869,8 @@ void Player::InitPositions(fPoint playerPosition)
 	cameraPosition.y = position.y - (TILE_SIZE * 3);
 	cameraRect.x = (int)cameraPosition.x;
 	cameraRect.y = (int)cameraPosition.y;
+	arrowPos.x = position.x;
+	arrowPos.y = position.y;
 }
 // Load the player's variables and flags
 void Player::LoadPlayer()
@@ -814,12 +906,17 @@ void Player::LoadPlayer()
 	destroyed = false;
 	godMode = false;
 	isTravelling = false;
+	isShooting = false;
+	canShoot = true;
 	state = APPEAR;
 
 	//
 	// Set cameraRect
 	//
 	cameraRect = { (int)position.x, (int)position.y - (TILE_SIZE * 4), TILE_SIZE * 6, TILE_SIZE * 5 };
+	
+	// Set arrowRect
+	arrowRect = { (int)arrowPos.x, (int)arrowPos.y, 17, 5 };
 	InitPositions(position);
 }
 // Load the player's state
@@ -932,6 +1029,10 @@ SDL_Rect Player::GetRect()
 	return { (int)position.x, (int)position.y, width, height };
 }
 
+SDL_Rect Player::GetArrowRect()
+{
+	return { (int)arrowPos.x, (int)arrowPos.y, arrowWidth, arrowHeight };
+}
 
 
 void Player::Jump(float dt)
@@ -985,6 +1086,42 @@ void Player::Jump(float dt)
 	}
 
 	timeInAir = timeInAir + dt;
+}
+
+void Player::Shoot(float dt)
+{
+	if (arrowHorizontalDirection == 1)
+	{
+		arrowPos = { position.x, position.y + 11 };
+	}
+	if (arrowHorizontalDirection == -1)
+	{
+		arrowPos = { position.x - arrowWidth /2, position.y + 11 };
+	}
+	if (isShooting == true)
+	{
+		if (arrowHorizontalDirection == 1)
+		{
+			arrowVel.x = ARROW_SPEED;
+
+			if (arrowPos.x >= position.x + 50.0f)
+				maxRange = true;
+		}
+		if (arrowHorizontalDirection == -1)
+		{
+			arrowVel.x = ARROW_SPEED;
+
+			if (arrowPos.x <= position.x + 50.0f)
+				maxRange = true;
+		}
+	}
+
+	if (maxRange == true)
+	{
+		arrowRect = { 0,0,0,0 };
+		isShooting = false;
+		canShoot = true;
+	}
 }
 
 void Player::MovingRightLogic()

@@ -412,6 +412,12 @@ void EnemyGhost::UpdateLogic(float dt)
 	position.x += velocity.x;
 	position.y += velocity.y;
 
+	// Check if arrow hit ghost
+	if (CheckCollision(GetRect(), player->GetArrowRect()) == true)
+	{
+		isHit = true;
+	}
+
 }
 // Changes the state
 void EnemyGhost::ChangeState(GhostState previousState, GhostState newState)
