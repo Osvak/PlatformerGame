@@ -93,6 +93,7 @@ bool SceneManager::Update(float dt)
 		if (menuSettings->exitMenuSettings == true)
 		{
 			current->menuSettings = false;
+			menuSettings->exitMenuSettings = false;
 		}
 		if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN &&
 			current->name != "sceneTitle"  &&
@@ -162,6 +163,7 @@ bool SceneManager::Update(float dt)
 		{
 			current->Update(dt);
 		}
+		else
 		{
 			menuSettings->exitMenuSettings = false;
 			menuSettings->Update(dt);

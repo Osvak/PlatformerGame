@@ -47,7 +47,6 @@ bool GUIButton::Update(Input* input, float dt)
                 playFocusedFX = false;
             }
             
-
             if (input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KeyState::KEY_REPEAT)
             {
                 state = GUIControlState::PRESSED;

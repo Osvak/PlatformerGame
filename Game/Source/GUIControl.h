@@ -71,6 +71,8 @@ public:
 
 public:
 
+    int value;
+
     uint32 id;
     GUIControlType type;
     GUIControlState state;

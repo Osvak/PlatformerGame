@@ -87,6 +87,12 @@
     <ClCompile Include="Source\MenuSettings.cpp">
       <Filter>Scenes</Filter>
     </ClCompile>
+    <ClCompile Include="Source\GUISlider.cpp">
+      <Filter>GUIControls</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GUICheckBox.cpp">
+      <Filter>GUIControls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\App.h" />
@@ -209,6 +215,12 @@
     </ClInclude>
     <ClInclude Include="Source\MenuSettings.h">
       <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUISlider.h">
+      <Filter>GUIControls</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GUICheckBox.h">
+      <Filter>GUIControls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -8,7 +8,7 @@
 
 #include "Map.h"
 #include "GUIButton.h"
-//#include "GUISlider.h"
+#include "GUISlider.h"
 //#include "GUICheckBox.h;
 
 #include "Log.h"
@@ -46,6 +46,12 @@ bool MenuSettings::Load()
 	buttonBack = new GUIButton(1, { 163, 205, 100, 24 }, "BACK", audioManager, fonts);
 	buttonBack->SetObserver(this);
 	buttonBack->SetTexture(GUITexture);
+	sliderMusic = new GUISlider(2, { 163, 65, 100, 10 }, audioManager, fonts, "Music Volume", 0, 100);
+	sliderMusic->SetObserver(this);
+	sliderMusic->SetTexture(GUITexture);
+	sliderFX = new GUISlider(3, { 163, 95, 100, 10 }, audioManager, fonts, "FX Volume", 0, 100);
+	sliderFX->SetObserver(this);
+	sliderFX->SetTexture(GUITexture);
 
 	//
 	// Load white font
@@ -69,6 +75,12 @@ bool MenuSettings::Update(float dt)
 	//
 	buttonBack->Update(input, dt);
 
+	//
+	// Sliders update
+	//
+	sliderMusic->Update(input, dt);
+	sliderFX->Update(input, dt);
+
 	return false;
 }
 
@@ -90,6 +102,12 @@ bool MenuSettings::Draw()
 	//
 	buttonBack->Draw(render, drawGUI);
 
+	//
+	// Draw sliders
+	//
+	sliderMusic->Draw(render, drawGUI);
+	sliderFX->Draw(render, drawGUI);
+
 
 	return false;
 }
@@ -109,6 +127,10 @@ bool MenuSettings::Unload()
 
 	delete buttonBack;
 	buttonBack = nullptr;
+	delete sliderMusic;
+	sliderMusic = nullptr;
+	delete sliderFX;
+	sliderFX = nullptr;
 
 	active = false;
 
@@ -138,6 +160,17 @@ bool MenuSettings::OnGUIMouseClickEvent(GUIControl* control)
 
 	case GUIControlType::SLIDER:
 	{
+		if (control->id == 2) // Music slider
+		{
+			//audioManager->SetMusicVolume(control->value);
+		}
+		if (control->id == 3) // FX slider
+		{
+			//audioManager->SetFXVolume(control->value);
+		}
+
+			
+
 		break;
 	}
 
