@@ -18,9 +18,9 @@
 // Constructor
 MenuSettings::MenuSettings(Window* win, Input* input, Render* render, Textures* tex, AudioManager* audioManager, Fonts* fonts)
 {
-	LOG("Creating Title Screen");
+	LOG("Creating Settings Menu");
 
-	name.Create("sceneTitle");
+	name.Create("menuSettings");
 
 
 	this->win = win;
@@ -39,7 +39,7 @@ MenuSettings::~MenuSettings()
 // Called before the first frame / when activated
 bool MenuSettings::Load()
 {
-	LOG("Loading Title Screen");
+	LOG("Loading Settings Menu");
 
 	//
 	// Load buttons
@@ -95,6 +95,15 @@ bool MenuSettings::Update(float dt)
 	checkBoxFullScreen->Update(input, dt);
 	checkBoxVSync->Update(input, dt);
 
+
+	//
+	// Input update
+	//
+	if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_UP)
+	{
+		exitMenuSettings = true;
+	}
+
 	return false;
 }
 
@@ -104,7 +113,10 @@ bool MenuSettings::Draw()
 	//
 	// Draw background
 	//
-	render->DrawRectangle(render->camera, 0, 0, 0, 235);
+	if (drawBackground == true)
+	{
+		render->DrawRectangle(render->camera, 0, 0, 0, 235);
+	}
 
 	//
 	// Draw title
@@ -141,7 +153,7 @@ bool MenuSettings::Unload()
 		return false;
 	}
 
-	LOG("Unloading Title Sreen");
+	LOG("Unloading Settings Menu");
 
 	tex->UnLoad(GUITexture);
 

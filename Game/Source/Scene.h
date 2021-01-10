@@ -2,6 +2,7 @@
 #define __SCENE_H__
 
 #include "SString.h"
+#include "Point.h"
 
 #include "PugiXml/src/pugixml.hpp"
 
@@ -83,8 +84,14 @@ public:
 	bool drawGUI = false;
 	bool playerGodMode = false;
 	bool exitGame = false;
+	bool goToTitleScreen = false;
+	bool drawBackground = true;
 	bool menuSettings = false;
 	bool exitMenuSettings = false;
+	bool menuPause = false;
+	bool exitMenuPause = false;
+
+	fPoint savedCameraPositon = { 0,0 };
 };
 
 #endif // !__SCENE_H__

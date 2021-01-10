@@ -8,6 +8,7 @@
 #include "SceneLose.h"
 
 #include "MenuSettings.h"
+#include "MenuPause.h"
 
 #include "Window.h"
 #include "Input.h"
@@ -18,6 +19,7 @@
 
 #include "Defs.h"
 #include "Log.h"
+#include "Point.h"
 
 #include "SDL/include/SDL.h"
 
@@ -65,6 +67,8 @@ bool SceneManager::Start()
 
 	menuSettings = new MenuSettings(win, input, render, tex, audioManager, fonts);
 	menuSettings->Load();
+	menuPause = new MenuPause(win, input, render, tex, audioManager, fonts);
+	menuPause->Load();
 	current = new SceneLogo(input, render, tex, audioManager);
 	current->Load();
 	current->name = "sceneLogo";
@@ -88,21 +92,44 @@ bool SceneManager::Update(float dt)
 {
 	if (!onTransition)
 	{
-		if (current->exitGame == true)
+		if (current->menuPause == true && current->menuSettings == false)
+		{
+			menuPause->exitMenuPause = false;
+			menuPause->Update(dt);
+			if (menuPause->menuSettings == true)
+			{
+				current->menuSettings = true;
+			}
+		}
+		if (current->menuSettings == true)
+		{
+			if (current->menuPause == true)
+			{
+				menuSettings->drawBackground = false;
+			}
+			else
+			{
+				menuSettings->drawBackground = true;
+			}
+			menuSettings->exitMenuSettings = false;
+			menuSettings->Update(dt);
+		}
+		if (current->exitGame == true || menuPause->exitGame == true)
 		{
 			return false;
 		}
-		if (menuSettings->exitMenuSettings == true)
-		{
-			current->menuSettings = false;
-			menuSettings->exitMenuSettings = false;
-		}
 		if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN &&
-			current->name != "sceneTitle"  &&
+			current->name != "sceneTitle" &&
 			current->name != "level1" &&
 			current->name != "level2")
 		{
 			return false;
+		}
+		if (menuPause->goToTitleScreen == true)
+		{
+			menuPause->goToTitleScreen = false;
+			current->menuPause = false;
+			current->TransitionToScene(SceneType::TITLE);
 		}
 		if (input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 		{
@@ -121,6 +148,15 @@ bool SceneManager::Update(float dt)
 		}
 		if (current->name == "level1" || current->name == "level2")
 		{
+			if (input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN)
+			{
+				if (current->menuPause == false)
+				{
+					current->savedCameraPositon.x = render->camera.x;
+					current->savedCameraPositon.y = render->camera.y;
+				}
+				current->menuPause = !current->menuPause;
+			}
 			if (input->GetKey(SDL_SCANCODE_F5) == KEY_DOWN)
 			{
 				saveGameRequested = true;
@@ -161,14 +197,22 @@ bool SceneManager::Update(float dt)
 			if (input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) render->camera.x -= 5;
 		}
 
-		if (current->menuSettings == false)
+		if (menuSettings->exitMenuSettings == true)
+		{
+			menuPause->menuSettings = false;
+			current->menuSettings = false;
+			menuSettings->exitMenuSettings = false;
+			render->camera.x = current->savedCameraPositon.x;
+		}
+		if (menuPause->exitMenuPause == true)
+		{
+			current->menuPause = false;
+			menuPause->exitMenuPause = false;
+			render->camera.y = current->savedCameraPositon.y;
+		}
+		if (current->menuSettings == false && current->menuPause == false)
 		{
 			current->Update(dt);
-		}
-		else
-		{
-			menuSettings->exitMenuSettings = false;
-			menuSettings->Update(dt);
 		}
 	}
 	else
@@ -212,10 +256,15 @@ bool SceneManager::Update(float dt)
 	// Draw current scene
 	current->Draw();
 	// Draw menus on top
+	if (current->menuPause == true)
+	{
+		menuPause->Draw();
+	}
 	if (current->menuSettings == true)
 	{
 		menuSettings->Draw();
 	}
+	
 
 	// Draw full screen rectangle in front of everything
 	if (onTransition)
